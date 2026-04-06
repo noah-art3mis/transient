@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../lib/auth-context";
 import { getStats } from "../../lib/api/stats";
 import { Stats } from "../../lib/types";
@@ -8,6 +9,7 @@ import { Stats } from "../../lib/types";
 export default function StatsScreen() {
   const { session } = useAuth();
   const userId = session?.user.id;
+  const { t } = useTranslation();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,21 +47,21 @@ export default function StatsScreen() {
       <View className="flex-row gap-3 mb-6">
         <View className="flex-1 bg-gray-50 rounded-lg p-4 items-center">
           <Text className="text-2xl font-bold">{stats.totalShows}</Text>
-          <Text className="text-xs text-gray-500 mt-1">Total shows</Text>
+          <Text className="text-xs text-gray-500 mt-1">{t("stats.totalShows")}</Text>
         </View>
         <View className="flex-1 bg-gray-50 rounded-lg p-4 items-center">
           <Text className="text-2xl font-bold">{stats.showsThisYear}</Text>
-          <Text className="text-xs text-gray-500 mt-1">This year</Text>
+          <Text className="text-xs text-gray-500 mt-1">{t("stats.thisYear")}</Text>
         </View>
         <View className="flex-1 bg-gray-50 rounded-lg p-4 items-center">
           <Text className="text-2xl font-bold">{stats.venuesVisited}</Text>
-          <Text className="text-xs text-gray-500 mt-1">Venues</Text>
+          <Text className="text-xs text-gray-500 mt-1">{t("stats.venues")}</Text>
         </View>
       </View>
 
       {stats.ratingDistribution.length > 0 && (
         <View className="mb-6">
-          <Text className="font-semibold mb-3">Rating Distribution</Text>
+          <Text className="font-semibold mb-3">{t("stats.ratingDistribution")}</Text>
           {stats.ratingDistribution.map(({ rating, count }) => (
             <View key={rating} className="flex-row items-center mb-1">
               <Text className="w-10 text-xs text-gray-500 text-right mr-2">{rating}</Text>
@@ -77,7 +79,7 @@ export default function StatsScreen() {
 
       {stats.byMediaType.length > 0 && (
         <View className="mb-6">
-          <Text className="font-semibold mb-3">By Media Type</Text>
+          <Text className="font-semibold mb-3">{t("stats.byMediaType")}</Text>
           {stats.byMediaType.map(({ media_type, count }) => (
             <View
               key={media_type}
@@ -92,7 +94,7 @@ export default function StatsScreen() {
 
       {stats.byYear.length > 0 && (
         <View className="mb-8">
-          <Text className="font-semibold mb-3">By Year</Text>
+          <Text className="font-semibold mb-3">{t("stats.byYear")}</Text>
           {stats.byYear.map(({ year, count }) => (
             <View key={year} className="flex-row justify-between py-2 border-b border-gray-50">
               <Text className="text-gray-700">{year}</Text>

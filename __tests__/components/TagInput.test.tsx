@@ -6,6 +6,13 @@ jest.mock("@expo/vector-icons", () => ({
   Ionicons: "Ionicons",
 }));
 
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+    i18n: { language: "en", changeLanguage: jest.fn() },
+  }),
+}));
+
 describe("TagInput", () => {
   it("displays existing tags as pills", () => {
     const { getByText } = render(
@@ -18,7 +25,7 @@ describe("TagInput", () => {
   it("adds a tag when comma is typed", () => {
     const onChange = jest.fn();
     const { getByPlaceholderText } = render(<TagInput value={[]} onChange={onChange} />);
-    const input = getByPlaceholderText("Add tags...");
+    const input = getByPlaceholderText("logForm.tagsPlaceholder");
     fireEvent.changeText(input, "new tag,");
     expect(onChange).toHaveBeenCalledWith(["new tag"]);
   });

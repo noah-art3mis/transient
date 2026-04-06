@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { updateLogEntry, deleteLogEntry } from "../../lib/api/log-entries";
 import { supabase } from "../../lib/supabase";
 import { LogEntryWithProduction } from "../../lib/types";
@@ -18,6 +19,7 @@ import TagInput from "../../components/TagInput";
 
 export default function EditLogEntryScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const [entry, setEntry] = useState<LogEntryWithProduction | null>(null);
@@ -79,10 +81,10 @@ export default function EditLogEntryScreen() {
   }
 
   async function handleDelete() {
-    Alert.alert("Delete Entry", "Are you sure?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("logEdit.deleteTitle"), t("logEdit.deleteMessage"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("common.delete"),
         style: "destructive",
         onPress: async () => {
           try {
@@ -105,7 +107,8 @@ export default function EditLogEntryScreen() {
     );
   }
 
-  const title = entry.production.title_override ?? entry.production.work?.title ?? "Unknown";
+  const title =
+    entry.production.title_override ?? entry.production.work?.title ?? t("common.unknown");
 
   return (
     <ScrollView className="flex-1 bg-white px-4 pt-4">
@@ -114,7 +117,7 @@ export default function EditLogEntryScreen() {
         {entry.production.venue && <Text className="text-gray-500">{entry.production.venue}</Text>}
       </View>
       <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">Date seen</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t("logForm.dateSeen")}</Text>
         <TextInput
           value={dateSeen}
           onChangeText={setDateSeen}
@@ -122,30 +125,30 @@ export default function EditLogEntryScreen() {
         />
       </View>
       <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">Rating</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t("logForm.rating")}</Text>
         <StarRating value={rating} onChange={setRating} />
       </View>
       <View className="mb-4 flex-row items-center gap-2">
-        <Text className="text-sm font-medium text-gray-700">Liked</Text>
+        <Text className="text-sm font-medium text-gray-700">{t("logForm.liked")}</Text>
         <HeartButton value={liked} onChange={setLiked} />
       </View>
       <View className="mb-4 flex-row items-center gap-2">
-        <Text className="text-sm font-medium text-gray-700">Seen this production before?</Text>
+        <Text className="text-sm font-medium text-gray-700">{t("logForm.rewatch")}</Text>
         <Pressable
           onPress={() => setIsRewatch(!isRewatch)}
           className={`px-3 py-1 rounded-full ${isRewatch ? "bg-black" : "bg-gray-200"}`}
         >
           <Text className={isRewatch ? "text-white" : "text-gray-700"}>
-            {isRewatch ? "Yes" : "No"}
+            {isRewatch ? t("common.yes") : t("common.no")}
           </Text>
         </Pressable>
       </View>
       <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">Review</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t("logForm.review")}</Text>
         <TextInput
           value={review}
           onChangeText={setReview}
-          placeholder="Write your thoughts..."
+          placeholder={t("logForm.reviewPlaceholder")}
           multiline
           numberOfLines={4}
           className="border border-gray-300 rounded-lg px-4 py-2 min-h-[100px] text-base"
@@ -153,7 +156,7 @@ export default function EditLogEntryScreen() {
         />
       </View>
       <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">Tags</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t("logForm.tags")}</Text>
         <TagInput value={tags} onChange={setTags} />
       </View>
       <View className="flex-row gap-3 mb-4">
@@ -161,18 +164,20 @@ export default function EditLogEntryScreen() {
           onPress={() => router.back()}
           className="flex-1 py-3 rounded-lg bg-gray-200 items-center"
         >
-          <Text className="font-medium">Cancel</Text>
+          <Text className="font-medium">{t("common.cancel")}</Text>
         </Pressable>
         <Pressable
           onPress={handleSave}
           disabled={saving}
           className="flex-1 py-3 rounded-lg bg-black items-center"
         >
-          <Text className="text-white font-medium">{saving ? "Saving..." : "Save"}</Text>
+          <Text className="text-white font-medium">
+            {saving ? t("common.saving") : t("common.save")}
+          </Text>
         </Pressable>
       </View>
       <Pressable onPress={handleDelete} className="py-3 items-center mb-8">
-        <Text className="text-red-500 font-medium">Delete Entry</Text>
+        <Text className="text-red-500 font-medium">{t("logEdit.deleteButton")}</Text>
       </Pressable>
     </ScrollView>
   );

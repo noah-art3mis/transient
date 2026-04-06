@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from "react-native";
 import { Link } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../lib/auth-context";
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,7 +17,7 @@ export default function LoginScreen() {
     try {
       await signIn(email, password);
     } catch (e: unknown) {
-      Alert.alert("Error", e instanceof Error ? e.message : "Sign in failed");
+      Alert.alert(t("common.error"), e instanceof Error ? e.message : t("login.signInFailed"));
     } finally {
       setLoading(false);
     }
@@ -23,11 +25,11 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 bg-white justify-center px-6">
-      <Text className="text-3xl font-bold mb-8 text-center">Transient</Text>
+      <Text className="text-3xl font-bold mb-8 text-center">{t("login.title")}</Text>
       <TextInput
         value={email}
         onChangeText={setEmail}
-        placeholder="Email"
+        placeholder={t("login.emailPlaceholder")}
         autoCapitalize="none"
         keyboardType="email-address"
         className="border border-gray-300 rounded-lg px-4 py-3 mb-3 text-base"
@@ -35,7 +37,7 @@ export default function LoginScreen() {
       <TextInput
         value={password}
         onChangeText={setPassword}
-        placeholder="Password"
+        placeholder={t("login.passwordPlaceholder")}
         secureTextEntry
         className="border border-gray-300 rounded-lg px-4 py-3 mb-6 text-base"
       />
@@ -47,13 +49,14 @@ export default function LoginScreen() {
         {loading ? (
           <ActivityIndicator color="white" />
         ) : (
-          <Text className="text-white font-semibold text-base">Sign In</Text>
+          <Text className="text-white font-semibold text-base">{t("login.signIn")}</Text>
         )}
       </Pressable>
       <Link href="/(auth)/signup" asChild>
         <Pressable className="py-2 items-center">
           <Text className="text-gray-600">
-            Don&apos;t have an account? <Text className="text-black font-semibold">Sign Up</Text>
+            {t("login.noAccount")}{" "}
+            <Text className="text-black font-semibold">{t("login.signUp")}</Text>
           </Text>
         </Pressable>
       </Link>

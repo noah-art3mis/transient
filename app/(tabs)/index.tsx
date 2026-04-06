@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { View, Text, FlatList, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../lib/auth-context";
 import { getLogEntries } from "../../lib/api/log-entries";
 import { LogEntryWithProduction } from "../../lib/types";
@@ -11,6 +12,7 @@ import EmptyState from "../../components/EmptyState";
 export default function DiaryScreen() {
   const { session } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
   const [entries, setEntries] = useState<LogEntryWithProduction[]>([]);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -51,7 +53,7 @@ export default function DiaryScreen() {
               }`}
             >
               <Text className={selectedYear === year ? "text-white" : "text-gray-700"}>
-                {year ?? "All"}
+                {year ?? t("diary.all")}
               </Text>
             </Pressable>
           ))}
@@ -59,7 +61,7 @@ export default function DiaryScreen() {
       </View>
 
       {entries.length === 0 && !loading ? (
-        <EmptyState message="No shows logged yet. Tap + to log your first show." />
+        <EmptyState message={t("diary.emptyState")} />
       ) : (
         <FlatList
           data={entries}

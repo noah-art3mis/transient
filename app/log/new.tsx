@@ -10,6 +10,7 @@ import {
   Platform,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../lib/auth-context";
 import { searchWorks, createWork } from "../../lib/api/works";
 import { getProductionsByWork, createProduction } from "../../lib/api/productions";
@@ -26,6 +27,7 @@ type Step = "search" | "create-work" | "create-production" | "log";
 export default function NewLogEntryScreen() {
   const { session } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
   const params = useLocalSearchParams<{
     productionId?: string;
     productionTitle?: string;
@@ -175,7 +177,7 @@ export default function NewLogEntryScreen() {
             autoFocus
             value={query}
             onChangeText={handleSearch}
-            placeholder="Search for a show..."
+            placeholder={t("logNew.searchPlaceholder")}
             className="border border-gray-300 rounded-lg px-4 py-3 text-base"
           />
         </View>
@@ -206,7 +208,7 @@ export default function NewLogEntryScreen() {
                     }}
                     className="py-2 pl-6"
                   >
-                    <Text className="text-blue-600 text-sm">+ Add new production</Text>
+                    <Text className="text-blue-600 text-sm">{t("logNew.addNewProduction")}</Text>
                   </Pressable>
                 </>
               )}
@@ -221,7 +223,7 @@ export default function NewLogEntryScreen() {
                 }}
                 className="py-4 items-center"
               >
-                <Text className="text-blue-600">Can&apos;t find it? Add new work</Text>
+                <Text className="text-blue-600">{t("logNew.cantFind")}</Text>
               </Pressable>
             ) : null
           }
@@ -234,14 +236,14 @@ export default function NewLogEntryScreen() {
   if (step === "create-work") {
     return (
       <ScrollView className="flex-1 bg-white px-4 pt-4">
-        <Text className="text-lg font-bold mb-4">Add New Work</Text>
-        <Text className="text-sm font-medium text-gray-700 mb-1">Title</Text>
+        <Text className="text-lg font-bold mb-4">{t("logNew.addNewWork")}</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t("logNew.title")}</Text>
         <TextInput
           value={newWorkTitle}
           onChangeText={setNewWorkTitle}
           className="border border-gray-300 rounded-lg px-4 py-2 mb-3"
         />
-        <Text className="text-sm font-medium text-gray-700 mb-1">Media Type</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t("logNew.mediaType")}</Text>
         <View className="flex-row flex-wrap gap-2 mb-3">
           {(
             ["theatre", "musical", "opera", "dance", "circus", "concert", "other"] as MediaType[]
@@ -251,21 +253,25 @@ export default function NewLogEntryScreen() {
               onPress={() => setNewWorkMediaType(mt)}
               className={`px-3 py-1 rounded-full ${newWorkMediaType === mt ? "bg-black" : "bg-gray-200"}`}
             >
-              <Text className={newWorkMediaType === mt ? "text-white" : "text-gray-700"}>{mt}</Text>
+              <Text className={newWorkMediaType === mt ? "text-white" : "text-gray-700"}>
+                {t(`mediaType.${mt}`)}
+              </Text>
             </Pressable>
           ))}
         </View>
-        <Text className="text-sm font-medium text-gray-700 mb-1">Creator (optional)</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">
+          {t("logNew.creatorOptional")}
+        </Text>
         <TextInput
           value={newWorkCreatorName}
           onChangeText={setNewWorkCreatorName}
-          placeholder="Name"
+          placeholder={t("logNew.namePlaceholder")}
           className="border border-gray-300 rounded-lg px-4 py-2 mb-2"
         />
         <TextInput
           value={newWorkCreatorRole}
           onChangeText={setNewWorkCreatorRole}
-          placeholder="Role (e.g., playwright)"
+          placeholder={t("logNew.rolePlaceholder")}
           className="border border-gray-300 rounded-lg px-4 py-2 mb-4"
         />
         <View className="flex-row gap-3 mb-8">
@@ -273,14 +279,14 @@ export default function NewLogEntryScreen() {
             onPress={() => setStep("search")}
             className="flex-1 py-3 rounded-lg bg-gray-200 items-center"
           >
-            <Text className="font-medium">Back</Text>
+            <Text className="font-medium">{t("common.back")}</Text>
           </Pressable>
           <Pressable
             onPress={handleCreateWork}
             disabled={!newWorkTitle.trim()}
             className="flex-1 py-3 rounded-lg bg-black items-center"
           >
-            <Text className="text-white font-medium">Save Work</Text>
+            <Text className="text-white font-medium">{t("logNew.saveWork")}</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -291,33 +297,35 @@ export default function NewLogEntryScreen() {
   if (step === "create-production") {
     return (
       <ScrollView className="flex-1 bg-white px-4 pt-4">
-        <Text className="text-lg font-bold mb-4">Add New Production</Text>
-        <Text className="text-sm font-medium text-gray-700 mb-1">Venue</Text>
+        <Text className="text-lg font-bold mb-4">{t("logNew.addNewProductionTitle")}</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t("logNew.venue")}</Text>
         <TextInput
           value={newProdVenue}
           onChangeText={setNewProdVenue}
-          placeholder="e.g., Almeida Theatre"
+          placeholder={t("logNew.venuePlaceholder")}
           className="border border-gray-300 rounded-lg px-4 py-2 mb-3"
         />
-        <Text className="text-sm font-medium text-gray-700 mb-1">Year</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t("logNew.year")}</Text>
         <TextInput
           value={newProdYear}
           onChangeText={setNewProdYear}
           keyboardType="numeric"
           className="border border-gray-300 rounded-lg px-4 py-2 mb-3"
         />
-        <Text className="text-sm font-medium text-gray-700 mb-1">Director (optional)</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">
+          {t("logNew.directorOptional")}
+        </Text>
         <TextInput
           value={newProdDirector}
           onChangeText={setNewProdDirector}
-          placeholder="Director name"
+          placeholder={t("logNew.directorPlaceholder")}
           className="border border-gray-300 rounded-lg px-4 py-2 mb-4"
         />
         <Pressable
           onPress={handleCreateProduction}
           className="py-3 rounded-lg bg-black items-center mb-8"
         >
-          <Text className="text-white font-medium">Save Production</Text>
+          <Text className="text-white font-medium">{t("logNew.saveProduction")}</Text>
         </Pressable>
       </ScrollView>
     );
@@ -325,7 +333,9 @@ export default function NewLogEntryScreen() {
 
   // ---- LOG FORM VIEW ----
   const displayTitle =
-    selectedProduction?.title_override ?? selectedProduction?.venue ?? "Selected production";
+    selectedProduction?.title_override ??
+    selectedProduction?.venue ??
+    t("logNew.selectedProduction");
 
   return (
     <ScrollView className="flex-1 bg-white px-4 pt-4">
@@ -336,39 +346,39 @@ export default function NewLogEntryScreen() {
         )}
       </View>
       <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">Date seen</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t("logForm.dateSeen")}</Text>
         <TextInput
           value={dateSeen}
           onChangeText={setDateSeen}
-          placeholder="YYYY-MM-DD"
+          placeholder={t("logForm.datePlaceholder")}
           className="border border-gray-300 rounded-lg px-4 py-2"
         />
       </View>
       <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">Rating</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t("logForm.rating")}</Text>
         <StarRating value={rating} onChange={setRating} />
       </View>
       <View className="mb-4 flex-row items-center gap-2">
-        <Text className="text-sm font-medium text-gray-700">Liked</Text>
+        <Text className="text-sm font-medium text-gray-700">{t("logForm.liked")}</Text>
         <HeartButton value={liked} onChange={setLiked} />
       </View>
       <View className="mb-4 flex-row items-center gap-2">
-        <Text className="text-sm font-medium text-gray-700">Seen this production before?</Text>
+        <Text className="text-sm font-medium text-gray-700">{t("logForm.rewatch")}</Text>
         <Pressable
           onPress={() => setIsRewatch(!isRewatch)}
           className={`px-3 py-1 rounded-full ${isRewatch ? "bg-black" : "bg-gray-200"}`}
         >
           <Text className={isRewatch ? "text-white" : "text-gray-700"}>
-            {isRewatch ? "Yes" : "No"}
+            {isRewatch ? t("common.yes") : t("common.no")}
           </Text>
         </Pressable>
       </View>
       <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">Review</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t("logForm.review")}</Text>
         <TextInput
           value={review}
           onChangeText={setReview}
-          placeholder="Write your thoughts..."
+          placeholder={t("logForm.reviewPlaceholder")}
           multiline
           numberOfLines={4}
           className="border border-gray-300 rounded-lg px-4 py-2 min-h-[100px] text-base"
@@ -376,7 +386,7 @@ export default function NewLogEntryScreen() {
         />
       </View>
       <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">Tags</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">{t("logForm.tags")}</Text>
         <TagInput value={tags} onChange={setTags} />
       </View>
       <View className="flex-row gap-3 mb-8">
@@ -384,14 +394,16 @@ export default function NewLogEntryScreen() {
           onPress={() => router.back()}
           className="flex-1 py-3 rounded-lg bg-gray-200 items-center"
         >
-          <Text className="font-medium">Cancel</Text>
+          <Text className="font-medium">{t("common.cancel")}</Text>
         </Pressable>
         <Pressable
           onPress={handleSave}
           disabled={saving}
           className="flex-1 py-3 rounded-lg bg-black items-center"
         >
-          <Text className="text-white font-medium">{saving ? "Saving..." : "Save"}</Text>
+          <Text className="text-white font-medium">
+            {saving ? t("common.saving") : t("common.save")}
+          </Text>
         </Pressable>
       </View>
     </ScrollView>

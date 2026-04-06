@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { View, Text, FlatList, Pressable, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../lib/auth-context";
 import { getWishlist, removeFromWishlist } from "../../lib/api/wishlist";
 import { WishlistItemWithDetails } from "../../lib/types";
@@ -11,6 +12,7 @@ export default function WishlistScreen() {
   const { session } = useAuth();
   const userId = session?.user.id;
   const router = useRouter();
+  const { t } = useTranslation();
   const [items, setItems] = useState<WishlistItemWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,10 +36,10 @@ export default function WishlistScreen() {
   );
 
   async function handleRemove(id: string) {
-    Alert.alert("Remove", "Remove from wishlist?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("wishlist.removeTitle"), t("wishlist.removeMessage"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Remove",
+        text: t("common.remove"),
         style: "destructive",
         onPress: async () => {
           try {
@@ -56,9 +58,7 @@ export default function WishlistScreen() {
   }
 
   if (items.length === 0 && !loading) {
-    return (
-      <EmptyState message="Nothing on your list yet. Browse shows and tap the bookmark icon to add." />
-    );
+    return <EmptyState message={t("wishlist.emptyState")} />;
   }
 
   return (
@@ -68,8 +68,8 @@ export default function WishlistScreen() {
       className="flex-1 bg-white"
       renderItem={({ item }) => {
         const title = item.production
-          ? (item.production.title_override ?? item.production.work?.title ?? "Unknown")
-          : (item.work?.title ?? "Unknown");
+          ? (item.production.title_override ?? item.production.work?.title ?? t("common.unknown"))
+          : (item.work?.title ?? t("common.unknown"));
         const subtitle = item.production?.venue
           ? `${item.production.venue}${item.production.year ? `, ${item.production.year}` : ""}`
           : null;
@@ -92,10 +92,12 @@ export default function WishlistScreen() {
                   {item.notes}
                 </Text>
               )}
-              <Text className="text-xs text-gray-300 mt-1">Added {dateAdded}</Text>
+              <Text className="text-xs text-gray-300 mt-1">
+                {t("common.added")} {dateAdded}
+              </Text>
             </View>
             <Pressable onPress={() => handleRemove(item.id)} className="p-2">
-              <Text className="text-red-400 text-sm">Remove</Text>
+              <Text className="text-red-400 text-sm">{t("common.remove")}</Text>
             </Pressable>
           </Pressable>
         );

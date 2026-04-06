@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, TextInput, FlatList, Pressable, Text } from "react-native";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { searchWorks } from "../../lib/api/works";
 import { getProductionsByWork } from "../../lib/api/productions";
 import { WorkWithProductionCount, Production } from "../../lib/types";
@@ -8,6 +9,7 @@ import WorkSearchResult from "../../components/WorkSearchResult";
 
 export default function SearchScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<WorkWithProductionCount[]>([]);
   const [expandedWorkId, setExpandedWorkId] = useState<string | null>(null);
@@ -47,7 +49,7 @@ export default function SearchScreen() {
         <TextInput
           value={query}
           onChangeText={handleSearch}
-          placeholder="Search works and productions..."
+          placeholder={t("search.placeholder")}
           className="border border-gray-300 rounded-lg px-4 py-3 text-base"
         />
       </View>
@@ -70,11 +72,13 @@ export default function SearchScreen() {
                     className="flex-1 py-2 pl-6 border-b border-gray-50"
                   >
                     <Text className="text-sm">
-                      {prod.venue ?? "Unknown venue"}
+                      {prod.venue ?? t("common.unknownVenue")}
                       {prod.year ? `, ${prod.year}` : ""}
                     </Text>
                     {prod.director && (
-                      <Text className="text-xs text-gray-400">dir. {prod.director}</Text>
+                      <Text className="text-xs text-gray-400">
+                        {t("common.dir")} {prod.director}
+                      </Text>
                     )}
                   </Pressable>
                   <Pressable
@@ -90,7 +94,7 @@ export default function SearchScreen() {
                     }
                     className="px-3 py-1 bg-black rounded-full mr-4"
                   >
-                    <Text className="text-white text-xs">Log</Text>
+                    <Text className="text-white text-xs">{t("common.log")}</Text>
                   </Pressable>
                 </View>
               ))}

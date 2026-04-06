@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   value: string[];
@@ -8,6 +9,7 @@ type Props = {
 };
 
 export default function TagInput({ value, onChange }: Props) {
+  const { t } = useTranslation();
   const [text, setText] = useState("");
 
   function handleChangeText(input: string) {
@@ -50,7 +52,7 @@ export default function TagInput({ value, onChange }: Props) {
         value={text}
         onChangeText={handleChangeText}
         onSubmitEditing={handleSubmitEditing}
-        placeholder="Add tags..."
+        placeholder={t("logForm.tagsPlaceholder")}
         className="border border-gray-300 rounded-lg px-4 py-2"
       />
     </View>

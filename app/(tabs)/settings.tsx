@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { View, Text, Pressable, Alert, Share } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../lib/auth-context";
 import { supabase } from "../../lib/supabase";
+import { setLanguage } from "../../lib/i18n";
 
 type ExportQueryRow = {
   date_seen: string;
@@ -17,8 +20,20 @@ type ExportQueryRow = {
   } | null;
 };
 
+const LANGUAGES = [
+  { code: "en", label: "settings.languageEn" },
+  { code: "pt-BR", label: "settings.languagePtBR" },
+] as const;
+
 export default function SettingsScreen() {
   const { session, signOut } = useAuth();
+  const { t, i18n } = useTranslation();
+  const [currentLang, setCurrentLang] = useState(i18n.language);
+
+  async function handleLanguageChange(lng: string) {
+    setCurrentLang(lng);
+    await setLanguage(lng);
+  }
 
   async function handleExportData() {
     if (!session) return;
@@ -49,7 +64,7 @@ export default function SettingsScreen() {
       await Share.share({ message: csv, title: "Transient Export" });
     } catch (e) {
       console.error(e);
-      Alert.alert("Error", "Failed to export data.");
+      Alert.alert(t("common.error"), t("settings.exportFailed"));
     }
   }
 
@@ -57,26 +72,44 @@ export default function SettingsScreen() {
     try {
       await signOut();
     } catch (e: unknown) {
-      Alert.alert("Error", e instanceof Error ? e.message : "Sign out failed");
+      Alert.alert(t("common.error"), e instanceof Error ? e.message : t("settings.signOutFailed"));
     }
   }
 
   return (
     <View className="flex-1 bg-white px-4 pt-4">
       <View className="mb-6 pb-4 border-b border-gray-200">
-        <Text className="text-sm text-gray-500">Signed in as</Text>
-        <Text className="text-base font-medium">{session?.user.email ?? "Unknown"}</Text>
+        <Text className="text-sm text-gray-500">{t("settings.signedInAs")}</Text>
+        <Text className="text-base font-medium">{session?.user.email ?? t("common.unknown")}</Text>
       </View>
+
+      <View className="py-3 border-b border-gray-100">
+        <Text className="text-base mb-2">{t("settings.language")}</Text>
+        <View className="flex-row gap-2">
+          {LANGUAGES.map(({ code, label }) => (
+            <Pressable
+              key={code}
+              onPress={() => handleLanguageChange(code)}
+              className={`px-3 py-1 rounded-full ${currentLang === code ? "bg-black" : "bg-gray-200"}`}
+            >
+              <Text className={currentLang === code ? "text-white" : "text-gray-700"}>
+                {t(label)}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
       <Pressable onPress={handleExportData} className="py-3 border-b border-gray-100">
-        <Text className="text-base">Export my data (CSV)</Text>
-        <Text className="text-sm text-gray-400">Download all your log entries</Text>
+        <Text className="text-base">{t("settings.exportCsv")}</Text>
+        <Text className="text-sm text-gray-400">{t("settings.exportDescription")}</Text>
       </Pressable>
       <View className="py-3 border-b border-gray-100">
-        <Text className="text-base">About</Text>
-        <Text className="text-sm text-gray-400">Transient v1.0.0</Text>
+        <Text className="text-base">{t("settings.about")}</Text>
+        <Text className="text-sm text-gray-400">{t("settings.version")}</Text>
       </View>
       <Pressable onPress={handleSignOut} className="py-4 mt-6 items-center">
-        <Text className="text-red-500 font-medium text-base">Sign Out</Text>
+        <Text className="text-red-500 font-medium text-base">{t("settings.signOut")}</Text>
       </Pressable>
     </View>
   );

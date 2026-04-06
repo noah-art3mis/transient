@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { View, Text, ScrollView, Pressable, ActivityIndicator, Image } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../lib/auth-context";
 import { getProduction } from "../../lib/api/productions";
 import { getLogEntriesForProduction } from "../../lib/api/log-entries";
@@ -14,6 +15,7 @@ export default function ProductionDetailScreen() {
   const { session } = useAuth();
   const userId = session?.user.id;
   const router = useRouter();
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const [production, setProduction] = useState<(Production & { work: Work | null }) | null>(null);
@@ -57,7 +59,7 @@ export default function ProductionDetailScreen() {
     );
   }
 
-  const title = production.title_override ?? production.work?.title ?? "Unknown";
+  const title = production.title_override ?? production.work?.title ?? t("common.unknown");
   const work = production.work;
 
   return (
@@ -72,10 +74,14 @@ export default function ProductionDetailScreen() {
         )}
         <Text className="text-2xl font-bold">{title}</Text>
         <Text className="text-gray-500 mt-1">
-          {production.venue ?? "Unknown venue"}
+          {production.venue ?? t("common.unknownVenue")}
           {production.year ? `, ${production.year}` : ""}
         </Text>
-        {production.director && <Text className="text-gray-500">dir. {production.director}</Text>}
+        {production.director && (
+          <Text className="text-gray-500">
+            {t("common.dir")} {production.director}
+          </Text>
+        )}
         {production.start_date && production.end_date && (
           <Text className="text-sm text-gray-400 mt-1">
             {production.start_date} — {production.end_date}
@@ -86,7 +92,7 @@ export default function ProductionDetailScreen() {
 
       {work && work.creators.length > 0 && (
         <View className="px-4 py-3 border-b border-gray-100">
-          <Text className="font-semibold mb-2">Creators</Text>
+          <Text className="font-semibold mb-2">{t("production.creators")}</Text>
           {work.creators.map((c, i) => (
             <Text key={i} className="text-sm text-gray-600">
               {c.name} ({c.role})
@@ -97,22 +103,20 @@ export default function ProductionDetailScreen() {
 
       {production.cast_members.length > 0 && (
         <View className="px-4 py-3 border-b border-gray-100">
-          <Text className="font-semibold mb-2">Cast</Text>
+          <Text className="font-semibold mb-2">{t("production.cast")}</Text>
           {production.cast_members.map((c, i) => (
             <Text key={i} className="text-sm text-gray-600">
               {c.name}
-              {c.role ? ` as ${c.role}` : ""}
+              {c.role ? ` ${t("production.castAs")} ${c.role}` : ""}
             </Text>
           ))}
         </View>
       )}
 
       <View className="px-4 py-3 border-b border-gray-100">
-        <Text className="font-semibold mb-2">Your Log Entries</Text>
+        <Text className="font-semibold mb-2">{t("production.yourLogEntries")}</Text>
         {logEntries.length === 0 ? (
-          <Text className="text-gray-400 text-sm">
-            You haven&apos;t logged this production yet.
-          </Text>
+          <Text className="text-gray-400 text-sm">{t("production.notLoggedYet")}</Text>
         ) : (
           logEntries.map((entry) => (
             <Pressable
@@ -155,13 +159,13 @@ export default function ProductionDetailScreen() {
           }
           className="py-3 rounded-lg bg-black items-center"
         >
-          <Text className="text-white font-medium">Log this production</Text>
+          <Text className="text-white font-medium">{t("production.logThis")}</Text>
         </Pressable>
         <Pressable
           onPress={handleAddToWishlist}
           className="py-3 rounded-lg bg-gray-200 items-center"
         >
-          <Text className="font-medium">Add to wishlist</Text>
+          <Text className="font-medium">{t("production.addToWishlist")}</Text>
         </Pressable>
       </View>
     </ScrollView>
