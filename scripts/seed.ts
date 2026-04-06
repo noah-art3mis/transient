@@ -3,8 +3,12 @@ import path from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { transformRawToWorkInserts, type SparqlResponse } from "./transform";
 
+// Wikidata subclass path (wdt:P279*): most theatrical works aren't typed directly as the
+// broad class (e.g. "play" Q25379). Instead they use specific subclasses like "tragedy" or
+// "comedy". The subclass path traverses the class hierarchy to find them all.
+// Exception: ballets (Q476300) timeout with subclass path due to large hierarchy — direct
+// lookup works fine there since most ballets are typed directly as Q476300.
 const CATEGORIES = [
-  // plays: no items use direct wdt:P31 wd:Q25379 — all typed via subclasses (tragedy, comedy, etc.)
   { name: "plays", wikidataClass: "Q25379", mediaType: "theatre" as const, useSubclassPath: true },
   {
     name: "musicals",
