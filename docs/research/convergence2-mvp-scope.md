@@ -9,50 +9,50 @@
 
 ### Core Loop (non-negotiable)
 
-| # | Feature | Justification |
-|---|---------|---------------|
-| 1 | **Log a show: production + date** | The irreducible minimum. Tap +, search, confirm date (defaults today), save. Under 5 seconds for a minimal entry. Without this, no product exists. |
-| 2 | **Work + Production two-level database** | The structural advantage over every competitor. "Hamlet" (Work) has many Productions. Users log against Productions. This is the data model's load-bearing wall. |
-| 3 | **Half-star rating (0.5-5.0, optional)** | Universal user expectation. Proven by Letterboxd and RYM. Applied at log entry level. Not required to save. |
-| 4 | **Private diary view** | Reverse-chronological list of everything logged, with date, title, venue, rating. Private by default. This is the proof the app is working. |
-| 5 | **Search works and productions** | Postgres full-text search on works. Users must find the production before they can log it. Partial-match search ("Hamlet Almeida") is critical for the pavement moment. |
-| 6 | **Create work/production inline** | When a search returns nothing, the user creates the entry on the spot. Minimum fields: title for Work; venue and year for Production. Without this, the app is useless for anything not pre-seeded. |
+| #   | Feature                                  | Justification                                                                                                                                                                                       |
+| --- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **Log a show: production + date**        | The irreducible minimum. Tap +, search, confirm date (defaults today), save. Under 5 seconds for a minimal entry. Without this, no product exists.                                                  |
+| 2   | **Work + Production two-level database** | The structural advantage over every competitor. "Hamlet" (Work) has many Productions. Users log against Productions. This is the data model's load-bearing wall.                                    |
+| 3   | **Half-star rating (0.5-5.0, optional)** | Universal user expectation. Proven by Letterboxd and RYM. Applied at log entry level. Not required to save.                                                                                         |
+| 4   | **Private diary view**                   | Reverse-chronological list of everything logged, with date, title, venue, rating. Private by default. This is the proof the app is working.                                                         |
+| 5   | **Search works and productions**         | Postgres full-text search on works. Users must find the production before they can log it. Partial-match search ("Hamlet Almeida") is critical for the pavement moment.                             |
+| 6   | **Create work/production inline**        | When a search returns nothing, the user creates the entry on the spot. Minimum fields: title for Work; venue and year for Production. Without this, the app is useless for anything not pre-seeded. |
 
 ### Enrichment (makes it worth using over a spreadsheet)
 
-| # | Feature | Justification |
-|---|---------|---------------|
-| 7 | **Written review (optional, per log entry)** | Free text. Added at log time or later via edit. Private by default. The two-stage pattern (log now, review later) is critical. |
-| 8 | **Tags (per log entry)** | Free-form text array: "world premiere", "with Mum", "standing ovation". Stored as Postgres `text[]`. Low implementation cost, high personal value. |
-| 9 | **Like/heart flag (per log entry)** | Binary "loved it" flag independent of star rating. One boolean column. Matches Letterboxd convention. |
-| 10 | **Rewatch flag** | Boolean on log entry. Same production, different date. Distinguishes first viewings from returns. |
-| 11 | **Wishlist** | "Want to see" list, targeting either a Work or a specific Production. Already in the schema. Separate from the diary. Half the value proposition of Letterboxd's watchlist. |
-| 12 | **Basic stats** | Total shows logged. Shows this year. Shows by venue. Rating distribution. Shows by media type. All derivable from existing log entry + production data with simple aggregate queries. No new tables needed. |
-| 13 | **Edit and delete log entries** | Users must be able to go back and add a review, change a rating, fix a date, or delete an entry entirely. |
+| #   | Feature                                      | Justification                                                                                                                                                                                               |
+| --- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 7   | **Written review (optional, per log entry)** | Free text. Added at log time or later via edit. Private by default. The two-stage pattern (log now, review later) is critical.                                                                              |
+| 8   | **Tags (per log entry)**                     | Free-form text array: "world premiere", "with Mum", "standing ovation". Stored as Postgres `text[]`. Low implementation cost, high personal value.                                                          |
+| 9   | **Like/heart flag (per log entry)**          | Binary "loved it" flag independent of star rating. One boolean column. Matches Letterboxd convention.                                                                                                       |
+| 10  | **Rewatch flag**                             | Boolean on log entry. Same production, different date. Distinguishes first viewings from returns.                                                                                                           |
+| 11  | **Wishlist**                                 | "Want to see" list, targeting either a Work or a specific Production. Already in the schema. Separate from the diary. Half the value proposition of Letterboxd's watchlist.                                 |
+| 12  | **Basic stats**                              | Total shows logged. Shows this year. Shows by venue. Rating distribution. Shows by media type. All derivable from existing log entry + production data with simple aggregate queries. No new tables needed. |
+| 13  | **Edit and delete log entries**              | Users must be able to go back and add a review, change a rating, fix a date, or delete an entry entirely.                                                                                                   |
 
 ---
 
 ## 2. Deferred to v2+
 
-| Feature | Reason for deferral |
-|---------|-------------------|
-| **Programme scan / camera import** | Requires OCR integration (e.g. Google Vision API or on-device ML). High implementation effort. Proven concept (Mezzanine) but not MVP-critical. |
-| **Venue tracking with map** | Requires a `venues` table with geolocation, map rendering. Current schema stores venue as plain text, which is sufficient for v1. |
-| **Public profiles / social log** | Social layer is opt-in by design. The `is_private` field on log entries supports this later, but building profile pages, privacy controls, and a public feed is a separate product track. |
-| **Follow / activity feed** | Requires follower graph, fan-out-on-write or fan-out-on-read feed architecture, notification system. Significant backend complexity for a single-user app. |
-| **Lists** | User-created ranked/unranked collections. Useful but not core to the log-and-remember loop. Requires a new `lists` + `list_items` schema. |
-| **Rich stats (year-in-review, most-seen playwright, etc.)** | Depends on having enough data to be meaningful. Basic stats cover v1. Rich stats require JSONB aggregation queries across `creators` and `cast_members`. |
-| **Companion tracking** | "Who I went with." Useful but adds a field and potentially a contacts/people system. Can be approximated with tags ("with Mum") in v1. |
-| **Seat + price tracking** | Spreadsheet power-user feature. Adds fields to log entry. Not part of the core loop. |
-| **Production discovery (what's on near me)** | Requires real-time event data pipeline, geolocation, calendar integration. Entirely separate product track. |
-| **Notifications for wish-listed works** | Requires production announcement data feed that does not exist in any accessible API. |
-| **Ticket integration (email/Apple Wallet import)** | Complex integration with unclear ROI. |
-| **Photo/programme archive** | File upload to Supabase Storage. Adds storage cost and UI complexity. Can be added as a field on log entry later without schema changes. |
-| **Cast-level reviews** | Very granular. Creates UI and data complexity. |
-| **Alternate cast tracking** | Requires per-performance cast data that is almost never machine-readable. |
-| **Critic review aggregation** | Requires partnerships and curation infrastructure. |
-| **Community-curated lists** | Requires editorial resources and a community. |
-| **Work page (aggregate across productions)** | Useful but not required for personal logging. The data model supports it; the UI can come later. |
+| Feature                                                     | Reason for deferral                                                                                                                                                                       |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Programme scan / camera import**                          | Requires OCR integration (e.g. Google Vision API or on-device ML). High implementation effort. Proven concept (Mezzanine) but not MVP-critical.                                           |
+| **Venue tracking with map**                                 | Requires a `venues` table with geolocation, map rendering. Current schema stores venue as plain text, which is sufficient for v1.                                                         |
+| **Public profiles / social log**                            | Social layer is opt-in by design. The `is_private` field on log entries supports this later, but building profile pages, privacy controls, and a public feed is a separate product track. |
+| **Follow / activity feed**                                  | Requires follower graph, fan-out-on-write or fan-out-on-read feed architecture, notification system. Significant backend complexity for a single-user app.                                |
+| **Lists**                                                   | User-created ranked/unranked collections. Useful but not core to the log-and-remember loop. Requires a new `lists` + `list_items` schema.                                                 |
+| **Rich stats (year-in-review, most-seen playwright, etc.)** | Depends on having enough data to be meaningful. Basic stats cover v1. Rich stats require JSONB aggregation queries across `creators` and `cast_members`.                                  |
+| **Companion tracking**                                      | "Who I went with." Useful but adds a field and potentially a contacts/people system. Can be approximated with tags ("with Mum") in v1.                                                    |
+| **Seat + price tracking**                                   | Spreadsheet power-user feature. Adds fields to log entry. Not part of the core loop.                                                                                                      |
+| **Production discovery (what's on near me)**                | Requires real-time event data pipeline, geolocation, calendar integration. Entirely separate product track.                                                                               |
+| **Notifications for wish-listed works**                     | Requires production announcement data feed that does not exist in any accessible API.                                                                                                     |
+| **Ticket integration (email/Apple Wallet import)**          | Complex integration with unclear ROI.                                                                                                                                                     |
+| **Photo/programme archive**                                 | File upload to Supabase Storage. Adds storage cost and UI complexity. Can be added as a field on log entry later without schema changes.                                                  |
+| **Cast-level reviews**                                      | Very granular. Creates UI and data complexity.                                                                                                                                            |
+| **Alternate cast tracking**                                 | Requires per-performance cast data that is almost never machine-readable.                                                                                                                 |
+| **Critic review aggregation**                               | Requires partnerships and curation infrastructure.                                                                                                                                        |
+| **Community-curated lists**                                 | Requires editorial resources and a community.                                                                                                                                             |
+| **Work page (aggregate across productions)**                | Useful but not required for personal logging. The data model supports it; the UI can come later.                                                                                          |
 
 ---
 
@@ -156,17 +156,17 @@ Minimal settings screen for a single-user app.
 
 ### What a log entry contains
 
-| Field | Type | Required | Default | Notes |
-|-------|------|----------|---------|-------|
-| `production_id` | uuid FK | Yes | — | Links to the production record |
-| `user_id` | uuid FK | Yes | — | From auth session |
-| `date_seen` | date | Yes | Today | The only field the user must confirm |
-| `rating` | numeric(2,1) | No | null | 0.5 to 5.0 in half-star increments |
-| `review` | text | No | null | Free text, any length |
-| `is_private` | boolean | Yes | true | All entries private in v1 (no public profiles) |
-| `liked` | boolean | Yes | false | Heart/love flag |
-| `tags` | text[] | Yes | [] | User-defined, free-form |
-| `is_rewatch` | boolean | Yes | false | "Have you seen this production before?" |
+| Field           | Type         | Required | Default | Notes                                          |
+| --------------- | ------------ | -------- | ------- | ---------------------------------------------- |
+| `production_id` | uuid FK      | Yes      | —       | Links to the production record                 |
+| `user_id`       | uuid FK      | Yes      | —       | From auth session                              |
+| `date_seen`     | date         | Yes      | Today   | The only field the user must confirm           |
+| `rating`        | numeric(2,1) | No       | null    | 0.5 to 5.0 in half-star increments             |
+| `review`        | text         | No       | null    | Free text, any length                          |
+| `is_private`    | boolean      | Yes      | true    | All entries private in v1 (no public profiles) |
+| `liked`         | boolean      | Yes      | false   | Heart/love flag                                |
+| `tags`          | text[]       | Yes      | []      | User-defined, free-form                        |
+| `is_rewatch`    | boolean      | Yes      | false   | "Have you seen this production before?"        |
 
 ### Minimum viable log (the pavement moment)
 

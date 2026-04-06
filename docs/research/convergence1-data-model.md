@@ -56,18 +56,18 @@ CREATE INDEX idx_works_media_type ON works(media_type);
 
 **Field rationale:**
 
-| Field | Required | Rationale |
-|---|---|---|
-| `title` | Yes | The irreducible identity of a work. |
-| `original_title` | No | For non-English works — store the original language title separately. Letterboxd does this (platform-research.md, Section 1, Film entity). |
-| `creators` | Yes (defaults to empty array) | JSONB array of `{name: string, role: string}`. Role values: "playwright", "book", "music", "lyrics", "devised by", "conceived by", "choreographer", "composer", "librettist". Replaces a single `playwright` field to handle musicals (multiple creators with different roles) and devised work (track1-data-model-precedents.md, Section 4.4). |
-| `year_written` | No | Nullable because devised work may have no fixed composition year. The premiere year of the first production is an alternative; either is acceptable. |
-| `creation_method` | Yes (defaults to 'scripted') | Distinguishes scripted, devised, and other creation processes. Recommended in track1-data-model-precedents.md, Section 5. |
-| `media_type` | Yes (defaults to 'theatre') | Theatre-first but flexible for other transient media. The enum covers the media types identified in the edge case analysis: plays, musicals, operas, dance, circus, concerts. |
-| `description` | No | Synopsis or description of the work. |
-| `adapted_from` | No | Self-referential FK for adaptation chains. West Side Story points to Romeo and Juliet. Recommended in track1-data-model-precedents.md, Section 4.1. Wikidata uses P144 (based on) for this relationship. |
-| `external_ids` | Yes (defaults to empty object) | JSONB object storing cross-reference identifiers. Keys: `wikidata_qid`, `musicbrainz_mbid`, `theatricalia_play_id`, `ibdb_show_id`. Extensible without schema migration as new sources emerge (track1-data-sources.md, "Recommended identifiers"; track3-tech-evaluation.md, Section 7). |
-| `search_vector` | Auto-generated | Postgres tsvector for full-text search. Generated from title, original_title, and description. Enables the production search flow critical to the logging moment (track2-product-audit.md). |
+| Field             | Required                       | Rationale                                                                                                                                                                                                                                                                                                                                       |
+| ----------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`           | Yes                            | The irreducible identity of a work.                                                                                                                                                                                                                                                                                                             |
+| `original_title`  | No                             | For non-English works — store the original language title separately. Letterboxd does this (platform-research.md, Section 1, Film entity).                                                                                                                                                                                                      |
+| `creators`        | Yes (defaults to empty array)  | JSONB array of `{name: string, role: string}`. Role values: "playwright", "book", "music", "lyrics", "devised by", "conceived by", "choreographer", "composer", "librettist". Replaces a single `playwright` field to handle musicals (multiple creators with different roles) and devised work (track1-data-model-precedents.md, Section 4.4). |
+| `year_written`    | No                             | Nullable because devised work may have no fixed composition year. The premiere year of the first production is an alternative; either is acceptable.                                                                                                                                                                                            |
+| `creation_method` | Yes (defaults to 'scripted')   | Distinguishes scripted, devised, and other creation processes. Recommended in track1-data-model-precedents.md, Section 5.                                                                                                                                                                                                                       |
+| `media_type`      | Yes (defaults to 'theatre')    | Theatre-first but flexible for other transient media. The enum covers the media types identified in the edge case analysis: plays, musicals, operas, dance, circus, concerts.                                                                                                                                                                   |
+| `description`     | No                             | Synopsis or description of the work.                                                                                                                                                                                                                                                                                                            |
+| `adapted_from`    | No                             | Self-referential FK for adaptation chains. West Side Story points to Romeo and Juliet. Recommended in track1-data-model-precedents.md, Section 4.1. Wikidata uses P144 (based on) for this relationship.                                                                                                                                        |
+| `external_ids`    | Yes (defaults to empty object) | JSONB object storing cross-reference identifiers. Keys: `wikidata_qid`, `musicbrainz_mbid`, `theatricalia_play_id`, `ibdb_show_id`. Extensible without schema migration as new sources emerge (track1-data-sources.md, "Recommended identifiers"; track3-tech-evaluation.md, Section 7).                                                        |
+| `search_vector`   | Auto-generated                 | Postgres tsvector for full-text search. Generated from title, original_title, and description. Enables the production search flow critical to the logging moment (track2-product-audit.md).                                                                                                                                                     |
 
 ### 2.2 Production
 
@@ -100,19 +100,19 @@ CREATE INDEX idx_productions_venue ON productions(venue);
 
 **Field rationale:**
 
-| Field | Required | Rationale |
-|---|---|---|
-| `work_id` | No | FK to Work. Nullable to support devised/new work that has no pre-existing Work entry — the production IS the work's first (and possibly only) instantiation (track1-data-model-precedents.md, Section 4.5, site-specific work). |
-| `title_override` | No | For renamed adaptations, billing variants, or touring titles that differ from the canonical Work title. Display logic: show `title_override` if set, otherwise fall through to `works.title`. |
-| `company` | No | Theatre company or producing organization. Text for MVP; a separate `companies` table is a post-MVP enhancement. |
-| `venue` | No | Venue name. Text for MVP. A separate `venues` table with geolocation is a post-MVP enhancement for venue tracking and discovery (track2-product-audit.md, Tier 2 feature #10). |
-| `director` | No | Text for MVP. |
-| `cast_members` | Yes (defaults to empty array) | JSONB array of `{name: string, role: string}`. Represents the official/opening-night cast. Understudy and specific-night cast are captured in LogEntry review text, not here (track1-data-model-precedents.md, Section 3, Model A). Named `cast_members` to avoid collision with SQL reserved word `cast`. |
-| `year` | No | Integer year of the production. Redundant with `start_date` but useful for display and filtering when exact dates are unknown. |
-| `start_date` / `end_date` | No | Run dates. Both nullable because historical productions may lack exact dates. |
-| `poster_url` | No | Path or URL to poster image in Supabase Storage. |
-| `is_touring` | Yes (defaults to false) | Flag for touring productions. A tour with a fixed creative team visiting multiple venues is a single Production with `is_touring = true` (track1-data-model-precedents.md, Section 4.2). |
-| `external_ids` | Yes (defaults to empty object) | Same pattern as Work. Keys: `wikidata_qid`, `ibdb_production_id`. |
+| Field                     | Required                       | Rationale                                                                                                                                                                                                                                                                                                  |
+| ------------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `work_id`                 | No                             | FK to Work. Nullable to support devised/new work that has no pre-existing Work entry — the production IS the work's first (and possibly only) instantiation (track1-data-model-precedents.md, Section 4.5, site-specific work).                                                                            |
+| `title_override`          | No                             | For renamed adaptations, billing variants, or touring titles that differ from the canonical Work title. Display logic: show `title_override` if set, otherwise fall through to `works.title`.                                                                                                              |
+| `company`                 | No                             | Theatre company or producing organization. Text for MVP; a separate `companies` table is a post-MVP enhancement.                                                                                                                                                                                           |
+| `venue`                   | No                             | Venue name. Text for MVP. A separate `venues` table with geolocation is a post-MVP enhancement for venue tracking and discovery (track2-product-audit.md, Tier 2 feature #10).                                                                                                                             |
+| `director`                | No                             | Text for MVP.                                                                                                                                                                                                                                                                                              |
+| `cast_members`            | Yes (defaults to empty array)  | JSONB array of `{name: string, role: string}`. Represents the official/opening-night cast. Understudy and specific-night cast are captured in LogEntry review text, not here (track1-data-model-precedents.md, Section 3, Model A). Named `cast_members` to avoid collision with SQL reserved word `cast`. |
+| `year`                    | No                             | Integer year of the production. Redundant with `start_date` but useful for display and filtering when exact dates are unknown.                                                                                                                                                                             |
+| `start_date` / `end_date` | No                             | Run dates. Both nullable because historical productions may lack exact dates.                                                                                                                                                                                                                              |
+| `poster_url`              | No                             | Path or URL to poster image in Supabase Storage.                                                                                                                                                                                                                                                           |
+| `is_touring`              | Yes (defaults to false)        | Flag for touring productions. A tour with a fixed creative team visiting multiple venues is a single Production with `is_touring = true` (track1-data-model-precedents.md, Section 4.2).                                                                                                                   |
+| `external_ids`            | Yes (defaults to empty object) | Same pattern as Work. Keys: `wikidata_qid`, `ibdb_production_id`.                                                                                                                                                                                                                                          |
 
 ### 2.3 LogEntry
 
@@ -143,17 +143,17 @@ CREATE INDEX idx_log_entries_tags ON log_entries USING GIN (tags);
 
 **Field rationale:**
 
-| Field | Required | Rationale |
-|---|---|---|
-| `production_id` | Yes | FK to Production. The log entry records attending a specific production, not an abstract work. Rating is for the production experience (track2-product-audit.md, "Rating Is For a Production, Not a Work"). |
-| `user_id` | Yes | FK to Supabase Auth users table. |
-| `date_seen` | Yes (defaults to today) | The date attended. Defaults to today — the "I just saw this" case must be friction-free (track2-product-audit.md, "The Logging Flow"). This is the only field besides production_id that is truly required for a useful log entry. |
-| `rating` | No | Half-star scale: 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0. The CHECK constraint enforces half-star increments. This is the proven sweet spot per platform research: Letterboxd and RateYourMusic both use it; Goodreads' integer-only 1-5 scale produces compressed distributions with poor discriminatory power (platform-research.md, Sections 1 and 3). |
-| `review` | No | Free text. Not required at log time — the two-stage pattern (log now, review later) is critical (track2-product-audit.md, "The Tension: Capture Now vs. Reflect Later"). |
-| `is_private` | Yes (defaults to true) | Private by default. "Users track theatre before they decide to share it. The social layer is opt-in." (track2-product-audit.md, Key Conclusions). |
-| `liked` | Yes (defaults to false) | Binary "heart" flag, independent of star rating. Matches Letterboxd's pattern (platform-research.md, Section 1). |
-| `tags` | Yes (defaults to empty array) | Postgres text array. User-defined tags for mood, context, themes: "world premiere", "with Mum", "standing ovation", "walk-out", "lottery ticket" (track2-product-audit.md, Tier 2 feature #11). |
-| `is_rewatch` | Yes (defaults to false) | Whether the user has seen this production before. A user can log the same production multiple times on different dates; each is a separate LogEntry (track2-product-audit.md, diary design). |
+| Field           | Required                      | Rationale                                                                                                                                                                                                                                                                                                                                                          |
+| --------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `production_id` | Yes                           | FK to Production. The log entry records attending a specific production, not an abstract work. Rating is for the production experience (track2-product-audit.md, "Rating Is For a Production, Not a Work").                                                                                                                                                        |
+| `user_id`       | Yes                           | FK to Supabase Auth users table.                                                                                                                                                                                                                                                                                                                                   |
+| `date_seen`     | Yes (defaults to today)       | The date attended. Defaults to today — the "I just saw this" case must be friction-free (track2-product-audit.md, "The Logging Flow"). This is the only field besides production_id that is truly required for a useful log entry.                                                                                                                                 |
+| `rating`        | No                            | Half-star scale: 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0. The CHECK constraint enforces half-star increments. This is the proven sweet spot per platform research: Letterboxd and RateYourMusic both use it; Goodreads' integer-only 1-5 scale produces compressed distributions with poor discriminatory power (platform-research.md, Sections 1 and 3). |
+| `review`        | No                            | Free text. Not required at log time — the two-stage pattern (log now, review later) is critical (track2-product-audit.md, "The Tension: Capture Now vs. Reflect Later").                                                                                                                                                                                           |
+| `is_private`    | Yes (defaults to true)        | Private by default. "Users track theatre before they decide to share it. The social layer is opt-in." (track2-product-audit.md, Key Conclusions).                                                                                                                                                                                                                  |
+| `liked`         | Yes (defaults to false)       | Binary "heart" flag, independent of star rating. Matches Letterboxd's pattern (platform-research.md, Section 1).                                                                                                                                                                                                                                                   |
+| `tags`          | Yes (defaults to empty array) | Postgres text array. User-defined tags for mood, context, themes: "world premiere", "with Mum", "standing ovation", "walk-out", "lottery ticket" (track2-product-audit.md, Tier 2 feature #11).                                                                                                                                                                    |
+| `is_rewatch`    | Yes (defaults to false)       | Whether the user has seen this production before. A user can log the same production multiple times on different dates; each is a separate LogEntry (track2-product-audit.md, diary design).                                                                                                                                                                       |
 
 ### 2.4 Wishlist
 
@@ -185,11 +185,11 @@ CREATE INDEX idx_wishlist_user ON wishlist_items(user_id);
 
 ### Absolute minimum to create each entity:
 
-| Entity | Required fields | Everything else |
-|---|---|---|
-| Work | `title` | Optional — even `creators` defaults to empty array |
-| Production | (none beyond auto-generated id) | `work_id` is nullable; all other fields optional |
-| LogEntry | `production_id`, `user_id`, `date_seen` | `date_seen` defaults to today, so effectively just `production_id` + `user_id` |
+| Entity     | Required fields                         | Everything else                                                                |
+| ---------- | --------------------------------------- | ------------------------------------------------------------------------------ |
+| Work       | `title`                                 | Optional — even `creators` defaults to empty array                             |
+| Production | (none beyond auto-generated id)         | `work_id` is nullable; all other fields optional                               |
+| LogEntry   | `production_id`, `user_id`, `date_seen` | `date_seen` defaults to today, so effectively just `production_id` + `user_id` |
 
 This supports the minimum viable log: the user taps a production, the date defaults to today, and the entry is saved. Three pieces of information: what, when, who — exactly as specified in the UX audit (track2-product-audit.md, "Minimum Viable Log Entry").
 
@@ -220,13 +220,14 @@ This supports the minimum viable log: the user taps a production, the date defau
 **Ruling:** Devised work uses `creation_method = 'devised'` on the Work entity. The `creators` JSONB array stores facilitators, devisors, or company names with `role = "devised by"` or `role = "created by"`. The `creators` array may be empty if authorship is truly collective and unnamed.
 
 **Example:** A verbatim theatre piece devised by an ensemble:
+
 ```json
 {
   "title": "The Laramie Project",
   "creation_method": "devised",
   "creators": [
-    {"name": "Moisés Kaufman", "role": "conceived by"},
-    {"name": "Tectonic Theater Project", "role": "devised by"}
+    { "name": "Moisés Kaufman", "role": "conceived by" },
+    { "name": "Tectonic Theater Project", "role": "devised by" }
   ]
 }
 ```
@@ -238,14 +239,17 @@ This supports the minimum viable log: the user taps a production, the date defau
 **Ruling:** Non-theatre transient media use the same Work + Production schema with `media_type` set to the appropriate value (`opera`, `dance`, `circus`, `concert`, `other`).
 
 **Circus (e.g., Cirque du Soleil's Alegria):**
+
 - Work: `title = "Alegría"`, `media_type = "circus"`, `creation_method = "devised"`, `creators = [{"name": "Franco Dragone", "role": "conceived by"}]`.
 - Productions: The original 1994 tour and the 2019 revival are separate Production records under the same Work.
 
 **Classical concert:**
+
 - Work: `title = "Beethoven: Symphony No. 9"`, `media_type = "concert"`, `creators = [{"name": "Ludwig van Beethoven", "role": "composer"}]`.
 - Production: A specific concert performance by a named orchestra.
 
 **Dance:**
+
 - Work: `title = "Swan Lake"`, `media_type = "dance"`, `creators = [{"name": "Tchaikovsky", "role": "composer"}, {"name": "Petipa/Ivanov", "role": "choreographer"}]`.
 - Production: A specific company's staging.
 
@@ -318,6 +322,7 @@ This migration is non-destructive — the JSONB data seeds the People table. But
 **Decision:** Wikidata is the primary source for seeding the Works catalog.
 
 **Method:** Run SPARQL queries against `query.wikidata.org` to extract:
+
 - All items typed as `Q25379` (play), `Q182659` (musical), `Q1344` (opera)
 - For each: title, creators (P170 creator, P86 composer, P58 screenwriter), year (P4 inception), description, genre (P136)
 - Store the Wikidata QID in `external_ids.wikidata_qid`
@@ -342,12 +347,12 @@ This migration is non-destructive — the JSONB data seeds the People table. But
 
 ### Cross-Reference Identifiers to Store
 
-| Identifier | Entity | Source | Notes |
-|---|---|---|---|
-| `wikidata_qid` | Work, Production | Wikidata SPARQL | Primary cross-reference (track1-data-sources.md) |
-| `musicbrainz_mbid` | Work | MusicBrainz API | Musicals and operas only |
-| `theatricalia_play_id` | Work | Wikidata P1242 | Lookup via Wikidata; no direct Theatricalia API |
-| `ibdb_show_id` | Production | Manual entry | Broadway productions; no API |
+| Identifier             | Entity           | Source          | Notes                                            |
+| ---------------------- | ---------------- | --------------- | ------------------------------------------------ |
+| `wikidata_qid`         | Work, Production | Wikidata SPARQL | Primary cross-reference (track1-data-sources.md) |
+| `musicbrainz_mbid`     | Work             | MusicBrainz API | Musicals and operas only                         |
+| `theatricalia_play_id` | Work             | Wikidata P1242  | Lookup via Wikidata; no direct Theatricalia API  |
+| `ibdb_show_id`         | Production       | Manual entry    | Broadway productions; no API                     |
 
 All stored in the `external_ids` JSONB field — extensible without schema changes.
 

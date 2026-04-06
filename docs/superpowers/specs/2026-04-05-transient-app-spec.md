@@ -21,75 +21,75 @@ Four entities. All IDs are UUIDs. Timestamps use `timestamptz`.
 
 The abstract creative concept: a play, musical, opera, dance piece, circus show, or concert. One Work can have many Productions across history.
 
-| Field | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `id` | uuid PK | Yes | `gen_random_uuid()` | Primary key |
-| `title` | text | Yes | -- | Canonical title of the work |
-| `original_title` | text | No | null | Non-English original language title |
-| `creators` | jsonb | Yes | `'[]'` | Array of `{name: string, role: string}`. Roles: "playwright", "book", "music", "lyrics", "devised by", "conceived by", "choreographer", "composer", "librettist" |
-| `year_written` | int | No | null | Year of composition or premiere. Nullable for devised work with no fixed composition year |
-| `creation_method` | text | Yes | `'scripted'` | One of: `scripted`, `devised`, `other` |
-| `media_type` | text | Yes | `'theatre'` | One of: `theatre`, `musical`, `opera`, `dance`, `circus`, `concert`, `other` |
-| `description` | text | No | null | Synopsis or description |
-| `adapted_from` | uuid FK | No | null | Self-referential FK to `works(id)` for adaptation chains (e.g., West Side Story points to Romeo and Juliet) |
-| `external_ids` | jsonb | Yes | `'{}'` | Cross-reference IDs: `wikidata_qid`, `musicbrainz_mbid`, `theatricalia_play_id`, `ibdb_show_id` |
-| `search_vector` | tsvector | Auto | Generated | Full-text search vector generated from `title`, `original_title`, and `description` |
-| `created_at` | timestamptz | Yes | `now()` | Row creation timestamp |
-| `updated_at` | timestamptz | Yes | `now()` | Last modification timestamp |
+| Field             | Type        | Required | Default             | Description                                                                                                                                                      |
+| ----------------- | ----------- | -------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | uuid PK     | Yes      | `gen_random_uuid()` | Primary key                                                                                                                                                      |
+| `title`           | text        | Yes      | --                  | Canonical title of the work                                                                                                                                      |
+| `original_title`  | text        | No       | null                | Non-English original language title                                                                                                                              |
+| `creators`        | jsonb       | Yes      | `'[]'`              | Array of `{name: string, role: string}`. Roles: "playwright", "book", "music", "lyrics", "devised by", "conceived by", "choreographer", "composer", "librettist" |
+| `year_written`    | int         | No       | null                | Year of composition or premiere. Nullable for devised work with no fixed composition year                                                                        |
+| `creation_method` | text        | Yes      | `'scripted'`        | One of: `scripted`, `devised`, `other`                                                                                                                           |
+| `media_type`      | text        | Yes      | `'theatre'`         | One of: `theatre`, `musical`, `opera`, `dance`, `circus`, `concert`, `other`                                                                                     |
+| `description`     | text        | No       | null                | Synopsis or description                                                                                                                                          |
+| `adapted_from`    | uuid FK     | No       | null                | Self-referential FK to `works(id)` for adaptation chains (e.g., West Side Story points to Romeo and Juliet)                                                      |
+| `external_ids`    | jsonb       | Yes      | `'{}'`              | Cross-reference IDs: `wikidata_qid`, `musicbrainz_mbid`, `theatricalia_play_id`, `ibdb_show_id`                                                                  |
+| `search_vector`   | tsvector    | Auto     | Generated           | Full-text search vector generated from `title`, `original_title`, and `description`                                                                              |
+| `created_at`      | timestamptz | Yes      | `now()`             | Row creation timestamp                                                                                                                                           |
+| `updated_at`      | timestamptz | Yes      | `now()`             | Last modification timestamp                                                                                                                                      |
 
 #### Production
 
 A specific staging of a Work -- a run at a venue with a director, cast, and dates.
 
-| Field | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `id` | uuid PK | Yes | `gen_random_uuid()` | Primary key |
-| `work_id` | uuid FK | No | null | FK to `works(id)`. Nullable to support devised/new work that has no pre-existing Work entry |
-| `title_override` | text | No | null | Billing variant or renamed adaptation. Display logic: show `title_override` if set, otherwise fall through to `works.title` |
-| `company` | text | No | null | Theatre company or producing organization |
-| `venue` | text | No | null | Venue name (plain text for v1; a `venues` table with geolocation is post-MVP) |
-| `director` | text | No | null | Director name (plain text for v1) |
-| `cast_members` | jsonb | Yes | `'[]'` | Array of `{name: string, role: string}`. Official/opening-night cast. Named `cast_members` to avoid SQL reserved word collision |
-| `year` | int | No | null | Integer year. Redundant with `start_date` but useful when exact dates are unknown |
-| `start_date` | date | No | null | Run start date |
-| `end_date` | date | No | null | Run end date |
-| `poster_url` | text | No | null | Path or URL to poster image in Supabase Storage |
-| `is_touring` | boolean | Yes | `false` | Flag for touring productions. A tour with a fixed creative team visiting multiple venues is one Production |
-| `external_ids` | jsonb | Yes | `'{}'` | Cross-reference IDs: `wikidata_qid`, `ibdb_production_id` |
-| `created_at` | timestamptz | Yes | `now()` | Row creation timestamp |
-| `updated_at` | timestamptz | Yes | `now()` | Last modification timestamp |
+| Field            | Type        | Required | Default             | Description                                                                                                                     |
+| ---------------- | ----------- | -------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `id`             | uuid PK     | Yes      | `gen_random_uuid()` | Primary key                                                                                                                     |
+| `work_id`        | uuid FK     | No       | null                | FK to `works(id)`. Nullable to support devised/new work that has no pre-existing Work entry                                     |
+| `title_override` | text        | No       | null                | Billing variant or renamed adaptation. Display logic: show `title_override` if set, otherwise fall through to `works.title`     |
+| `company`        | text        | No       | null                | Theatre company or producing organization                                                                                       |
+| `venue`          | text        | No       | null                | Venue name (plain text for v1; a `venues` table with geolocation is post-MVP)                                                   |
+| `director`       | text        | No       | null                | Director name (plain text for v1)                                                                                               |
+| `cast_members`   | jsonb       | Yes      | `'[]'`              | Array of `{name: string, role: string}`. Official/opening-night cast. Named `cast_members` to avoid SQL reserved word collision |
+| `year`           | int         | No       | null                | Integer year. Redundant with `start_date` but useful when exact dates are unknown                                               |
+| `start_date`     | date        | No       | null                | Run start date                                                                                                                  |
+| `end_date`       | date        | No       | null                | Run end date                                                                                                                    |
+| `poster_url`     | text        | No       | null                | Path or URL to poster image in Supabase Storage                                                                                 |
+| `is_touring`     | boolean     | Yes      | `false`             | Flag for touring productions. A tour with a fixed creative team visiting multiple venues is one Production                      |
+| `external_ids`   | jsonb       | Yes      | `'{}'`              | Cross-reference IDs: `wikidata_qid`, `ibdb_production_id`                                                                       |
+| `created_at`     | timestamptz | Yes      | `now()`             | Row creation timestamp                                                                                                          |
+| `updated_at`     | timestamptz | Yes      | `now()`             | Last modification timestamp                                                                                                     |
 
 #### LogEntry
 
 A user's personal record of attending a production.
 
-| Field | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `id` | uuid PK | Yes | `gen_random_uuid()` | Primary key |
-| `production_id` | uuid FK | Yes | -- | FK to `productions(id)`. The log records attending a specific production |
-| `user_id` | uuid FK | Yes | -- | FK to `auth.users(id)` (Supabase Auth) |
-| `date_seen` | date | Yes | `CURRENT_DATE` | Date attended. Defaults to today for the "pavement moment" |
-| `rating` | numeric(2,1) | No | null | Half-star scale: 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0. CHECK constraint enforces range and half-star increments |
-| `review` | text | No | null | Free text review. Not required at log time; can be added later |
-| `is_private` | boolean | Yes | `true` | Private by default. All entries are private in v1 (no public profiles) |
-| `liked` | boolean | Yes | `false` | Binary "heart" flag, independent of star rating |
-| `tags` | text[] | Yes | `'{}'` | User-defined tags: "world premiere", "with Mum", "standing ovation", "lottery ticket" |
-| `is_rewatch` | boolean | Yes | `false` | Whether the user has seen this production before. Multiple log entries per production are allowed |
-| `created_at` | timestamptz | Yes | `now()` | Row creation timestamp |
-| `updated_at` | timestamptz | Yes | `now()` | Last modification timestamp |
+| Field           | Type         | Required | Default             | Description                                                                                                                 |
+| --------------- | ------------ | -------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `id`            | uuid PK      | Yes      | `gen_random_uuid()` | Primary key                                                                                                                 |
+| `production_id` | uuid FK      | Yes      | --                  | FK to `productions(id)`. The log records attending a specific production                                                    |
+| `user_id`       | uuid FK      | Yes      | --                  | FK to `auth.users(id)` (Supabase Auth)                                                                                      |
+| `date_seen`     | date         | Yes      | `CURRENT_DATE`      | Date attended. Defaults to today for the "pavement moment"                                                                  |
+| `rating`        | numeric(2,1) | No       | null                | Half-star scale: 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0. CHECK constraint enforces range and half-star increments |
+| `review`        | text         | No       | null                | Free text review. Not required at log time; can be added later                                                              |
+| `is_private`    | boolean      | Yes      | `true`              | Private by default. All entries are private in v1 (no public profiles)                                                      |
+| `liked`         | boolean      | Yes      | `false`             | Binary "heart" flag, independent of star rating                                                                             |
+| `tags`          | text[]       | Yes      | `'{}'`              | User-defined tags: "world premiere", "with Mum", "standing ovation", "lottery ticket"                                       |
+| `is_rewatch`    | boolean      | Yes      | `false`             | Whether the user has seen this production before. Multiple log entries per production are allowed                           |
+| `created_at`    | timestamptz  | Yes      | `now()`             | Row creation timestamp                                                                                                      |
+| `updated_at`    | timestamptz  | Yes      | `now()`             | Last modification timestamp                                                                                                 |
 
 #### WishlistItem
 
 A user's "want to see" list entry. Can target either a Work or a specific Production, but not both.
 
-| Field | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `id` | uuid PK | Yes | `gen_random_uuid()` | Primary key |
-| `user_id` | uuid FK | Yes | -- | FK to `auth.users(id)` |
-| `work_id` | uuid FK | No | null | FK to `works(id)`. Set when targeting a Work ("I want to see any production of Hamlet") |
-| `production_id` | uuid FK | No | null | FK to `productions(id)`. Set when targeting a specific Production |
-| `notes` | text | No | null | Personal notes about why they want to see it |
-| `created_at` | timestamptz | Yes | `now()` | Row creation timestamp |
+| Field           | Type        | Required | Default             | Description                                                                             |
+| --------------- | ----------- | -------- | ------------------- | --------------------------------------------------------------------------------------- |
+| `id`            | uuid PK     | Yes      | `gen_random_uuid()` | Primary key                                                                             |
+| `user_id`       | uuid FK     | Yes      | --                  | FK to `auth.users(id)`                                                                  |
+| `work_id`       | uuid FK     | No       | null                | FK to `works(id)`. Set when targeting a Work ("I want to see any production of Hamlet") |
+| `production_id` | uuid FK     | No       | null                | FK to `productions(id)`. Set when targeting a specific Production                       |
+| `notes`         | text        | No       | null                | Personal notes about why they want to see it                                            |
+| `created_at`    | timestamptz | Yes      | `now()`             | Row creation timestamp                                                                  |
 
 A CHECK constraint enforces that exactly one of `work_id` or `production_id` is non-null.
 
@@ -113,12 +113,12 @@ Production
 
 ### 2.3 Minimum Fields to Create Each Entity
 
-| Entity | Required fields for creation | Everything else |
-|---|---|---|
-| Work | `title` | Optional. `creators` defaults to `[]`, `creation_method` to `'scripted'`, `media_type` to `'theatre'` |
-| Production | (none beyond auto-generated id) | `work_id` is nullable; all other fields optional |
-| LogEntry | `production_id`, `user_id` | `date_seen` defaults to today, so effectively the user only selects a production |
-| WishlistItem | `user_id` + one of (`work_id`, `production_id`) | `notes` is optional |
+| Entity       | Required fields for creation                    | Everything else                                                                                       |
+| ------------ | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Work         | `title`                                         | Optional. `creators` defaults to `[]`, `creation_method` to `'scripted'`, `media_type` to `'theatre'` |
+| Production   | (none beyond auto-generated id)                 | `work_id` is nullable; all other fields optional                                                      |
+| LogEntry     | `production_id`, `user_id`                      | `date_seen` defaults to today, so effectively the user only selects a production                      |
+| WishlistItem | `user_id` + one of (`work_id`, `production_id`) | `notes` is optional                                                                                   |
 
 ### 2.4 Edge Case Rulings
 
@@ -304,26 +304,26 @@ CREATE TRIGGER log_entries_updated_at
 
 ### Tier 1: Core Loop (non-negotiable)
 
-| # | Feature | Description |
-|---|---------|-------------|
-| 1 | Log a show | Tap +, search for production, confirm date (defaults today), save. Under 5 seconds for a minimal entry. |
-| 2 | Two-level catalog | Work + Production hierarchy. Users log against Productions. This is the structural advantage over every competitor. |
-| 3 | Half-star rating | 0.5-5.0 scale, optional, on log entries. Proven by Letterboxd and RateYourMusic. |
-| 4 | Private diary view | Reverse-chronological list of log entries. Private by default. The home screen. |
-| 5 | Search works and productions | Full-text search on works via Postgres `tsvector`. Partial-match search ("Hamlet Almeida") surfaces relevant results. |
-| 6 | Inline creation | When search returns nothing, the user creates Work and Production on the spot with minimal fields. Title for Work; venue and year for Production. |
+| #   | Feature                      | Description                                                                                                                                       |
+| --- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Log a show                   | Tap +, search for production, confirm date (defaults today), save. Under 5 seconds for a minimal entry.                                           |
+| 2   | Two-level catalog            | Work + Production hierarchy. Users log against Productions. This is the structural advantage over every competitor.                               |
+| 3   | Half-star rating             | 0.5-5.0 scale, optional, on log entries. Proven by Letterboxd and RateYourMusic.                                                                  |
+| 4   | Private diary view           | Reverse-chronological list of log entries. Private by default. The home screen.                                                                   |
+| 5   | Search works and productions | Full-text search on works via Postgres `tsvector`. Partial-match search ("Hamlet Almeida") surfaces relevant results.                             |
+| 6   | Inline creation              | When search returns nothing, the user creates Work and Production on the spot with minimal fields. Title for Work; venue and year for Production. |
 
 ### Tier 2: Enrichment (makes it worth using over a spreadsheet)
 
-| # | Feature | Description |
-|---|---------|-------------|
-| 7 | Written review | Free text per log entry. Added at log time or later via edit. Private by default. |
-| 8 | Tags | Free-form text array per log entry. Stored as Postgres `text[]`. |
-| 9 | Like/heart flag | Binary "loved it" flag per log entry, independent of star rating. |
-| 10 | Rewatch flag | Boolean per log entry. Distinguishes first viewings from return visits. |
-| 11 | Wishlist | "Want to see" list targeting either a Work or a specific Production. Separate from the diary. |
-| 12 | Basic stats | Total shows logged, shows this year, venues visited, rating distribution, shows by media type, shows by year. All derivable from existing data with aggregate queries. |
-| 13 | Edit and delete log entries | Users can go back to add a review, change a rating, fix a date, or delete an entry. |
+| #   | Feature                     | Description                                                                                                                                                            |
+| --- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 7   | Written review              | Free text per log entry. Added at log time or later via edit. Private by default.                                                                                      |
+| 8   | Tags                        | Free-form text array per log entry. Stored as Postgres `text[]`.                                                                                                       |
+| 9   | Like/heart flag             | Binary "loved it" flag per log entry, independent of star rating.                                                                                                      |
+| 10  | Rewatch flag                | Boolean per log entry. Distinguishes first viewings from return visits.                                                                                                |
+| 11  | Wishlist                    | "Want to see" list targeting either a Work or a specific Production. Separate from the diary.                                                                          |
+| 12  | Basic stats                 | Total shows logged, shows this year, venues visited, rating distribution, shows by media type, shows by year. All derivable from existing data with aggregate queries. |
+| 13  | Edit and delete log entries | Users can go back to add a review, change a rating, fix a date, or delete an entry.                                                                                    |
 
 ---
 
@@ -441,16 +441,16 @@ Minimal settings screen.
 
 ## 5. Tech Stack
 
-| Layer | Choice | Rationale |
-|---|---|---|
-| **Frontend framework** | Expo Router (React Native + web) | Single codebase for iOS, Android, and web. File-based routing. ~80-90% shared code. Simpler than Solito for a solo developer at MVP. |
-| **UI/styling** | NativeWind (Tailwind CSS for React Native) | Familiar Tailwind syntax. Proper atomic CSS on web (not inline styles). Low learning curve. Fast iteration. |
-| **Backend** | Supabase | Hosted Postgres with auto-generated REST API, auth (email/password, OAuth), file storage, real-time subscriptions, row-level security. Zero setup cost on free tier. |
-| **Database** | PostgreSQL 15+ (via Supabase) | Native foreign keys, JSONB for semi-structured data (`creators`, `cast_members`, `external_ids`), `text[]` for tags, `tsvector` for full-text search. Ideal fit for the relational Work-Production model. |
-| **Auth** | Supabase Auth | Email/password and OAuth (Google, Apple). JWT-based. Integrates with RLS policies. |
-| **File storage** | Supabase Storage | Poster images, user avatars. 1 GB on free tier. |
-| **Web hosting** | Vercel (free hobby plan) or EAS Hosting | Expo Router web output deploys directly. 100 GB bandwidth/month on Vercel free tier. |
-| **Mobile distribution** | Web-first (PWA) | Skip App Store fees initially. PWA provides home-screen icon and offline capability. Add Google Play ($25 one-time) and Apple ($99/year) when there are users beyond the developer. |
+| Layer                   | Choice                                     | Rationale                                                                                                                                                                                                 |
+| ----------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend framework**  | Expo Router (React Native + web)           | Single codebase for iOS, Android, and web. File-based routing. ~80-90% shared code. Simpler than Solito for a solo developer at MVP.                                                                      |
+| **UI/styling**          | NativeWind (Tailwind CSS for React Native) | Familiar Tailwind syntax. Proper atomic CSS on web (not inline styles). Low learning curve. Fast iteration.                                                                                               |
+| **Backend**             | Supabase                                   | Hosted Postgres with auto-generated REST API, auth (email/password, OAuth), file storage, real-time subscriptions, row-level security. Zero setup cost on free tier.                                      |
+| **Database**            | PostgreSQL 15+ (via Supabase)              | Native foreign keys, JSONB for semi-structured data (`creators`, `cast_members`, `external_ids`), `text[]` for tags, `tsvector` for full-text search. Ideal fit for the relational Work-Production model. |
+| **Auth**                | Supabase Auth                              | Email/password and OAuth (Google, Apple). JWT-based. Integrates with RLS policies.                                                                                                                        |
+| **File storage**        | Supabase Storage                           | Poster images, user avatars. 1 GB on free tier.                                                                                                                                                           |
+| **Web hosting**         | Vercel (free hobby plan) or EAS Hosting    | Expo Router web output deploys directly. 100 GB bandwidth/month on Vercel free tier.                                                                                                                      |
+| **Mobile distribution** | Web-first (PWA)                            | Skip App Store fees initially. PWA provides home-screen icon and offline capability. Add Google Play ($25 one-time) and Apple ($99/year) when there are users beyond the developer.                       |
 
 ### Operational note: Supabase free tier inactivity
 
@@ -491,15 +491,15 @@ Total interaction: 3-4 taps + typing the search query. Under 10 seconds.
 
 ### Log entry fields summary
 
-| Field | Required | Default | Input |
-|---|---|---|---|
-| Production | Yes | -- | Selected via search in Step 1 |
-| Date seen | Yes | Today | Date picker |
-| Rating | No | null | Star widget (0.5-5.0) |
-| Liked | No | false | Heart toggle |
-| Rewatch | No | false | Toggle |
-| Review | No | null | Multiline text input |
-| Tags | No | [] | Text input with comma separation |
+| Field      | Required | Default | Input                            |
+| ---------- | -------- | ------- | -------------------------------- |
+| Production | Yes      | --      | Selected via search in Step 1    |
+| Date seen  | Yes      | Today   | Date picker                      |
+| Rating     | No       | null    | Star widget (0.5-5.0)            |
+| Liked      | No       | false   | Heart toggle                     |
+| Rewatch    | No       | false   | Toggle                           |
+| Review     | No       | null    | Multiline text input             |
+| Tags       | No       | []      | Text input with comma separation |
 
 ---
 
@@ -529,12 +529,12 @@ LIMIT 20;
 
 When the search returns no relevant results, the user taps "Can't find it? Add new work." An inline form appears:
 
-| Field | Input | Required | Default |
-|---|---|---|---|
-| Title | Text input, pre-filled from search text | Yes | Search query text |
-| Media type | Dropdown | No | `theatre` |
-| Creator name | Text input | No | empty |
-| Creator role | Dropdown | No | `playwright` |
+| Field        | Input                                   | Required | Default           |
+| ------------ | --------------------------------------- | -------- | ----------------- |
+| Title        | Text input, pre-filled from search text | Yes      | Search query text |
+| Media type   | Dropdown                                | No       | `theatre`         |
+| Creator name | Text input                              | No       | empty             |
+| Creator role | Dropdown                                | No       | `playwright`      |
 
 User taps "Save Work." The work is inserted into the `works` table.
 
@@ -542,11 +542,11 @@ User taps "Save Work." The work is inserted into the `works` table.
 
 When a work is found but the user's production is not listed, the user taps "Add new production" below the work's production list. An inline form appears:
 
-| Field | Input | Required | Default |
-|---|---|---|---|
-| Venue | Text input | No | empty |
-| Year | Number input | No | Current year |
-| Director | Text input | No | empty |
+| Field    | Input        | Required | Default      |
+| -------- | ------------ | -------- | ------------ |
+| Venue    | Text input   | No       | empty        |
+| Year     | Number input | No       | Current year |
+| Director | Text input   | No       | empty        |
 
 User taps "Save Production." The production is inserted into the `productions` table with `work_id` set to the parent work.
 
@@ -655,14 +655,14 @@ For a single-user personal app, this is acceptable: the database only needs prod
 
 ### Cross-reference identifiers stored
 
-| Identifier | Entity | Source | Notes |
-|---|---|---|---|
-| `wikidata_qid` | Work, Production | Wikidata SPARQL | Primary cross-reference for canonical works |
-| `musicbrainz_mbid` | Work | MusicBrainz REST API | Musicals and operas only |
-| `salic_pronac` | Production | SALIC API | Lei Rouanet project number. Links to `versalic.cultura.gov.br` |
-| `sympla_event_id` | Production | Sympla API | Links to event page on `sympla.com.br` |
-| `mapas_culturais_space_id` | (reference data) | Mapas Culturais API | Venue cross-reference for future `venues` table |
-| `mapas_culturais_agent_id` | (reference data) | Mapas Culturais API | Theatre company cross-reference |
+| Identifier                 | Entity           | Source               | Notes                                                          |
+| -------------------------- | ---------------- | -------------------- | -------------------------------------------------------------- |
+| `wikidata_qid`             | Work, Production | Wikidata SPARQL      | Primary cross-reference for canonical works                    |
+| `musicbrainz_mbid`         | Work             | MusicBrainz REST API | Musicals and operas only                                       |
+| `salic_pronac`             | Production       | SALIC API            | Lei Rouanet project number. Links to `versalic.cultura.gov.br` |
+| `sympla_event_id`          | Production       | Sympla API           | Links to event page on `sympla.com.br`                         |
+| `mapas_culturais_space_id` | (reference data) | Mapas Culturais API  | Venue cross-reference for future `venues` table                |
+| `mapas_culturais_agent_id` | (reference data) | Mapas Culturais API  | Theatre company cross-reference                                |
 
 All stored in the `external_ids` JSONB field on both `works` and `productions`. Extensible without schema changes.
 
@@ -683,23 +683,23 @@ For a solo developer, implement in this order:
 
 The following features are out of scope for v1. They are documented here to confirm they were considered and intentionally excluded.
 
-| Feature | Reason for deferral |
-|---------|-------------------|
-| Programme scan / camera import | Requires OCR integration (e.g., Google Vision API or on-device ML). High implementation effort. |
-| Venue tracking with map | Requires a `venues` table with geolocation and map rendering. Current schema stores venue as plain text, which is sufficient. |
-| Public profiles / social log | Social layer is opt-in by design. The `is_private` field supports this later, but profile pages, privacy controls, and a public feed are a separate product track. |
-| Follow / activity feed | Requires follower graph, feed architecture, notification system. |
-| Lists | User-created ranked/unranked collections. Requires new `lists` + `list_items` tables. |
-| Rich stats (year-in-review, most-seen playwright) | Depends on having enough data to be meaningful. Requires JSONB aggregation across `creators` and `cast_members`. |
-| Companion tracking ("who I went with") | Adds a field and potentially a contacts system. Approximated with tags ("with Mum") in v1. |
-| Seat and price tracking | Spreadsheet power-user feature. Adds fields to log entry. Not part of the core loop. |
-| Production discovery ("what's on near me") | Requires real-time event data pipeline, geolocation, calendar integration. Entirely separate product track. |
-| Notifications for wish-listed works | Requires a production announcement data feed that does not exist in any accessible API. |
-| Ticket integration (email/Apple Wallet import) | Complex integration with unclear ROI. |
-| Photo/programme archive | File upload to Supabase Storage. Adds storage cost and UI complexity. Can be added as a field on log entry later. |
-| Cast-level reviews | Creates UI and data complexity. |
-| Alternate cast tracking | Requires per-performance cast data that is almost never machine-readable. |
-| Critic review aggregation | Requires partnerships and curation infrastructure. |
-| Community-curated lists | Requires editorial resources and a community. |
-| Work page (aggregate view across productions) | The data model supports it; the UI can come later. |
-| Rating aggregation (community averages) | Requires multiple users. Post-MVP, use Bayesian weighted average: `WR = (v / (v + m)) * R + (m / (v + m)) * C` with m=5, C~3.5. |
+| Feature                                           | Reason for deferral                                                                                                                                                |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Programme scan / camera import                    | Requires OCR integration (e.g., Google Vision API or on-device ML). High implementation effort.                                                                    |
+| Venue tracking with map                           | Requires a `venues` table with geolocation and map rendering. Current schema stores venue as plain text, which is sufficient.                                      |
+| Public profiles / social log                      | Social layer is opt-in by design. The `is_private` field supports this later, but profile pages, privacy controls, and a public feed are a separate product track. |
+| Follow / activity feed                            | Requires follower graph, feed architecture, notification system.                                                                                                   |
+| Lists                                             | User-created ranked/unranked collections. Requires new `lists` + `list_items` tables.                                                                              |
+| Rich stats (year-in-review, most-seen playwright) | Depends on having enough data to be meaningful. Requires JSONB aggregation across `creators` and `cast_members`.                                                   |
+| Companion tracking ("who I went with")            | Adds a field and potentially a contacts system. Approximated with tags ("with Mum") in v1.                                                                         |
+| Seat and price tracking                           | Spreadsheet power-user feature. Adds fields to log entry. Not part of the core loop.                                                                               |
+| Production discovery ("what's on near me")        | Requires real-time event data pipeline, geolocation, calendar integration. Entirely separate product track.                                                        |
+| Notifications for wish-listed works               | Requires a production announcement data feed that does not exist in any accessible API.                                                                            |
+| Ticket integration (email/Apple Wallet import)    | Complex integration with unclear ROI.                                                                                                                              |
+| Photo/programme archive                           | File upload to Supabase Storage. Adds storage cost and UI complexity. Can be added as a field on log entry later.                                                  |
+| Cast-level reviews                                | Creates UI and data complexity.                                                                                                                                    |
+| Alternate cast tracking                           | Requires per-performance cast data that is almost never machine-readable.                                                                                          |
+| Critic review aggregation                         | Requires partnerships and curation infrastructure.                                                                                                                 |
+| Community-curated lists                           | Requires editorial resources and a community.                                                                                                                      |
+| Work page (aggregate view across productions)     | The data model supports it; the UI can come later.                                                                                                                 |
+| Rating aggregation (community averages)           | Requires multiple users. Post-MVP, use Bayesian weighted average: `WR = (v / (v + m)) * R + (m / (v + m)) * C` with m=5, C~3.5.                                    |

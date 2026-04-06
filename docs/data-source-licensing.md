@@ -5,22 +5,22 @@
 
 ## Usable Sources
 
-| Source | License | Access Method | Notes |
-|---|---|---|---|
-| Wikidata | CC0 (public domain) | SPARQL API (no auth) | Official public endpoint. Designed for bulk queries. 60s query timeout. |
-| MusicBrainz | CC0 / Public Domain | REST API (no auth) | 1 req/sec rate limit. Requires User-Agent header. Full DB dumps also available. |
-| IMSLP | Public domain works | MediaWiki API | Metadata usable for cross-referencing. Limited theatre coverage. |
+| Source      | License             | Access Method        | Notes                                                                           |
+| ----------- | ------------------- | -------------------- | ------------------------------------------------------------------------------- |
+| Wikidata    | CC0 (public domain) | SPARQL API (no auth) | Official public endpoint. Designed for bulk queries. 60s query timeout.         |
+| MusicBrainz | CC0 / Public Domain | REST API (no auth)   | 1 req/sec rate limit. Requires User-Agent header. Full DB dumps also available. |
+| IMSLP       | Public domain works | MediaWiki API        | Metadata usable for cross-referencing. Limited theatre coverage.                |
 
 ## Not Usable
 
-| Source | License | Why Not |
-|---|---|---|
-| IBDB | All Rights Reserved | No API. Scraping explicitly prohibited. |
-| Spectra (IOBDB) | Proprietary | No API. Commercial entity, likely restricts bulk extraction. |
-| Theatricalia | No API | No bulk access. Could contact maintainer (Matthew Somerville) to request a data dump. |
-| AboutTheArtists | Proprietary | Scraping and AI training explicitly forbidden. Would need formal data agreement. |
-| BroadwayWorld | Proprietary | No public API. |
-| Playbill | Proprietary | No public API. |
+| Source          | License             | Why Not                                                                               |
+| --------------- | ------------------- | ------------------------------------------------------------------------------------- |
+| IBDB            | All Rights Reserved | No API. Scraping explicitly prohibited.                                               |
+| Spectra (IOBDB) | Proprietary         | No API. Commercial entity, likely restricts bulk extraction.                          |
+| Theatricalia    | No API              | No bulk access. Could contact maintainer (Matthew Somerville) to request a data dump. |
+| AboutTheArtists | Proprietary         | Scraping and AI training explicitly forbidden. Would need formal data agreement.      |
+| BroadwayWorld   | Proprietary         | No public API.                                                                        |
+| Playbill        | Proprietary         | No public API.                                                                        |
 
 ## What We're Using for MVP
 

@@ -69,6 +69,7 @@ Tamagui is the most comprehensive cross-platform UI option for React Native + we
 **Architecture:** An optimizing compiler runs at build time and converts styled components to platform-optimized output — atomic CSS classes on web, hoisted style objects on React Native. This largely solves the "RN styles compile to inline styles on web" performance problem.
 
 **What you get:**
+
 - Universal components that render correctly on iOS, Android, and web without platform splits
 - A large typed superset of the React Native style API (adds gap, aspectRatio, etc.)
 - A component library (Button, Input, Card, Dialog, etc.) with theming
@@ -76,6 +77,7 @@ Tamagui is the most comprehensive cross-platform UI option for React Native + we
 - Dark mode, animations, accessible focus management
 
 **Limitations:**
+
 - Steep learning curve. The compiler and theme system have significant configuration surface area.
 - The component library is opinionated; customizing deeply can fight the framework.
 - Community is smaller than NativeWind; fewer tutorials and examples.
@@ -86,6 +88,7 @@ Tamagui is the most comprehensive cross-platform UI option for React Native + we
 NativeWind brings Tailwind CSS utility classes to React Native. On web, it compiles to standard Tailwind CSS (not inline styles), which means near-zero performance overhead. On native, it uses a custom style resolver.
 
 **What you get:**
+
 - Familiar Tailwind syntax (`className="flex flex-col p-4 text-sm"`)
 - Web: proper atomic CSS, fast
 - Native: Tailwind classes compiled to React Native StyleSheet objects
@@ -93,6 +96,7 @@ NativeWind brings Tailwind CSS utility classes to React Native. On web, it compi
 - Good interop with any React Native component
 
 **Limitations:**
+
 - Tailwind's design system (spacing scale, color palette) is web-native. Some values don't translate cleanly to mobile (rem units, certain pseudo-classes).
 - No bundled component library — you're styling raw RN primitives or community components.
 - More manual work to build consistent UI than Tamagui's component kit.
@@ -109,12 +113,12 @@ A Material Design 3 component library for React Native. Web support via React Na
 
 ### 2.4 Summary
 
-| Library | Web CSS output | Component kit | Learning curve | Best for |
-|---|---|---|---|---|
-| **Tamagui** | Atomic CSS (compiler) | Yes, comprehensive | High | Polished cross-platform product, willing to invest in setup |
-| **NativeWind v4+** | Atomic CSS (Tailwind) | No (you bring your own) | Low (if you know Tailwind) | Tailwind-familiar devs, fast iteration |
-| **React Native Paper** | Inline styles (RNWeb) | Yes, Material Design 3 | Low | Material Design apps, native-first |
-| **Unistyles** | Inline styles (RNWeb) | No | Medium | Pure styling API without component opinions |
+| Library                | Web CSS output        | Component kit           | Learning curve             | Best for                                                    |
+| ---------------------- | --------------------- | ----------------------- | -------------------------- | ----------------------------------------------------------- |
+| **Tamagui**            | Atomic CSS (compiler) | Yes, comprehensive      | High                       | Polished cross-platform product, willing to invest in setup |
+| **NativeWind v4+**     | Atomic CSS (Tailwind) | No (you bring your own) | Low (if you know Tailwind) | Tailwind-familiar devs, fast iteration                      |
+| **React Native Paper** | Inline styles (RNWeb) | Yes, Material Design 3  | Low                        | Material Design apps, native-first                          |
+| **Unistyles**          | Inline styles (RNWeb) | No                      | Medium                     | Pure styling API without component opinions                 |
 
 **For Transient:** NativeWind is the pragmatic choice at MVP. Tailwind is ubiquitous, well-documented, and fast to iterate with. If the web product later needs more polish, migrating to Tamagui or adding a custom design system layer is feasible. Tamagui is the right choice if you're committed to investing in design from day one.
 
@@ -127,6 +131,7 @@ A Material Design 3 component library for React Native. Web support via React Na
 Supabase is a hosted Postgres-as-a-backend with auto-generated REST and GraphQL APIs, real-time subscriptions, auth, and file storage. It is the closest thing to a managed backend for relational data in the BaaS space.
 
 **Free tier (2026):**
+
 - 500 MB database storage
 - 1 GB file storage
 - 50,000 monthly active users (auth)
@@ -137,6 +142,7 @@ Supabase is a hosted Postgres-as-a-backend with auto-generated REST and GraphQL 
 **Postgres underneath:** This is the key differentiator. Supabase gives you a real Postgres instance. The Work → Production relational model maps cleanly: foreign keys, joins, JSONB for `external_ids` and `cast` arrays, full-text search via `tsvector`. You can write raw SQL migrations, use Postgres functions/triggers, and model exactly what the data model requires.
 
 **What's included:**
+
 - Row-level security (RLS) policies — you can enforce "only the owner can write their log entries" at the database level, not just application code.
 - Realtime: WebSocket subscriptions on row changes. Useful if you want a live feed of friends' log entries.
 - Storage: Poster images, user avatars.
@@ -146,6 +152,7 @@ Supabase is a hosted Postgres-as-a-backend with auto-generated REST and GraphQL 
 **Self-hosting:** Official Docker Compose setup spins up the full stack (Postgres, PostgREST, GoTrue, Realtime, Storage, Studio). Requires ~4GB RAM minimum; ~8GB for anything beyond minimal. Non-trivial to maintain (15+ Docker containers). The self-hosting story is improving but is still considerably more complex than running a single PocketBase binary.
 
 **Concerns:**
+
 - Free tier pausing is a real operational problem for a personal project. Workaround: a cron job that pings the API every 5 days.
 - Vendor dependency: Supabase wraps Postgres with PostgREST (REST) and Hasura-style GraphQL. If you outgrow the BaaS layer, migrating means rebuilding your API layer, though the underlying Postgres data is fully portable.
 - At personal-project scale, Supabase's free tier is almost certainly sufficient for years of single-user logging.
@@ -157,6 +164,7 @@ PocketBase is a single Go binary that bundles SQLite, a REST API, auth, file sto
 **Self-hosting model:** Deploy the binary to any VPS. The database is a single `.db` file. Backup = copy the file. The entire app stack is one process.
 
 **What's included:**
+
 - SQLite-backed persistent storage (collections = tables)
 - Auto-generated REST API from collection schemas
 - Real-time subscriptions via SSE
@@ -166,6 +174,7 @@ PocketBase is a single Go binary that bundles SQLite, a REST API, auth, file sto
 - JavaScript SDK (PocketBase JS) — works in browsers and Node
 
 **Limitations:**
+
 - **SQLite means single-writer.** SQLite handles concurrent reads fine but serializes all writes. For a personal app with one user, this is not a constraint. If you ever want multi-user or high write throughput, SQLite is a ceiling. PocketBase is explicit about this.
 - **No native JSONB operators.** SQLite's JSON support is functional but less powerful than Postgres JSONB. Complex queries across `cast` arrays or `external_ids` are harder.
 - **Schema migrations are manual.** PocketBase doesn't have a migration system comparable to Postgres migrations. Schema changes through the admin UI are reflected in Go code if you use it as a framework, but it's less structured.
@@ -179,6 +188,7 @@ PocketBase is a single Go binary that bundles SQLite, a REST API, auth, file sto
 Firebase is Google's mobile/web BaaS. Firestore is its primary NoSQL document database.
 
 **Free tier (Spark plan, 2026):**
+
 - 1 GB stored data
 - 50,000 document reads/day
 - 20,000 document writes/day
@@ -187,6 +197,7 @@ Firebase is Google's mobile/web BaaS. Firestore is its primary NoSQL document da
 
 **The relational data problem:**
 Firestore is a document database. It does not have joins. Querying across the Work → Production → LogEntry hierarchy requires either:
+
 1. **Denormalization:** Embed production data inside LogEntry documents. This avoids joins but creates update anomalies — if a Production record changes (venue corrected, dates updated), every embedded copy must be updated.
 2. **Multiple round-trips:** Query LogEntries, then for each unique production_id, query Productions. N+1 problem; expensive against Firestore's per-read billing.
 3. **Firestore collection group queries:** Can query across all `log_entries` subcollections, but requires structuring data in a Firestore-specific hierarchy that makes reasoning harder.
@@ -202,17 +213,20 @@ None of these patterns are as clean as a Postgres foreign key. For data that is 
 Building a custom backend gives full control but adds setup and maintenance overhead.
 
 **Stack options:**
+
 - **Fastify + Drizzle ORM + Postgres** — TypeScript-native, fast, good type safety. Drizzle generates typed SQL queries, has a migration system, and doesn't abstract away Postgres.
 - **Hono + Postgres** — lightweight, edge-deployable, TypeScript.
 - **tRPC + Prisma + Postgres** — full type safety end-to-end (server → client), good for a TypeScript monorepo where frontend and backend share types.
 
 **Pros:**
+
 - Full control over API design, caching, business logic
 - No BaaS constraints (no row count limits, no free-tier pausing, no opaque pricing)
 - Portable: Postgres is Postgres anywhere
 - Can use Postgres features directly: row-level security, triggers, full-text search, pg_vector if recommendations are added later
 
 **Cons:**
+
 - More setup work: auth system, file storage, deployment pipeline, database migrations, monitoring
 - Auth from scratch (or integrate a library like Lucia, Auth.js, or a managed auth service like Clerk)
 - File storage from scratch (or S3/R2/Backblaze)
@@ -220,6 +234,7 @@ Building a custom backend gives full control but adds setup and maintenance over
 - For one developer building a personal app, this is a meaningful ongoing time cost
 
 **Hosting (see Section 5 for detail):**
+
 - Railway or Fly.io for custom backend: ~$5–15/month for a small instance
 - A Postgres instance (Neon, Supabase Postgres standalone, or Railway's Postgres add-on): ~$0–10/month at personal-project scale
 
@@ -252,6 +267,7 @@ LogEntry
 ```
 
 Query patterns that matter:
+
 - "All productions of a work" → `SELECT * FROM productions WHERE work_id = $1`
 - "My diary sorted by date" → `SELECT * FROM log_entries WHERE user_id = $1 ORDER BY date_seen DESC`
 - "Search works by playwright" → Full-text search on `creators` JSONB or a separate indexed column
@@ -359,6 +375,7 @@ Key query patterns all work. The four query patterns above translate directly to
 Firestore is a non-relational document store. Attempting the Work → Production → LogEntry model:
 
 **Option 1: Collections**
+
 ```
 /works/{work_id}          — Work document
 /productions/{prod_id}    — Production document, work_id as field
@@ -370,6 +387,7 @@ Querying "all productions of a work": `collection('productions').where('work_id'
 Querying "my diary sorted by date": `collection('log_entries').where('user_id', '==', uid).orderBy('date_seen', 'desc')` — works, requires composite index on (user_id, date_seen).
 
 **Option 2: Subcollections**
+
 ```
 /works/{work_id}/productions/{prod_id}
 /users/{user_id}/log_entries/{entry_id}
@@ -378,6 +396,7 @@ Querying "my diary sorted by date": `collection('log_entries').where('user_id', 
 This is more Firestore-idiomatic but breaks the relationship between log_entries and productions (a log entry needs to reference a production, but they're in different root-level collections or different user subcollections). Joins don't exist; you must fetch the production separately.
 
 **Problems:**
+
 - Every "all productions of this work, with my log entries for each" query requires: one query for productions, then N queries for log entries (one per production). This is expensive and slow.
 - Firestore's 50,000 reads/day limit gets consumed faster than expected when each page view fetches multiple documents.
 - No aggregate queries natively — "most-logged productions" requires client-side aggregation or a maintained counter field updated on every write.
@@ -392,6 +411,7 @@ This is more Firestore-idiomatic but breaks the relationship between log_entries
 ### 5.1 Web Frontend
 
 **Vercel (Hobby/Free plan):**
+
 - Free for non-commercial personal projects
 - Expo Router web output deploys to Vercel with the official adapter
 - 100 GB bandwidth/month
@@ -400,6 +420,7 @@ This is more Firestore-idiomatic but breaks the relationship between log_entries
 - Cold starts on serverless functions can be 200–500ms
 
 **Netlify (Free plan):**
+
 - Commercially usable on the free tier (important distinction vs. Vercel)
 - 100 GB bandwidth/month
 - 300 build minutes/month
@@ -408,11 +429,13 @@ This is more Firestore-idiomatic but breaks the relationship between log_entries
 - Slightly more complex to configure than Vercel for Next.js-style apps
 
 **EAS Hosting (Expo's own hosting):**
+
 - Purpose-built for Expo Router web deployments
 - Simplest deployment path if already using Expo's toolchain
 - Pricing not publicly fixed; check expo.dev for current tiers
 
 **Cloudflare Pages:**
+
 - Unlimited bandwidth on free tier
 - Edge-deployed (no cold starts)
 - Good for static sites; Edge Functions for dynamic routes
@@ -423,11 +446,13 @@ This is more Firestore-idiomatic but breaks the relationship between log_entries
 ### 5.2 Mobile App Deployment
 
 **Apple Developer Program:** $99/year
+
 - Required to distribute on the App Store
 - TestFlight included for beta testing (up to 10,000 external testers)
 - Required for any iOS distribution, including internal testing on physical devices beyond your own
 
 **Google Play:** $25 one-time
+
 - Permanent account; no annual renewal
 - Internal testing tracks are free to use; no public distribution costs
 
@@ -436,6 +461,7 @@ This is more Firestore-idiomatic but breaks the relationship between log_entries
 For a personal project used primarily by one person, the friction-free answer is: **start web-only and skip both fees entirely.** Expo Router's web output is a Progressive Web App (PWA) that can be "installed" on iOS and Android from the browser, giving a home-screen icon and offline capability without App Store distribution.
 
 If you want native app distribution (App Store / Google Play):
+
 - Google Play at $25 is a no-brainer for long-term access to Android distribution.
 - Apple's $99/year is a real recurring cost for a personal project you don't monetize. At $99/year, over 3 years that's $297 just to distribute an app to yourself. PWA on iOS Safari is a reasonable alternative unless you need notifications or native APIs that require store distribution.
 
@@ -444,6 +470,7 @@ If you want native app distribution (App Store / Google Play):
 ### 5.3 Supabase (Database + Backend)
 
 **Free tier:** Sufficient for a single-user personal app for years.
+
 - 500 MB database: a personal theatre log with thousands of productions and log entries will use under 50 MB.
 - 1 GB file storage: posters and avatars at small scale.
 - **The inactivity pause is the main operational gotcha.** Solution: deploy a simple cron job (GitHub Actions on a schedule, or Cloudflare Worker) that pings `https://your-project.supabase.co/rest/v1/` every 5 days.
@@ -453,13 +480,13 @@ If you want native app distribution (App Store / Google Play):
 
 **Cost:** VPS cost only.
 
-| Provider | Specs | Monthly Cost |
-|---|---|---|
-| Hetzner CAX11 | 2 vCPU (ARM), 4 GB RAM, 40 GB SSD | ~€4.51 (~$5) |
-| Hetzner CX22 | 2 vCPU, 4 GB RAM, 40 GB SSD | ~€4.35 (~$5) |
-| DigitalOcean Basic | 1 vCPU, 1 GB RAM, 25 GB SSD | $6 |
-| Fly.io (shared-cpu-1x) | Shared CPU, 256 MB RAM | Free (up to 3 VMs on free plan) |
-| Railway (Dev plan) | Usage-based; minimal idle cost | ~$5 |
+| Provider               | Specs                             | Monthly Cost                    |
+| ---------------------- | --------------------------------- | ------------------------------- |
+| Hetzner CAX11          | 2 vCPU (ARM), 4 GB RAM, 40 GB SSD | ~€4.51 (~$5)                    |
+| Hetzner CX22           | 2 vCPU, 4 GB RAM, 40 GB SSD       | ~€4.35 (~$5)                    |
+| DigitalOcean Basic     | 1 vCPU, 1 GB RAM, 25 GB SSD       | $6                              |
+| Fly.io (shared-cpu-1x) | Shared CPU, 256 MB RAM            | Free (up to 3 VMs on free plan) |
+| Railway (Dev plan)     | Usage-based; minimal idle cost    | ~$5                             |
 
 A PocketBase binary on a $5/mo Hetzner VPS is a complete self-hosted backend for a personal project. Fly.io's free tier (3 shared VMs) can host PocketBase at zero cost, though the shared CPU and 256 MB RAM require the SQLite WAL-mode configuration to be lean.
 
@@ -469,29 +496,29 @@ A PocketBase binary on a $5/mo Hetzner VPS is a complete self-hosted backend for
 
 If building a custom backend:
 
-| Component | Option | Cost |
-|---|---|---|
-| Backend compute | Fly.io shared-cpu-1x | ~$0–5/mo |
-| Backend compute | Railway Dev | ~$5/mo |
-| Postgres | Neon free tier | $0 (0.5 GB, unlimited branches) |
-| Postgres | Supabase Postgres only | $0 (free project) |
-| Postgres | Railway Postgres add-on | ~$5/mo |
-| File storage | Cloudflare R2 | $0 (10 GB free tier) |
-| Auth | Lucia (self-managed) | $0 |
-| Auth | Clerk (managed) | $0 up to 10,000 MAU |
+| Component       | Option                  | Cost                            |
+| --------------- | ----------------------- | ------------------------------- |
+| Backend compute | Fly.io shared-cpu-1x    | ~$0–5/mo                        |
+| Backend compute | Railway Dev             | ~$5/mo                          |
+| Postgres        | Neon free tier          | $0 (0.5 GB, unlimited branches) |
+| Postgres        | Supabase Postgres only  | $0 (free project)               |
+| Postgres        | Railway Postgres add-on | ~$5/mo                          |
+| File storage    | Cloudflare R2           | $0 (10 GB free tier)            |
+| Auth            | Lucia (self-managed)    | $0                              |
+| Auth            | Clerk (managed)         | $0 up to 10,000 MAU             |
 
 For a personal project, a custom backend can be run for $0–10/month, but with meaningfully more setup time than Supabase or PocketBase.
 
 ### 5.6 Cost Summary
 
-| Setup | Monthly Cost | Notes |
-|---|---|---|
-| Expo web + Supabase free | $0 | Inactivity pause caveat; cron ping workaround |
-| Expo web + PocketBase on Fly.io free | $0 | Fly.io's 3 free VMs; 256 MB RAM is tight |
-| Expo web + PocketBase on Hetzner VPS | ~$5 | Best value for self-hosting |
-| Expo web + custom backend on Fly/Railway + Neon | ~$5–10 | Most control, most setup |
-| Native iOS distribution | +$99/year | Apple Developer Program |
-| Native Android distribution | +$25 one-time | Google Play |
+| Setup                                           | Monthly Cost  | Notes                                         |
+| ----------------------------------------------- | ------------- | --------------------------------------------- |
+| Expo web + Supabase free                        | $0            | Inactivity pause caveat; cron ping workaround |
+| Expo web + PocketBase on Fly.io free            | $0            | Fly.io's 3 free VMs; 256 MB RAM is tight      |
+| Expo web + PocketBase on Hetzner VPS            | ~$5           | Best value for self-hosting                   |
+| Expo web + custom backend on Fly/Railway + Neon | ~$5–10        | Most control, most setup                      |
+| Native iOS distribution                         | +$99/year     | Apple Developer Program                       |
+| Native Android distribution                     | +$25 one-time | Google Play                                   |
 
 ---
 
@@ -499,37 +526,37 @@ For a personal project, a custom backend can be run for $0–10/month, but with 
 
 ### Frontend Framework
 
-| Option | Web quality | Mobile quality | Shared code | Complexity | Verdict |
-|---|---|---|---|---|---|
-| **Expo Router + RNWeb** | Good (some quirks) | Excellent | ~80–90% | Low | Best for MVP, one-repo simplicity |
-| **Solito (Next.js + RN)** | Excellent | Excellent | ~60–70% (logic only) | Medium-high | Best web quality, more repos/complexity |
-| **Expo web only** | Good | — | N/A | Very low | If mobile is later/optional |
-| **Next.js only** | Excellent | — | N/A | Low | If you accept web-only MVP |
+| Option                    | Web quality        | Mobile quality | Shared code          | Complexity  | Verdict                                 |
+| ------------------------- | ------------------ | -------------- | -------------------- | ----------- | --------------------------------------- |
+| **Expo Router + RNWeb**   | Good (some quirks) | Excellent      | ~80–90%              | Low         | Best for MVP, one-repo simplicity       |
+| **Solito (Next.js + RN)** | Excellent          | Excellent      | ~60–70% (logic only) | Medium-high | Best web quality, more repos/complexity |
+| **Expo web only**         | Good               | —              | N/A                  | Very low    | If mobile is later/optional             |
+| **Next.js only**          | Excellent          | —              | N/A                  | Low         | If you accept web-only MVP              |
 
 ### UI Library
 
-| Library | Web CSS | Components | Tailwind-compatible | Complexity | Verdict |
-|---|---|---|---|---|---|
-| **NativeWind v4+** | Atomic CSS | No (primitives) | Yes (it IS Tailwind) | Low | Best for fast iteration |
-| **Tamagui** | Atomic CSS (compiler) | Yes (full kit) | No | High | Best for polished product |
-| **React Native Paper** | Inline styles | Yes (Material) | No | Low | Fine if you want Material Design |
+| Library                | Web CSS               | Components      | Tailwind-compatible  | Complexity | Verdict                          |
+| ---------------------- | --------------------- | --------------- | -------------------- | ---------- | -------------------------------- |
+| **NativeWind v4+**     | Atomic CSS            | No (primitives) | Yes (it IS Tailwind) | Low        | Best for fast iteration          |
+| **Tamagui**            | Atomic CSS (compiler) | Yes (full kit)  | No                   | High       | Best for polished product        |
+| **React Native Paper** | Inline styles         | Yes (Material)  | No                   | Low        | Fine if you want Material Design |
 
 ### Backend
 
-| Option | Database | Auth | Storage | Realtime | Cost (free) | Relational fit | Self-host |
-|---|---|---|---|---|---|---|---|
-| **Supabase** | Postgres | Yes (JWT/OAuth) | Yes | Yes | $0 (pause caveat) | Excellent | Complex (Docker) |
-| **PocketBase** | SQLite | Yes | Yes | Yes (SSE) | $0 (VPS cost) | Good | Simple (1 binary) |
-| **Firebase** | Firestore (NoSQL) | Yes | Yes | Yes | $0 (daily limits) | Poor | No |
-| **Custom (Fastify+Postgres)** | Postgres | DIY | DIY | DIY | $0–5 | Excellent | Manual |
+| Option                        | Database          | Auth            | Storage | Realtime  | Cost (free)       | Relational fit | Self-host         |
+| ----------------------------- | ----------------- | --------------- | ------- | --------- | ----------------- | -------------- | ----------------- |
+| **Supabase**                  | Postgres          | Yes (JWT/OAuth) | Yes     | Yes       | $0 (pause caveat) | Excellent      | Complex (Docker)  |
+| **PocketBase**                | SQLite            | Yes             | Yes     | Yes (SSE) | $0 (VPS cost)     | Good           | Simple (1 binary) |
+| **Firebase**                  | Firestore (NoSQL) | Yes             | Yes     | Yes       | $0 (daily limits) | Poor           | No                |
+| **Custom (Fastify+Postgres)** | Postgres          | DIY             | DIY     | DIY       | $0–5              | Excellent      | Manual            |
 
 ### Database for the Work → Production Model
 
-| Database | Foreign keys | Arrays/JSONB | Full-text search | Query complexity | Best for |
-|---|---|---|---|---|---|
-| **Postgres** | Native | Excellent (JSONB) | Built-in (tsvector) | Low | Any scale; ideal |
-| **SQLite** | Yes (pragma) | JSON functions | FTS5 (excellent) | Low–medium | Personal/small scale |
-| **Firestore** | None (emulated) | Documents | None (external req'd) | High | Document-oriented data |
+| Database      | Foreign keys    | Arrays/JSONB      | Full-text search      | Query complexity | Best for               |
+| ------------- | --------------- | ----------------- | --------------------- | ---------------- | ---------------------- |
+| **Postgres**  | Native          | Excellent (JSONB) | Built-in (tsvector)   | Low              | Any scale; ideal       |
+| **SQLite**    | Yes (pragma)    | JSON functions    | FTS5 (excellent)      | Low–medium       | Personal/small scale   |
+| **Firestore** | None (emulated) | Documents         | None (external req'd) | High             | Document-oriented data |
 
 ---
 
@@ -558,6 +585,7 @@ A custom backend (Fastify/tRPC + Postgres) is the right choice if you outgrow Su
 **Hosting:** Web frontend on Vercel (free) or EAS Hosting. Start web-only; skip App Store fees initially. Add a GitHub Actions cron to keep the Supabase project awake. Total monthly cost: $0 until you decide to scale.
 
 **Mobile distribution decision point:** When you have real users who want native apps, add:
+
 - Google Play ($25 one-time) — easy decision
 - Apple Developer Program ($99/year) — only worth it when others will use the app, or when PWA limitations become a real problem (primarily: push notifications on iOS require a native app)
 

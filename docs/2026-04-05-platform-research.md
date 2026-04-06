@@ -36,27 +36,28 @@ Deep technical research into Letterboxd, Rotten Tomatoes, Goodreads, and similar
 
 ### Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Java on custom in-house CMS framework |
-| App Server | Apache Tomcat |
-| Web Server | nginx with in-house load balancing |
-| Database | PostgreSQL with read replicas |
-| ORM | Hibernate |
-| Cache | Redis (metadata), Varnish (HTTP-level, custom fork) |
-| CDN | Cloudflare |
-| Frontend | Server-side rendered HTML, jQuery, ProseMirror (rich text editor), Tailwind CSS + Vite (recent) |
-| iOS App | Native Swift/Objective-C (built by Cactuslab) |
-| Android App | Kotlin with Ktor (auto-generated API clients via OpenAPI) |
-| Data Source | TMDb API (syncs within 30 hours) |
-| Streaming Data | JustWatch |
-| Recommendations | Nanocrowd/ViewerVoice (nanogenre clustering from review language) |
+| Layer           | Technology                                                                                      |
+| --------------- | ----------------------------------------------------------------------------------------------- |
+| Backend         | Java on custom in-house CMS framework                                                           |
+| App Server      | Apache Tomcat                                                                                   |
+| Web Server      | nginx with in-house load balancing                                                              |
+| Database        | PostgreSQL with read replicas                                                                   |
+| ORM             | Hibernate                                                                                       |
+| Cache           | Redis (metadata), Varnish (HTTP-level, custom fork)                                             |
+| CDN             | Cloudflare                                                                                      |
+| Frontend        | Server-side rendered HTML, jQuery, ProseMirror (rich text editor), Tailwind CSS + Vite (recent) |
+| iOS App         | Native Swift/Objective-C (built by Cactuslab)                                                   |
+| Android App     | Kotlin with Ktor (auto-generated API clients via OpenAPI)                                       |
+| Data Source     | TMDb API (syncs within 30 hours)                                                                |
+| Streaming Data  | JustWatch                                                                                       |
+| Recommendations | Nanocrowd/ViewerVoice (nanogenre clustering from review language)                               |
 
 The founders (Karl von Randow and Matthew Buchanan) built the CMS framework through their studio Cactuslab. Karl also created Charles Proxy and Camera+. The architecture is traditional (Tomcat + nginx + PostgreSQL + Varnish + Redis) rather than cloud-native/serverless.
 
 **Open Source Footprint** (github.com/Letterboxd): 7 public repos including a Varnish Cache fork (C), OpenAPI Kotlin client generator, ProseMirror selection menu plugin, and Swagger-core fork.
 
 Sources:
+
 - https://www.quora.com/What-is-the-technology-stack-behind-Letterboxd
 - https://github.com/Letterboxd
 - https://cactuslab.com/work/letterboxd-for-ios/
@@ -69,7 +70,7 @@ Sources:
 - **Member (User)**: Username, display name, bio, avatar, pronoun, location, account tier (free/Pro/Patron/HQ), privacy settings, favorite films, followed streaming services, followers/following.
 - **Rating**: Member + Film + value (0.5-5.0 in 0.5 increments, 10 discrete values). Timestamp. Exists independently of reviews/diary.
 - **Review**: Member + Film + rich text (HTML via ProseMirror). Optional rating. Spoiler flag. Like/comment counts.
-- **Diary Entry (LogEntry)**: Member + Film + watched date + logged date. Optional rating, optional review. Rewatch flag. User-defined tags. The record of *watching* on a specific date.
+- **Diary Entry (LogEntry)**: Member + Film + watched date + logged date. Optional rating, optional review. Rewatch flag. User-defined tags. The record of _watching_ on a specific date.
 - **List**: Owner, title, description, tags. Ranked flag (entries get ordinal positions). Privacy: public/private/friends/unlisted. Entries have optional per-film notes.
 - **Watchlist**: Per-member ordered collection. Essentially a special-case list.
 - **Activity**: Event stream per member (ratings, reviews, diary entries, likes, comments, list updates, follows).
@@ -79,6 +80,7 @@ Sources:
 **Export Limitation**: Exports use Letterboxd URI slugs, not TMDb IDs, making external interoperability difficult by design.
 
 Sources:
+
 - https://www.feadin.eu/en/posts/letterboxd_i_love_you_but_we_need_to_talk_about_your_exports/
 - https://docs.rs/letterboxd (Rust client reveals API structures)
 
@@ -92,6 +94,7 @@ Sources:
 - **Histogram**: Film pages show raw distribution at each half-star level.
 
 Sources:
+
 - https://letterboxd.com/journal/the-score-new-weighted-average-ratings/
 - https://sol.sbc.org.br/index.php/webmedia/article/download/37951/37729
 
@@ -105,6 +108,7 @@ Sources:
 - **Community wrappers**: Python (PyPI), Rust (crates.io), JavaScript (npm) -- all limited by access constraints.
 
 Sources:
+
 - https://api-docs.letterboxd.com/
 - https://letterboxd.com/api-beta/
 
@@ -130,18 +134,19 @@ Sources:
 
 ### Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Cloud | AWS (confirmed by internal URLs: `rt-client-facade-v2-6-1.aws.prod.flixster.com`) |
-| Backend Languages | Python, C#, Java, TypeScript |
-| Architecture | Migrating from monolith to microservices, event-driven |
-| Auth | AWS Cognito (passwordless since Aug 2022 via Google, Facebook, email magic links) |
-| Editorial CMS | WordPress with Jetpack |
-| Ads | Google Publisher Tag (GPT) + Versant MPS |
-| Frontend | JSON-LD structured data (schema.org). 25% higher CTR after adding structured data to 100k+ pages |
-| AI/ML | LLM integration for metadata; job postings mention MCP Servers |
+| Layer             | Technology                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------ |
+| Cloud             | AWS (confirmed by internal URLs: `rt-client-facade-v2-6-1.aws.prod.flixster.com`)                |
+| Backend Languages | Python, C#, Java, TypeScript                                                                     |
+| Architecture      | Migrating from monolith to microservices, event-driven                                           |
+| Auth              | AWS Cognito (passwordless since Aug 2022 via Google, Facebook, email magic links)                |
+| Editorial CMS     | WordPress with Jetpack                                                                           |
+| Ads               | Google Publisher Tag (GPT) + Versant MPS                                                         |
+| Frontend          | JSON-LD structured data (schema.org). 25% higher CTR after adding structured data to 100k+ pages |
+| AI/ML             | LLM integration for metadata; job postings mention MCP Servers                                   |
 
 Sources:
+
 - https://www.showbizjobs.com/jobs/nbcuniversal-staff-engineer-rotten-tomatoes-in-orlando/jid-369vqn
 - https://jobs.smartrecruiters.com/Versant3/744000118606982-staff-engineer-rotten-tomatoes
 
@@ -158,6 +163,7 @@ Sources:
 **JSON-LD Markup**: Embeds schema.org Movie, TVSeason, TVEpisode, AggregateRating types.
 
 Sources:
+
 - https://www.kaggle.com/datasets/stefanoleone992/rotten-tomatoes-movies-and-critic-reviews-dataset
 - https://www.rottentomatoes.com/faq
 
@@ -179,31 +185,32 @@ The process is **surprisingly manual**:
 #### Popcornmeter (Audience)
 
 - Users rate 0.5-5 stars. Rating >= 3.5 = positive.
-- Percentage = (ratings >= 3.5) / total * 100
+- Percentage = (ratings >= 3.5) / total \* 100
 - Two sub-scores: Verified (Fandango ticket confirmed) and All.
 
 #### Thresholds
 
-| Icon | Threshold |
-|------|-----------|
-| Fresh (red tomato) | >= 60% Tomatometer |
-| Rotten (green splat) | < 60% Tomatometer |
-| Certified Fresh | >= 75% + minimum reviews (80 wide/40 limited) + 5 Top Critic reviews + score stability |
-| Hot (audience) | >= 60% Popcornmeter |
-| Stale (audience) | < 60% Popcornmeter |
-| Verified Hot | >= 90% verified + 500 verified ratings (wide) |
+| Icon                 | Threshold                                                                              |
+| -------------------- | -------------------------------------------------------------------------------------- |
+| Fresh (red tomato)   | >= 60% Tomatometer                                                                     |
+| Rotten (green splat) | < 60% Tomatometer                                                                      |
+| Certified Fresh      | >= 75% + minimum reviews (80 wide/40 limited) + 5 Top Critic reviews + score stability |
+| Hot (audience)       | >= 60% Popcornmeter                                                                    |
+| Stale (audience)     | < 60% Popcornmeter                                                                     |
+| Verified Hot         | >= 90% verified + 500 verified ratings (wide)                                          |
 
 Certified Fresh is retained unless score drops below 70%. Verified Hot removed if below 80%.
 
 #### Score Display Minimums (by box office forecast)
 
-| Forecast | Min Reviews for Tomatometer | Min Verified for Popcornmeter |
-|----------|---------------------------|------------------------------|
-| $120M+ | 40 | 500 |
-| $60M-$120M | 20 | 300 |
-| <$60M | 10 | proportionally lower |
+| Forecast   | Min Reviews for Tomatometer | Min Verified for Popcornmeter |
+| ---------- | --------------------------- | ----------------------------- |
+| $120M+     | 40                          | 500                           |
+| $60M-$120M | 20                          | 300                           |
+| <$60M      | 10                          | proportionally lower          |
 
 Sources:
+
 - https://thehustle.co/01222020-rotten-tomatoes-reviews
 - https://www.rottentomatoes.com/about
 - https://editorial.rottentomatoes.com/article/introducing-verified-audience-score/
@@ -211,6 +218,7 @@ Sources:
 ### Approved Critics & Top Critics
 
 **Approved Critics** must meet criteria in Insight, Audience reach, Quality, Dedication:
+
 - Written: 2+ years, 200k+ monthly unique visitors (SimilarWeb) or established publication
 - Video: 30k+ YouTube subscribers
 - Podcasts: 200+ Apple Podcasts ratings, 4+ episodes/month
@@ -221,6 +229,7 @@ Sources:
 ### Verified Audience Score (Anti-Review-Bombing)
 
 Launched May 2019:
+
 - Links Fandango account; checks email matches ticket purchase AND showing time has passed
 - One verified review per transaction
 - Post-screening push notifications via Fandango app prompt reviews
@@ -240,12 +249,13 @@ Launched May 2019:
 - **Third-party ecosystem**: Many scrapers and wrappers exist due to prohibitive API cost (rottentomatoes-python, rotten_tomatoes_client, etc.)
 
 Sources:
+
 - https://developer.fandango.com/rotten_tomatoes
 - https://github.com/jaebradley/rotten_tomatoes_client
 
 ### Controversies & Vulnerabilities
 
-**Bunker 15 Manipulation (2023)**: PR firm paid critics $50+ per positive review for 5+ years. Exploited loosened 2018 eligibility requirements. Negative reviews redirected to blogs RT doesn't track. Example: *Ophelia* went from 48% (Rotten) to 62% (Fresh) after 7/8 paid positive reviews.
+**Bunker 15 Manipulation (2023)**: PR firm paid critics $50+ per positive review for 5+ years. Exploited loosened 2018 eligibility requirements. Negative reviews redirected to blogs RT doesn't track. Example: _Ophelia_ went from 48% (Rotten) to 62% (Fresh) after 7/8 paid positive reviews.
 
 **Review Bombing**: Led to verified audience score system (2019). But Fandango-only verification excludes most ticket buyers.
 
@@ -254,6 +264,7 @@ Sources:
 **Critic Expansion (post-2016)**: Reviewer pool grew significantly, including lesser-known outlets. Correlated with rising average Tomatometer scores and growing critic/audience divergence.
 
 Sources:
+
 - https://www.statsignificant.com/p/is-rotten-tomatoes-still-reliable
 - https://dexerto.com/tv-movies/rotten-tomatoes-scores-manipulated-pr-firm-paying-critics-reviews-2282558/
 
@@ -265,18 +276,19 @@ Sources:
 
 ### Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Ruby on Rails (founder coded it solo learning Rails in 2006) |
-| Database | MySQL (strong circumstantial evidence), likely Amazon RDS post-acquisition |
-| Frontend | React (modern, async-loading), with legacy Rails views underneath. jQuery, CoffeeScript, GSAP |
-| Hosting | AWS (post-acquisition) |
-| CDN | CloudFront; assets from `s.gr-assets.com` and `m.media-amazon.com` |
-| Auth | Amazon sign-in integration |
-| Mobile | Native iOS (Swift/Obj-C) and Android (Java) |
+| Layer           | Technology                                                                                                                          |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Backend         | Ruby on Rails (founder coded it solo learning Rails in 2006)                                                                        |
+| Database        | MySQL (strong circumstantial evidence), likely Amazon RDS post-acquisition                                                          |
+| Frontend        | React (modern, async-loading), with legacy Rails views underneath. jQuery, CoffeeScript, GSAP                                       |
+| Hosting         | AWS (post-acquisition)                                                                                                              |
+| CDN             | CloudFront; assets from `s.gr-assets.com` and `m.media-amazon.com`                                                                  |
+| Auth            | Amazon sign-in integration                                                                                                          |
+| Mobile          | Native iOS (Swift/Obj-C) and Android (Java)                                                                                         |
 | Recommendations | Discovereads ML engine (acquired 2011), uses restricted SVD, nearest neighbors, mean extraction. Analyzes "20 billion data points." |
 
 Sources:
+
 - https://mixergy.com/interviews/goodreads-otis-chandler/
 - https://stackshare.io/goodreads/goodreads
 
@@ -285,6 +297,7 @@ Sources:
 **Key Design: Works vs. Editions**
 
 Goodreads uses a two-level hierarchy:
+
 - **Work**: The abstract creative concept (e.g., "To Kill a Mockingbird"). Aggregate ratings computed from all editions.
 - **Edition (Book)**: A specific manifestation -- publisher, ISBN, format (hardcover/paperback/audio/ebook), language, cover art, page count. Has its own Goodreads book_id.
 
@@ -292,28 +305,30 @@ One Work has many Editions. Ratings attach to editions but aggregate up to the W
 
 **Full Entity List:**
 
-| Entity | Key Fields |
-|--------|-----------|
-| Work | work_id, original_title, original_pub_year, aggregate_rating, ratings_count |
-| Book/Edition | book_id, work_id, title, isbn, isbn13, asin, publisher, pub_date, format, language, num_pages, cover |
-| Author | author_id, name, bio, image, fans_count, works_count, avg_rating |
-| User | user_id, username, profile, friend_count, review_count |
-| Review | review_id, user_id, book_id, rating (1-5), text, date_added, date_read, spoiler_flag |
-| Shelf | shelf_id, user_id, name, exclusive_flag, sortable, featured, sticky |
-| Shelf-Book | user_id, book_id, shelf_name, date_added/read/started, position |
-| UserStatus | status_id, user_id, book_id, page, percent, comment, created_at |
-| Series | series_id, title, description, works_count |
-| ReadingChallenge | user_id, year, goal, books_read_count |
+| Entity           | Key Fields                                                                                           |
+| ---------------- | ---------------------------------------------------------------------------------------------------- |
+| Work             | work_id, original_title, original_pub_year, aggregate_rating, ratings_count                          |
+| Book/Edition     | book_id, work_id, title, isbn, isbn13, asin, publisher, pub_date, format, language, num_pages, cover |
+| Author           | author_id, name, bio, image, fans_count, works_count, avg_rating                                     |
+| User             | user_id, username, profile, friend_count, review_count                                               |
+| Review           | review_id, user_id, book_id, rating (1-5), text, date_added, date_read, spoiler_flag                 |
+| Shelf            | shelf_id, user_id, name, exclusive_flag, sortable, featured, sticky                                  |
+| Shelf-Book       | user_id, book_id, shelf_name, date_added/read/started, position                                      |
+| UserStatus       | status_id, user_id, book_id, page, percent, comment, created_at                                      |
+| Series           | series_id, title, description, works_count                                                           |
+| ReadingChallenge | user_id, year, goal, books_read_count                                                                |
 
 **Dataset scale** (UCSD research dataset): 2,360,655 books, 1,521,962 works, 829,529 authors, 400,390 series.
 
 Sources:
+
 - https://cseweb.ucsd.edu/~jmcauley/datasets/goodreads.html
 - https://help.goodreads.com/s/article/Librarian-Manual-How-to-combine-editions
 
 ### Key Features
 
 **Bookshelves**: Three default exclusive shelves (Read, Currently Reading, Want to Read) plus user-created custom shelves. Two types:
+
 - **Exclusive**: Book can only be on one exclusive shelf (including defaults). Used for "DNF", "Wishlist", etc.
 - **Non-exclusive**: Book can be on many simultaneously ("favorites", "sci-fi", "2024-reads").
 
@@ -342,6 +357,7 @@ Shelf names double as genre/tag data -- if many users shelve a book as "science-
 - **Data sources**: Amazon Product Advertising API, Ingram Content Group (2012-2013), WorldCat, Library of Congress
 
 Sources:
+
 - https://github.com/adamkrogh/goodreads-dotnet/wiki/API-methods
 - https://news.ycombinator.com/item?id=25405737
 
@@ -366,6 +382,7 @@ Sources:
 **What failed**: Zero post-acquisition investment, API killed, search never improved, recommendation engine stagnated, no moderation tools, data quality relies on volunteer labor, 5-star integer scale produces compressed distributions.
 
 Sources:
+
 - https://onezero.medium.com/almost-everything-about-goodreads-is-broken-662e424244d5
 - https://lithub.com/the-problems-with-goodreads/
 - https://news.ycombinator.com/item?id=36575003
@@ -381,6 +398,7 @@ Sources:
 **Rating**: 0.5-5.0 stars (half-star increments). Uses weighted averages (formula undisclosed, known to be more than simple averaging).
 
 **Unique Features**:
+
 - **Descriptor system**: Community-voted tags for mood (warm, uplifting), lyrical content (educational, political), form (concept album, suite). Separate from genres.
 - **Genre tree**: Deeply hierarchical, community-maintained. Considered the most comprehensive genre taxonomy of any platform.
 - **Charts**: 50+ filter options (descriptor, subgenre, language, label, "diverse" charts with one entry per artist, popularity weighting).
@@ -418,6 +436,7 @@ Sources:
 **Scale**: 4M+ users. Founded 2019 by Nadia Odunayo (largely solo developer).
 
 **Tech Stack (confirmed)**:
+
 - Ruby on Rails, PostgreSQL (migrated from Heroku to YugabyteDB for distributed SQL)
 - Devise (auth), Sidekiq (background jobs), Makara (read/write splitting)
 - Turbo Native (Hotwire) for cross-platform iOS/Android
@@ -432,6 +451,7 @@ Sources:
 **Scale**: Largest film/TV database. Owned by Amazon. AWS infrastructure.
 
 **Rating**: 1-10 integer. **Industry-standard Bayesian formula** (most documented):
+
 ```
 WR = (v / (v + m)) * R + (m / (v + m)) * C
 
@@ -446,6 +466,7 @@ Additional weighting by: user voting history length, rating recency, account age
 ### Metacritic (Multi-Media Critic Aggregation)
 
 **Scoring**: Metascore is a **weighted average of critic scores** on 0-100 scale:
+
 1. Each critic review converted to 0-100 (even non-numeric reviews get assigned scores)
 2. Each publication assigned a weight based on prestige/consistency/quality (<6 tiers)
 3. For movies/music, scores normalized on a curve before averaging
@@ -459,19 +480,20 @@ Additional weighting by: user voting history length, rating recency, account age
 
 ### Rating Systems Comparison
 
-| Approach | Formula | Pros | Cons | Used By |
-|----------|---------|------|------|---------|
-| Simple Average | sum/count | Easy | Skewed by few votes, unreliable at low N | Goodreads (apparent) |
-| Bayesian Average | `(v*R + m*C)/(v+m)` | Handles low-vote items; bounded; converges to true mean | Must choose m; pulls everything toward global mean initially | IMDb, MAL, AniList |
-| Weighted Average | Per-user weights (proprietary) | Accounts for user credibility, fraud | Complex, opaque | Letterboxd, RYM |
-| Binary Percentage | Fresh count / Total * 100 | Simple to understand | Loses intensity; rewards safe over bold | Rotten Tomatoes |
-| Weighted Critic | Publication-weighted average + normalization | Expert opinion; resistant to brigading | Subjective weights; excludes user voice | Metacritic |
+| Approach          | Formula                                      | Pros                                                    | Cons                                                         | Used By              |
+| ----------------- | -------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------ | -------------------- |
+| Simple Average    | sum/count                                    | Easy                                                    | Skewed by few votes, unreliable at low N                     | Goodreads (apparent) |
+| Bayesian Average  | `(v*R + m*C)/(v+m)`                          | Handles low-vote items; bounded; converges to true mean | Must choose m; pulls everything toward global mean initially | IMDb, MAL, AniList   |
+| Weighted Average  | Per-user weights (proprietary)               | Accounts for user credibility, fraud                    | Complex, opaque                                              | Letterboxd, RYM      |
+| Binary Percentage | Fresh count / Total \* 100                   | Simple to understand                                    | Loses intensity; rewards safe over bold                      | Rotten Tomatoes      |
+| Weighted Critic   | Publication-weighted average + normalization | Expert opinion; resistant to brigading                  | Subjective weights; excludes user voice                      | Metacritic           |
 
 **Key implementation insight**: The Bayesian average formula is the industry starting point. The weight function `w = m/(m+n)` approaches 0 when an item has few ratings (defaulting to system mean) and 1 as ratings accumulate. Choose m based on your data's vote-count distribution.
 
 ### Metadata: External APIs vs. User-Contributed
 
 **External API approach** (most common):
+
 - TMDb: Letterboxd, Serializd, most movie/TV clones
 - IGDB (Twitch): Backloggd, Glitchwave
 - MusicBrainz/Discogs/Spotify: Music platforms
@@ -485,6 +507,7 @@ Additional weighting by: user voting history length, rating recency, account age
 ### Social Feature Architecture
 
 **Activity Feed patterns**:
+
 - **Fan-out on write** (normal users <10k followers): When user acts, immediately write to all followers' feed tables. Read = simple query.
 - **Fan-out on read** (high-follower accounts): Store events once, compute feeds at query time.
 - **Hybrid** (industry standard): Write fan-out for most users, read fan-out for celebrities.
@@ -496,6 +519,7 @@ Additional weighting by: user voting history length, rating recency, account age
 ### List/Collection Features (Universal Pattern)
 
 All successful platforms implement:
+
 - **Status tracking**: Watching/Completed/Dropped/Plan to Watch (MAL pattern, adopted universally)
 - **Custom lists**: User-created, orderable collections
 - **Favorites/Bookmarks**: Quick-save separate from lists
@@ -510,36 +534,40 @@ All successful platforms implement:
 
 ### Content Moderation
 
-| Model | How | Quality | Speed | Used By |
-|-------|-----|---------|-------|---------|
-| Pre-moderation | All content reviewed before publishing | Highest | Slowest | RYM |
-| Post-moderation | Content live immediately, reviewed after | Medium | Fastest | Most platforms |
-| Hybrid | AI auto-filters clear violations, humans handle edge cases | High | Fast | Industry standard |
-| Community | Trusted users gain moderator privileges | Varies | Medium | RYM, MAL |
-| Federation | Each instance sets own rules | Per-instance | Per-instance | BookWyrm, NeoDB |
+| Model           | How                                                        | Quality      | Speed        | Used By           |
+| --------------- | ---------------------------------------------------------- | ------------ | ------------ | ----------------- |
+| Pre-moderation  | All content reviewed before publishing                     | Highest      | Slowest      | RYM               |
+| Post-moderation | Content live immediately, reviewed after                   | Medium       | Fastest      | Most platforms    |
+| Hybrid          | AI auto-filters clear violations, humans handle edge cases | High         | Fast         | Industry standard |
+| Community       | Trusted users gain moderator privileges                    | Varies       | Medium       | RYM, MAL          |
+| Federation      | Each instance sets own rules                               | Per-instance | Per-instance | BookWyrm, NeoDB   |
 
 ---
 
 ## 6. Open Source References
 
 ### BookWyrm (Goodreads Alternative) -- Most Mature
+
 - **GitHub**: github.com/bookwyrm-social/bookwyrm (2.7k stars)
 - **Stack**: Python/Django, PostgreSQL 14+, Celery + Redis, Bulma.io CSS, Gunicorn, Docker, nginx
 - **Key**: ActivityPub federation (interoperates with Mastodon). Custom activity types for book-specific data. 74.6% Python, 10,583 commits.
 - **Learning**: Clean Django model -> ActivityPub serialization. How to extend ActivityPub for domain-specific data.
 
 ### NeoDB (Multi-Media Cataloging) -- Most Comprehensive
+
 - **GitHub**: github.com/neodb-social/neodb
 - **Stack**: Python/Django, ActivityPub (modified Takahe server), containerized
 - **Key**: Single platform for books, movies, TV, music, games, podcasts, **performances**. Integrates 19+ external data sources. Mastodon-compatible API. ATProto/Bluesky support.
 - **Learning**: Best reference for multi-media cataloging. Shows how to normalize diverse media types into a single data model.
 
 ### Cloneboxd (Letterboxd Clone)
+
 - **GitHub**: github.com/ddanielsantos/cloneboxd (archived)
 - **Stack**: TypeScript, React + Relay, Koa + GraphQL, MongoDB, TMDB API, Vite, Chakra UI
 - **Learning**: GraphQL-based review platform; Relay for declarative data fetching.
 
 ### Other Letterboxd Clones
+
 - MERN stack (MongoDB/Express/Node/EJS + TMDB): github.com/Sorracha-A/Letterboxd-Clone
 - React + Firebase: github.com/janaiscoding/letterboxd-clone
 - React + GraphQL + Prisma: github.com/drothschild/letterboxed-clone
@@ -547,16 +575,19 @@ All successful platforms implement:
 - PHP + AWS RDS + TMDB: github.com/ClintHarding/Letterboxd-Clone
 
 ### Rating Library (Ruby)
+
 - **GitHub**: github.com/wbotelhos/rating
 - Implements IMDb Bayesian formula: `WR = (v/(v+m)) * R + (m/(v+m)) * C`
 - Scoped ratings (rate same item in different contexts), cached aggregation, configurable via YAML.
 
 ### Trakt API (TV/Movie Tracking)
+
 - **GitHub**: github.com/trakt/trakt-api
 - **Stack**: ts-rest + zod (type-safe), Hono server, Deno runtime, OpenAPI spec
 - RESTful with scrobbling, watch history, ratings, lists, social features.
 
 ### AniList API (GraphQL Reference)
+
 - **Docs**: docs.anilist.co
 - 500k+ anime/manga entries. AniList's own websites run on this API -- reference for "API-first" cataloging platforms.
 
@@ -570,19 +601,19 @@ All successful platforms implement:
 
 #### Major Venues
 
-| Venue | Notes |
-|-------|-------|
-| **Teatro Nacional Claudio Santoro** | Flagship. Designed by Oscar Niemeyer. Multiple halls (Sala Villa-Lobos, Sala Martins Pena, Sala Alberto Nepomuceno). Periodic closures for renovation. |
-| **CCBB Brasilia** (Centro Cultural Banco do Brasil) | One of the most visited cultural centres in the world. National touring productions. |
-| **Teatro SESC Paulo Autran** (SESC Garagem) | SESC's Brasilia venue. Theatre, music, workshops. |
-| **Teatro Dulcina de Moraes** | On the Funarte complex. Important for independent/experimental work. |
-| **Espaço Cultural Renato Russo** (508 Sul) | Public cultural space. Experimental and community theatre. |
-| **Teatro Plinio Marcos** (Funarte) | Smaller, experimental and independent. |
-| **Teatro Goldoni** | Private. Commercial comedies and stand-up. |
-| **Teatro da Caixa** (Caixa Cultural Brasilia) | Bank-sponsored cultural centre. Regular performing arts. |
-| **Centro de Convenções Ulysses Guimarães** | Hosts larger touring musicals and concerts. |
-| **Teatro dos Bancarios** | Run by banking workers' union. Active mid-size venue. |
-| **Teatro Mapati** | Independent venue. |
+| Venue                                               | Notes                                                                                                                                                  |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Teatro Nacional Claudio Santoro**                 | Flagship. Designed by Oscar Niemeyer. Multiple halls (Sala Villa-Lobos, Sala Martins Pena, Sala Alberto Nepomuceno). Periodic closures for renovation. |
+| **CCBB Brasilia** (Centro Cultural Banco do Brasil) | One of the most visited cultural centres in the world. National touring productions.                                                                   |
+| **Teatro SESC Paulo Autran** (SESC Garagem)         | SESC's Brasilia venue. Theatre, music, workshops.                                                                                                      |
+| **Teatro Dulcina de Moraes**                        | On the Funarte complex. Important for independent/experimental work.                                                                                   |
+| **Espaço Cultural Renato Russo** (508 Sul)          | Public cultural space. Experimental and community theatre.                                                                                             |
+| **Teatro Plinio Marcos** (Funarte)                  | Smaller, experimental and independent.                                                                                                                 |
+| **Teatro Goldoni**                                  | Private. Commercial comedies and stand-up.                                                                                                             |
+| **Teatro da Caixa** (Caixa Cultural Brasilia)       | Bank-sponsored cultural centre. Regular performing arts.                                                                                               |
+| **Centro de Convenções Ulysses Guimarães**          | Hosts larger touring musicals and concerts.                                                                                                            |
+| **Teatro dos Bancarios**                            | Run by banking workers' union. Active mid-size venue.                                                                                                  |
+| **Teatro Mapati**                                   | Independent venue.                                                                                                                                     |
 
 #### Character of the Scene
 
@@ -598,6 +629,7 @@ All successful platforms implement:
 These are the actually useful data sources for a Brasilia-focused platform:
 
 #### Sympla API (Primary -- Ticketing)
+
 - **URL**: https://developers.sympla.com.br/
 - **What**: Major Brazilian events/ticketing platform. Very widely used for theatre ticketing in Brasilia.
 - **Data**: Events, dates, venues, categories, ticket availability.
@@ -605,6 +637,7 @@ These are the actually useful data sources for a Brasilia-focused platform:
 - **Verdict**: **#1 most useful source** for current/upcoming ticketed events. Many independent Brasilia theatre productions sell through Sympla.
 
 #### Mapas Culturais API (Primary -- Government Cultural Mapping)
+
 - **URL**: https://github.com/mapasculturais/mapasculturais
 - **What**: Open-source cultural mapping platform developed by Brazilian Ministry of Culture (Instituto TIM + Hacklab). Used by state/municipal governments across Brazil to map cultural agents, spaces, events, and projects. The DF (Distrito Federal) likely runs an instance.
 - **Stack**: PHP (Slim framework + Doctrine ORM)
@@ -613,6 +646,7 @@ These are the actually useful data sources for a Brasilia-focused platform:
 - **Verdict**: **If the DF instance is active, this is the best structured source for venues, theatre companies, and events in Brasilia.** Check `cultura.df.gov.br` for the instance.
 
 #### SALIC / VerSalic API (Federal Arts Funding)
+
 - **URL**: https://versalic.cultura.gov.br/ (portal) / https://api.salic.cultura.gov.br/ (API)
 - **What**: Public transparency portal for Lei Rouanet (federal arts incentive law). Every project receiving Lei Rouanet funding is listed.
 - **Data**: Project name, proponent, municipality, art segment (including "Artes Cenicas" -- performing arts), approved budget, execution dates.
@@ -620,37 +654,39 @@ These are the actually useful data sources for a Brasilia-focused platform:
 - **Verdict**: Historical and current funded projects. Not real-time event listings, but a database of funded theatre projects in DF/Brasilia.
 
 #### Ingresse API (Secondary -- Ticketing)
+
 - **URL**: https://developer.ingresse.com/
 - **What**: Another Brazilian ticketing platform. Less dominant in Brasilia than Sympla.
 - **Access**: Developer API (check current status).
 - **Verdict**: Secondary ticketing data source.
 
 #### Portal Brasileiro de Dados Abertos
+
 - **URL**: https://dados.gov.br/
 - **What**: Brazilian open data portal. Has datasets from Ministry of Culture.
 - **Search for**: "cultura", "artes cenicas", "Lei Rouanet"
 
 ### 7c. Brazilian Institutional Sources (No APIs, Scrapeable)
 
-| Source | URL | Notes |
-|--------|-----|-------|
-| **Enciclopedia Itau Cultural** | https://enciclopedia.itaucultural.org.br/ | Closest thing Brazil has to a theatre encyclopedia. Entries for companies, artists, works. Not a listings DB. |
-| **SESC-DF** | https://www.sescdf.com.br/ | Publishes event listings. Scrapeable. |
-| **CCBB Brasilia** | https://ccbb.com.br/brasilia/ | Programming calendar. Structured, scrapeable. |
-| **Caixa Cultural** | https://www.caixacultural.gov.br/ | Brasilia unit programming. |
-| **Secretaria de Cultura do DF** | https://www.cultura.df.gov.br/ | FAC-funded project data. Published editais and results. |
-| **FUNARTE** | https://www.funarte.gov.br/ | Administers theatres (Plinio Marcos, Sala Funarte in Brasilia). Publishes calls/reports as PDFs. |
+| Source                          | URL                                       | Notes                                                                                                         |
+| ------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Enciclopedia Itau Cultural**  | https://enciclopedia.itaucultural.org.br/ | Closest thing Brazil has to a theatre encyclopedia. Entries for companies, artists, works. Not a listings DB. |
+| **SESC-DF**                     | https://www.sescdf.com.br/                | Publishes event listings. Scrapeable.                                                                         |
+| **CCBB Brasilia**               | https://ccbb.com.br/brasilia/             | Programming calendar. Structured, scrapeable.                                                                 |
+| **Caixa Cultural**              | https://www.caixacultural.gov.br/         | Brasilia unit programming.                                                                                    |
+| **Secretaria de Cultura do DF** | https://www.cultura.df.gov.br/            | FAC-funded project data. Published editais and results.                                                       |
+| **FUNARTE**                     | https://www.funarte.gov.br/               | Administers theatres (Plinio Marcos, Sala Funarte in Brasilia). Publishes calls/reports as PDFs.              |
 
 ### 7d. Brasilia Theatre Review/Listing Sites
 
-| Site | Notes |
-|------|-------|
-| **Correio Braziliense** -- Diversao e Arte | https://www.correiobraziliense.com.br/diversao-e-arte/ -- Main Brasilia newspaper. Local theatre reviews and listings. |
-| **Metropoles** | https://www.metropoles.com/ -- Major Brasilia-focused digital news. Culture/entertainment section covers local theatre. |
-| **Curta Mais** | https://www.curtamais.com.br/ -- Brasilia-specific culture/lifestyle portal. One of the best local sources. |
-| **Catraca Livre** | https://catracalivre.com.br/ -- National "what's on" portal with Brasilia section. |
-| **Guia da Semana** | https://www.guiadasemana.com.br/brasilia -- National listings with Brasilia section. |
-| **BroadwayWorld Brazil** | https://www.broadwayworld.com/brazil/ -- Covers mostly large musical touring productions. Focuses on SP/Rio, occasionally Brasilia for big tours. Not useful for local independent scene. |
+| Site                                       | Notes                                                                                                                                                                                     |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Correio Braziliense** -- Diversao e Arte | https://www.correiobraziliense.com.br/diversao-e-arte/ -- Main Brasilia newspaper. Local theatre reviews and listings.                                                                    |
+| **Metropoles**                             | https://www.metropoles.com/ -- Major Brasilia-focused digital news. Culture/entertainment section covers local theatre.                                                                   |
+| **Curta Mais**                             | https://www.curtamais.com.br/ -- Brasilia-specific culture/lifestyle portal. One of the best local sources.                                                                               |
+| **Catraca Livre**                          | https://catracalivre.com.br/ -- National "what's on" portal with Brasilia section.                                                                                                        |
+| **Guia da Semana**                         | https://www.guiadasemana.com.br/brasilia -- National listings with Brasilia section.                                                                                                      |
+| **BroadwayWorld Brazil**                   | https://www.broadwayworld.com/brazil/ -- Covers mostly large musical touring productions. Focuses on SP/Rio, occasionally Brasilia for big tours. Not useful for local independent scene. |
 
 ### 7e. Competitors / Existing Theatre Tracking
 
@@ -658,12 +694,12 @@ These are the actually useful data sources for a Brasilia-focused platform:
 
 Existing platforms that exist internationally are all Broadway/West End-focused and irrelevant for Brasilia:
 
-| Platform | Scope | Relevance to Brasilia |
-|----------|-------|-----------------------|
+| Platform               | Scope                      | Relevance to Brasilia                                                               |
+| ---------------------- | -------------------------- | ----------------------------------------------------------------------------------- |
 | BroadwayWorld My Shows | 350k+ productions globally | Has Brazil section but focuses on large SP/Rio musicals. Minimal Brasilia coverage. |
-| Mezzanine | Broadway/West End | Not relevant |
-| Show-Score | NYC + London | Not relevant |
-| Stagedoor | London | Not relevant |
+| Mezzanine              | Broadway/West End          | Not relevant                                                                        |
+| Show-Score             | NYC + London               | Not relevant                                                                        |
+| Stagedoor              | London                     | Not relevant                                                                        |
 
 **How Brazilian theatregoers currently track**: Instagram (the de facto platform), WhatsApp groups, personal spreadsheets/Notion, or not at all.
 
@@ -671,25 +707,25 @@ Existing platforms that exist internationally are all Broadway/West End-focused 
 
 These are worth knowing about for data model inspiration, but not directly useful for Brasilia content:
 
-| Database | Country | Why It Matters |
-|----------|---------|----------------|
-| **iUKTDb** | UK | Best data model to study: Work -> Production -> Venue -> Listing with permanent IDs (QTIX Codes). 142k works, 1.2M events. |
-| **AusStage** | Australia/NZ | Gold standard for open performing arts data (MySQL dump + SPARQL). 500k+ records. Model for what an open Brazilian equivalent could look like. |
-| **StageBrainz** | GitHub (global) | Data model inspired by MusicBrainz: Organities, Productions, Shows, Works, Characters. Embryonic but worth studying. |
-| **Mapas Culturais** | Brazil (open source) | Already mentioned above. The most relevant open-source reference since it's Brazilian government infrastructure. |
+| Database            | Country              | Why It Matters                                                                                                                                 |
+| ------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **iUKTDb**          | UK                   | Best data model to study: Work -> Production -> Venue -> Listing with permanent IDs (QTIX Codes). 142k works, 1.2M events.                     |
+| **AusStage**        | Australia/NZ         | Gold standard for open performing arts data (MySQL dump + SPARQL). 500k+ records. Model for what an open Brazilian equivalent could look like. |
+| **StageBrainz**     | GitHub (global)      | Data model inspired by MusicBrainz: Organities, Productions, Shows, Works, Characters. Embryonic but worth studying.                           |
+| **Mapas Culturais** | Brazil (open source) | Already mentioned above. The most relevant open-source reference since it's Brazilian government infrastructure.                               |
 
 ### 7g. Gap Analysis: Brasilia Specifically
 
-| Need | Available? | Best Source |
-|------|-----------|-------------|
-| Current show listings | Partial | Sympla API + Mapas Culturais + scraping CCBB/SESC |
-| Venue data | Yes | Mapas Culturais (with geolocation) |
-| Cast/crew for productions | **No structured source** | Must be community-contributed or scraped from news/social media |
-| Historical productions | **No** | FAC/SALIC has funded project data only. No comprehensive archive. |
-| Reviews/ratings | **No** | Scattered in Correio Braziliense, Metropoles. No aggregated source. |
-| Theatre companies/artists | Partial | Mapas Culturais (agents), Enciclopedia Itau Cultural (encyclopedic) |
-| Photos/posters | **No structured source** | Instagram, newspaper archives |
-| Play texts/synopses | **No** | No Brazilian equivalent of Doollee |
+| Need                      | Available?               | Best Source                                                         |
+| ------------------------- | ------------------------ | ------------------------------------------------------------------- |
+| Current show listings     | Partial                  | Sympla API + Mapas Culturais + scraping CCBB/SESC                   |
+| Venue data                | Yes                      | Mapas Culturais (with geolocation)                                  |
+| Cast/crew for productions | **No structured source** | Must be community-contributed or scraped from news/social media     |
+| Historical productions    | **No**                   | FAC/SALIC has funded project data only. No comprehensive archive.   |
+| Reviews/ratings           | **No**                   | Scattered in Correio Braziliense, Metropoles. No aggregated source. |
+| Theatre companies/artists | Partial                  | Mapas Culturais (agents), Enciclopedia Itau Cultural (encyclopedic) |
+| Photos/posters            | **No structured source** | Instagram, newspaper archives                                       |
+| Play texts/synopses       | **No**                   | No Brazilian equivalent of Doollee                                  |
 
 ### 7h. Recommended Metadata Strategy for Brasilia
 
@@ -702,6 +738,7 @@ These are worth knowing about for data model inspiration, but not directly usefu
 7. **Build the archive** -- No historical record of Brasilia theatre exists in structured form. Your platform could become that archive over time. This is culturally valuable and a unique selling point.
 
 Sources:
+
 - https://developers.sympla.com.br/
 - https://github.com/mapasculturais/mapasculturais
 - https://versalic.cultura.gov.br/

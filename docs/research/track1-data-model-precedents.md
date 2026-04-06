@@ -14,6 +14,7 @@ Letterboxd is the clearest UX and data model precedent for Transient. Its entiti
 The central canonical entity. Metadata is sourced from TMDB (The Movie Database) rather than maintained internally.
 
 Fields:
+
 - `title` (string)
 - `year` (integer — release year)
 - `directors` (array of people)
@@ -36,6 +37,7 @@ Film is essentially a work-level entity. There is no production-level entity in 
 A log entry in Letterboxd can be a diary entry, a review, or both simultaneously.
 
 Fields:
+
 - `film_id` (foreign key)
 - `member_id` (foreign key)
 - `rating` (0.5–5.0 in half-star increments, or null)
@@ -52,6 +54,7 @@ A single member can log the same film multiple times (diary mode tracks each vie
 ### List
 
 Fields:
+
 - `title` (string)
 - `description` (text, optional)
 - `entries` (ordered array of film references)
@@ -106,6 +109,7 @@ Wikidata notes its own tension: the `performing arts production` class conflates
 Theatricalia has a `Play` entity (the abstract work) and a separate `Production` entity (a specific staging). This is the closest structural match to what Transient needs.
 
 Additional structural notes from the codebase and documentation:
+
 - Venues (Places) can have a parent/child hierarchy — a specific stage within a venue is a child of the venue. Productions are attached to a specific place (stage-level if known).
 - Places support alternative names with date ranges (e.g., a theatre renamed over its history).
 - No per-performance entity — individual nights are not tracked.
@@ -134,6 +138,7 @@ Similar to IBDB. Production records list credits (title page credits), cast, und
 **Model type:** Three-level (Work → Recording → Release), but the second level is audio-specific
 
 MusicBrainz has:
+
 - **Work** — the abstract intellectual creation (opera, musical, song). Has composer, librettist, ISWC, premiere year, genre.
 - **Recording** — a specific audio capture (a cast recording session).
 - **Release** — the published product (the cast recording album).
@@ -144,14 +149,14 @@ For theatre: works with hierarchical parts (opera acts, arias). Productions exis
 
 ### 2.6 Summary Table
 
-| Platform | Work entity | Production entity | Performance entity | User log |
-|---|---|---|---|---|
-| Letterboxd | Film (= work) | None | None | Yes |
-| Wikidata | Yes | Yes | No | No |
-| Theatricalia | Yes (Play) | Yes | No | No |
-| IBDB | No | Yes | No | No |
-| Spectra / IOBDB | No | Yes | No | No |
-| MusicBrainz | Yes | No (audio-only) | No | No |
+| Platform        | Work entity   | Production entity | Performance entity | User log |
+| --------------- | ------------- | ----------------- | ------------------ | -------- |
+| Letterboxd      | Film (= work) | None              | None               | Yes      |
+| Wikidata        | Yes           | Yes               | No                 | No       |
+| Theatricalia    | Yes (Play)    | Yes               | No                 | No       |
+| IBDB            | No            | Yes               | No                 | No       |
+| Spectra / IOBDB | No            | Yes               | No                 | No       |
+| MusicBrainz     | Yes           | No (audio-only)   | No                 | No       |
 
 **Significant finding:** No existing platform implements the full three-level model (Work → Production → Performance) for theatre. The two-level model (Work → Production) is the most common pattern among the platforms that model the distinction at all. Platforms that lack a work entity are production databases, not theatrical knowledge graphs.
 
@@ -201,11 +206,13 @@ LogEntry
 ```
 
 **Edge cases handled well:**
+
 - **Touring productions:** A tour with a fixed cast and creative team but multiple venues can be modelled as a single Production with the primary/opening venue recorded; venue changes are a known limitation or addressed by a `venue_legs` sub-table.
 - **Revivals:** The same Work gets a new Production. The Work → Production one-to-many relationship handles this cleanly.
 - **Understudies:** Cast at the production level reflects the credited/official cast. Specific understudy performances are not tracked (acceptable for a personal log — you note who you actually saw in your review text).
 
 **Edge cases it struggles with:**
+
 - **Devised/collective creation:** `playwright` field becomes awkward. Can be nulled or replaced with a free-text `creators` field, but the data model implies an author, which biases toward scripted work.
 - **Improvised/variety shows:** No "script" and no fixed repeat-identical performances. A show like a Comedy Store set is not a production in the traditional sense.
 - **Circus:** Genre tag helps, but "work" doesn't make sense for a Big Apple Circus season — there is no underlying script.
@@ -262,11 +269,13 @@ LogEntry
 ```
 
 **Edge cases handled well:**
+
 - **Understudies:** The Performance entity can record the actual cast seen on that specific night, including understudy details. This is the primary motivation for adding the third level.
 - **Press nights / special performances:** Can be flagged as distinct Performance records with notes.
 - **Multiple viewings of the same production:** Each viewing attaches to its own Performance, so if a user saw a show twice (once with the lead, once with the understudy), both LogEntries are attached to distinct Performance records.
 
 **Edge cases it still struggles with:**
+
 - **Devised/improvised work:** Same as Model A — the Work entity still implies a fixed script.
 - **Circus/variety:** Same as Model A.
 - **Data availability:** In practice, users will almost never know the specific cast from their exact performance night unless the theatre provides cast sheets. Most people do not retain their programme. This means Performance records will usually be empty shells (date only) with no cast data, making the added complexity largely theoretical.
@@ -278,18 +287,18 @@ LogEntry
 
 ### Comparison
 
-| Criterion | Model A (2-level) | Model B (3-level) |
-|---|---|---|
-| Implements core use case | Yes | Yes |
-| Touring productions | Partial | Partial |
-| Understudy tracking | No (review text only) | Yes (if data available) |
-| Revivals | Clean | Clean |
-| Devised work | Awkward | Awkward |
-| Circus/variety | Awkward | Awkward |
-| Implementation complexity | Low | High |
-| User logging friction | Low | Medium |
-| Data availability | Good | Limited (per-performance data rare) |
-| Right for MVP | Yes | No |
+| Criterion                 | Model A (2-level)     | Model B (3-level)                   |
+| ------------------------- | --------------------- | ----------------------------------- |
+| Implements core use case  | Yes                   | Yes                                 |
+| Touring productions       | Partial               | Partial                             |
+| Understudy tracking       | No (review text only) | Yes (if data available)             |
+| Revivals                  | Clean                 | Clean                               |
+| Devised work              | Awkward               | Awkward                             |
+| Circus/variety            | Awkward               | Awkward                             |
+| Implementation complexity | Low                   | High                                |
+| User logging friction     | Low                   | Medium                              |
+| Data availability         | Good                  | Limited (per-performance data rare) |
+| Right for MVP             | Yes                   | No                                  |
 
 **Recommendation:** Start with Model A. The Performance level can be added later as an optional extension if there is demonstrated user need (i.e., if a meaningful number of users want to track understudy performances). Premature introduction of the Performance entity adds complexity without proportionate benefit given that the raw data (per-performance cast sheets) is almost never available in machine-readable form.
 
@@ -299,19 +308,20 @@ LogEntry
 
 ### 4.1 Adaptation Chains
 
-Example: *Romeo and Juliet* (Shakespeare, ~1594) → *West Side Story* (Bernstein/Sondheim, 1957) → *West Side Story* (Spielberg, 2021 film)
+Example: _Romeo and Juliet_ (Shakespeare, ~1594) → _West Side Story_ (Bernstein/Sondheim, 1957) → _West Side Story_ (Spielberg, 2021 film)
 
 **Model A / B handling:**
-- *Romeo and Juliet* is a Work.
-- *West Side Story* is a separate Work (it is a sufficiently distinct new work — new book, music, lyrics, setting). It does not inherit from R&J in the schema; the relationship is documented in the `description` field or via a future `adapted_from` FK.
+
+- _Romeo and Juliet_ is a Work.
+- _West Side Story_ is a separate Work (it is a sufficiently distinct new work — new book, music, lyrics, setting). It does not inherit from R&J in the schema; the relationship is documented in the `description` field or via a future `adapted_from` FK.
 - The 2021 Spielberg film is out of Transient's scope (it is a film, not a stage production). If Transient ever expands beyond theatre, it would be a separate Work with a different medium flag.
-- A stage production of the 2021 film adaptation (if staged) would be a Production under the *West Side Story* Work, not a new Work.
+- A stage production of the 2021 film adaptation (if staged) would be a Production under the _West Side Story_ Work, not a new Work.
 
 **Gap:** Neither model has an `adapted_from` or `based_on` Work FK. This could be added to the Work entity without structural disruption. Wikidata uses `P144` (based on) and `P941` (inspired by) for this relationship.
 
 ### 4.2 Touring Productions
 
-Example: The RSC's production of *Henry V* opens in Stratford-upon-Avon, then transfers to the Barbican, then goes on a UK tour to five regional venues.
+Example: The RSC's production of _Henry V_ opens in Stratford-upon-Avon, then transfers to the Barbican, then goes on a UK tour to five regional venues.
 
 **Model A handling:** One Production record with `venue = "RSC Barbican"` (or the opening venue). Touring legs can be represented as a `venue_legs` sub-table (venue + start/end date), or — more simply — as separate Production records per major leg with a `touring_group_id` linking them. Neither is perfect.
 
@@ -321,9 +331,9 @@ Example: The RSC's production of *Henry V* opens in Stratford-upon-Avon, then tr
 
 ### 4.3 Revivals
 
-Example: *Oklahoma!* at the National Theatre in 2019 vs. *Oklahoma!* on Broadway in 1943.
+Example: _Oklahoma!_ at the National Theatre in 2019 vs. _Oklahoma!_ on Broadway in 1943.
 
-**Model A / B handling:** Clean. Both are Productions of the same Work (*Oklahoma!*). The Work carries `year_written = 1943`, `playwright = "Rodgers and Hammerstein"`. Each Production has its own director, cast, venue, dates. No ambiguity.
+**Model A / B handling:** Clean. Both are Productions of the same Work (_Oklahoma!_). The Work carries `year_written = 1943`, `playwright = "Rodgers and Hammerstein"`. Each Production has its own director, cast, venue, dates. No ambiguity.
 
 **This is the core use case Model A handles perfectly.** Revivals are the strongest argument for having a Work entity at all.
 
@@ -332,6 +342,7 @@ Example: *Oklahoma!* at the National Theatre in 2019 vs. *Oklahoma!* on Broadway
 Example: A verbatim theatre piece devised collaboratively by an ensemble of 12 performers with a facilitator, no single author.
 
 **Model A / B handling:** The `playwright` field on Work is awkward. Options:
+
 - Null the field and use `description` to note devised creation.
 - Replace `playwright` with a more general `creators` field (free text or array of people with roles).
 - Add a `creation_method` flag: `scripted | devised | improvised | found text | other`.
@@ -340,7 +351,7 @@ Example: A verbatim theatre piece devised collaboratively by an ensemble of 12 p
 
 ### 4.5 Site-Specific Work
 
-Example: Punchdrunk's *Sleep No More* — performed in a converted warehouse (The McKittrick Hotel, New York), where the architecture IS the artistic medium.
+Example: Punchdrunk's _Sleep No More_ — performed in a converted warehouse (The McKittrick Hotel, New York), where the architecture IS the artistic medium.
 
 **Model A / B handling:** The Venue field on Production records the location. But site-specific work often cannot transfer to another venue without becoming a different work. The model treats venue as metadata when for site-specific work it is essential identity.
 
@@ -348,11 +359,11 @@ Example: Punchdrunk's *Sleep No More* — performed in a converted warehouse (Th
 
 ### 4.6 Circus and Variety
 
-Example: Cirque du Soleil's *Alegría* — a touring show with acrobatics, clown acts, music. No playwright. No script in the theatrical sense.
+Example: Cirque du Soleil's _Alegría_ — a touring show with acrobatics, clown acts, music. No playwright. No script in the theatrical sense.
 
 **Model A / B handling:** `genre = ["circus"]` on the Work. `playwright = null`. `description` describes the production concept.
 
-The Work entity is awkward here because Cirque tours frequently revive and recast their shows. *Alegría* has had multiple distinct productions (original 1994 tour, 2019 revival with redesigned costumes). These are meaningfully distinct enough that both Work and Production entities are appropriate — but the Work has no author.
+The Work entity is awkward here because Cirque tours frequently revive and recast their shows. _Alegría_ has had multiple distinct productions (original 1994 tour, 2019 revival with redesigned costumes). These are meaningfully distinct enough that both Work and Production entities are appropriate — but the Work has no author.
 
 **Recommendation:** The `creators` array (as recommended above) with role = "director" or "conceived by" or "choreographer" works here. The Work entity represents the creative concept; the Production represents a specific tour iteration.
 

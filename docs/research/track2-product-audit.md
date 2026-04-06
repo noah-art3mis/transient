@@ -177,15 +177,15 @@ Letterboxd doesn't handle this emotionally — the UI is the same whether you're
 
 ### Summary Table
 
-| App | Log Shows | Rate | Review | Work vs Production Distinction | Discovery | Social | Coverage | Notes |
-|---|---|---|---|---|---|---|---|---|
-| **Show-Score** | No (track only) | Yes (0–100) | Yes (structured) | No — show only | Yes (NYC/London) | Follows, feed | NYC, London, limited elsewhere | Strong structured review format; owned by TodayTix |
-| **BroadwayWorld My Shows** | Yes | Yes | Yes | Partially — production records | Yes (listings) | Limited | Broadway-centric, expanding | Launched Sept 2025; backed by large database |
-| **Mezzanine** | Yes (diary) | Yes (stars) | Yes | Yes — production screens | Limited | Yes (follow friends) | Broadway, West End (~1,500 productions) | Closest to Letterboxd model; iOS only; program scan feature |
-| **Aklaim** | Yes (performance log) | Yes (stars) | Yes | Partially — musical-focused | Yes (browse) | Yes (community) | Musicals-focused, Broadway/West End | Calendar view; performance-level logging; wishlist |
-| **Theatregoer** | Yes (detailed) | Yes | Notes only | No | No | No | User-driven (any show) | Attach tickets; seat tracking; iCloud sync; import from spreadsheet |
-| **StagePort** | Yes | Yes | Mini-reviews | No | No | Yes (compare friends) | Unknown | Badges/gamification; framed as "Letterboxd for theatre" |
-| **TheaterLog** | Yes (personal tracker) | Unknown | Unknown | No | No | No | User-driven | Lightweight personal tracker |
+| App                        | Log Shows              | Rate        | Review           | Work vs Production Distinction | Discovery        | Social                | Coverage                                | Notes                                                               |
+| -------------------------- | ---------------------- | ----------- | ---------------- | ------------------------------ | ---------------- | --------------------- | --------------------------------------- | ------------------------------------------------------------------- |
+| **Show-Score**             | No (track only)        | Yes (0–100) | Yes (structured) | No — show only                 | Yes (NYC/London) | Follows, feed         | NYC, London, limited elsewhere          | Strong structured review format; owned by TodayTix                  |
+| **BroadwayWorld My Shows** | Yes                    | Yes         | Yes              | Partially — production records | Yes (listings)   | Limited               | Broadway-centric, expanding             | Launched Sept 2025; backed by large database                        |
+| **Mezzanine**              | Yes (diary)            | Yes (stars) | Yes              | Yes — production screens       | Limited          | Yes (follow friends)  | Broadway, West End (~1,500 productions) | Closest to Letterboxd model; iOS only; program scan feature         |
+| **Aklaim**                 | Yes (performance log)  | Yes (stars) | Yes              | Partially — musical-focused    | Yes (browse)     | Yes (community)       | Musicals-focused, Broadway/West End     | Calendar view; performance-level logging; wishlist                  |
+| **Theatregoer**            | Yes (detailed)         | Yes         | Notes only       | No                             | No               | No                    | User-driven (any show)                  | Attach tickets; seat tracking; iCloud sync; import from spreadsheet |
+| **StagePort**              | Yes                    | Yes         | Mini-reviews     | No                             | No               | Yes (compare friends) | Unknown                                 | Badges/gamification; framed as "Letterboxd for theatre"             |
+| **TheaterLog**             | Yes (personal tracker) | Unknown     | Unknown          | No                             | No               | No                    | User-driven                             | Lightweight personal tracker                                        |
 
 ### Show-Score
 
@@ -303,23 +303,27 @@ Some people write Show-Score reviews purely to have a record, not primarily to s
 You've just walked out of a theatre. It's 10:30pm. The show just ended. You might be standing in a crowd on the pavement, queueing for the cloakroom, or sitting in a taxi. You have maybe 60–90 seconds of logging attention before your companions start talking, before you look for your bus, before the adrenaline gives way to exhaustion.
 
 What do you have in front of you?
+
 - Your memory of the show name and the venue (strong, right now)
 - A physical or digital ticket (possibly) with show name, date, venue, and seat
 - A programme (possibly) with full cast and creative list
 
 What don't you have?
+
 - Your phone fully focused (you're moving or talking)
 - The playwright's name off the top of your head (maybe)
 - The director's name (less likely)
 - A fully formed opinion (too immediate)
 
 What do you want to do?
+
 - Mark "I saw this" while it's fresh
 - Not lose the memory that you went
 - Maybe capture a first impression ("stunning," "disappointing," "hard to describe")
 - Not be forced to write a review right now
 
 What do you want to do later (at home, the next day)?
+
 - Write a proper review
 - Rate it more carefully
 - Look up the cast and note standout performances

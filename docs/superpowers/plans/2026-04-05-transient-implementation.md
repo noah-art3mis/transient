@@ -85,6 +85,7 @@ tailwind.config.js                 # Tailwind + NativeWind config
 ### Task 1: Project Scaffold with Expo and NativeWind
 
 **Files:**
+
 - Create (via template): `package.json`, `app.json`, `tsconfig.json`, `app/_layout.tsx`, `app/(tabs)/_layout.tsx`
 - Create: `tailwind.config.js`
 - Create: `global.css`
@@ -194,6 +195,7 @@ git commit -m "scaffold: initialize Expo project with NativeWind"
 ### Task 2: Supabase Client, Database Schema, and TypeScript Types
 
 **Files:**
+
 - Create: `.env.example`
 - Create: `.env.local`
 - Create: `lib/supabase.ts`
@@ -254,14 +256,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 ```ts
 // lib/types.ts
 
-export type MediaType =
-  | "theatre"
-  | "musical"
-  | "opera"
-  | "dance"
-  | "circus"
-  | "concert"
-  | "other";
+export type MediaType = "theatre" | "musical" | "opera" | "dance" | "circus" | "concert" | "other";
 
 export type CreationMethod = "scripted" | "devised" | "other";
 
@@ -597,6 +592,7 @@ git commit -m "feat: add Supabase client, database schema, and TypeScript types"
 ### Task 3: Authentication Context and Screens
 
 **Files:**
+
 - Create: `lib/auth-context.tsx`
 - Create: `app/(auth)/_layout.tsx`
 - Create: `app/(auth)/login.tsx`
@@ -679,9 +675,7 @@ export function useAuth() {
 import { Stack } from "expo-router";
 
 export default function AuthLayout() {
-  return (
-    <Stack screenOptions={{ headerShown: false }} />
-  );
+  return <Stack screenOptions={{ headerShown: false }} />;
 }
 ```
 
@@ -690,14 +684,7 @@ export default function AuthLayout() {
 ```tsx
 // app/(auth)/login.tsx
 import { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
+import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from "react-native";
 import { Link } from "expo-router";
 import { useAuth } from "../../lib/auth-context";
 
@@ -755,8 +742,7 @@ export default function LoginScreen() {
       <Link href="/(auth)/signup" asChild>
         <Pressable className="py-2 items-center">
           <Text className="text-gray-600">
-            Don't have an account?{" "}
-            <Text className="text-black font-semibold">Sign Up</Text>
+            Don't have an account? <Text className="text-black font-semibold">Sign Up</Text>
           </Text>
         </Pressable>
       </Link>
@@ -770,14 +756,7 @@ export default function LoginScreen() {
 ```tsx
 // app/(auth)/signup.tsx
 import { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
+import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from "react-native";
 import { Link } from "expo-router";
 import { useAuth } from "../../lib/auth-context";
 
@@ -836,8 +815,7 @@ export default function SignupScreen() {
       <Link href="/(auth)/login" asChild>
         <Pressable className="py-2 items-center">
           <Text className="text-gray-600">
-            Already have an account?{" "}
-            <Text className="text-black font-semibold">Sign In</Text>
+            Already have an account? <Text className="text-black font-semibold">Sign In</Text>
           </Text>
         </Pressable>
       </Link>
@@ -920,6 +898,7 @@ git commit -m "feat: add authentication with Supabase Auth"
 ### Task 4: API Layer — Works, Productions, and Search (TDD)
 
 **Files:**
+
 - Create: `__tests__/helpers/supabase-mock.ts`
 - Test: `__tests__/lib/api/works.test.ts`
 - Create: `lib/api/works.ts`
@@ -969,10 +948,8 @@ export function createMockQueryBuilder(result: { data: any; error: any }) {
   }
 
   // Make the builder awaitable (thenable)
-  builder.then = (onfulfilled: (value: any) => any) =>
-    Promise.resolve(result).then(onfulfilled);
-  builder.catch = (onrejected: (reason: any) => any) =>
-    Promise.resolve(result).catch(onrejected);
+  builder.then = (onfulfilled: (value: any) => any) => Promise.resolve(result).then(onfulfilled);
+  builder.catch = (onrejected: (reason: any) => any) => Promise.resolve(result).catch(onrejected);
 
   return builder;
 }
@@ -994,9 +971,7 @@ const worksApi = require("../../../lib/api/works");
 
 describe("searchWorks", () => {
   it("searches works by query and returns results", async () => {
-    const mockWorks = [
-      { id: "1", title: "Hamlet", productions: [{ count: 3 }] },
-    ];
+    const mockWorks = [{ id: "1", title: "Hamlet", productions: [{ count: 3 }] }];
     const builder = createMockQueryBuilder({ data: mockWorks, error: null });
     (supabase.from as jest.Mock).mockReturnValue(builder);
 
@@ -1004,11 +979,7 @@ describe("searchWorks", () => {
 
     expect(supabase.from).toHaveBeenCalledWith("works");
     expect(builder.select).toHaveBeenCalledWith("*, productions(count)");
-    expect(builder.textSearch).toHaveBeenCalledWith(
-      "search_vector",
-      "hamlet",
-      { type: "plain" }
-    );
+    expect(builder.textSearch).toHaveBeenCalledWith("search_vector", "hamlet", { type: "plain" });
     expect(builder.limit).toHaveBeenCalledWith(20);
     expect(result).toEqual(mockWorks);
   });
@@ -1069,9 +1040,7 @@ Expected: FAIL — `Cannot find module '../../../lib/api/works'`
 import { supabase } from "../supabase";
 import { Work, WorkInsert, WorkWithProductionCount } from "../types";
 
-export async function searchWorks(
-  query: string
-): Promise<WorkWithProductionCount[]> {
+export async function searchWorks(query: string): Promise<WorkWithProductionCount[]> {
   const { data, error } = await supabase
     .from("works")
     .select("*, productions(count)")
@@ -1083,22 +1052,14 @@ export async function searchWorks(
 }
 
 export async function getWork(id: string): Promise<Work | null> {
-  const { data, error } = await supabase
-    .from("works")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const { data, error } = await supabase.from("works").select("*").eq("id", id).single();
 
   if (error) throw new Error(error.message);
   return data;
 }
 
 export async function createWork(work: WorkInsert): Promise<Work> {
-  const { data, error } = await supabase
-    .from("works")
-    .insert(work)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("works").insert(work).select().single();
 
   if (error) throw new Error(error.message);
   return data;
@@ -1126,9 +1087,7 @@ const productionsApi = require("../../../lib/api/productions");
 
 describe("getProductionsByWork", () => {
   it("returns productions for a given work", async () => {
-    const mockProds = [
-      { id: "p1", work_id: "w1", venue: "Almeida Theatre", year: 2025 },
-    ];
+    const mockProds = [{ id: "p1", work_id: "w1", venue: "Almeida Theatre", year: 2025 }];
     const builder = createMockQueryBuilder({ data: mockProds, error: null });
     (supabase.from as jest.Mock).mockReturnValue(builder);
 
@@ -1196,9 +1155,7 @@ Expected: FAIL — `Cannot find module '../../../lib/api/productions'`
 import { supabase } from "../supabase";
 import { Production, ProductionInsert, Work } from "../types";
 
-export async function getProductionsByWork(
-  workId: string
-): Promise<Production[]> {
+export async function getProductionsByWork(workId: string): Promise<Production[]> {
   const { data, error } = await supabase
     .from("productions")
     .select("*")
@@ -1210,7 +1167,7 @@ export async function getProductionsByWork(
 }
 
 export async function getProduction(
-  id: string
+  id: string,
 ): Promise<(Production & { work: Work | null }) | null> {
   const { data, error } = await supabase
     .from("productions")
@@ -1222,14 +1179,8 @@ export async function getProduction(
   return data;
 }
 
-export async function createProduction(
-  production: ProductionInsert
-): Promise<Production> {
-  const { data, error } = await supabase
-    .from("productions")
-    .insert(production)
-    .select()
-    .single();
+export async function createProduction(production: ProductionInsert): Promise<Production> {
+  const { data, error } = await supabase.from("productions").insert(production).select().single();
 
   if (error) throw new Error(error.message);
   return data;
@@ -1254,6 +1205,7 @@ git commit -m "feat: add Works and Productions API layer with tests"
 ### Task 5: API Layer — LogEntries, Wishlist, and Stats (TDD)
 
 **Files:**
+
 - Test: `__tests__/lib/api/log-entries.test.ts`
 - Create: `lib/api/log-entries.ts`
 - Test: `__tests__/lib/api/wishlist.test.ts`
@@ -1276,9 +1228,7 @@ const logEntriesApi = require("../../../lib/api/log-entries");
 
 describe("getLogEntries", () => {
   it("returns user log entries ordered by date", async () => {
-    const mockEntries = [
-      { id: "le1", date_seen: "2026-04-05", production: { venue: "Globe" } },
-    ];
+    const mockEntries = [{ id: "le1", date_seen: "2026-04-05", production: { venue: "Globe" } }];
     const builder = createMockQueryBuilder({ data: mockEntries, error: null });
     (supabase.from as jest.Mock).mockReturnValue(builder);
 
@@ -1366,20 +1316,16 @@ import { LogEntry, LogEntryInsert, LogEntryWithProduction } from "../types";
 
 export async function getLogEntries(
   userId: string,
-  year?: number
+  year?: number,
 ): Promise<LogEntryWithProduction[]> {
   let query = supabase
     .from("log_entries")
-    .select(
-      "*, production:productions(*, work:works(*))"
-    )
+    .select("*, production:productions(*, work:works(*))")
     .eq("user_id", userId)
     .order("date_seen", { ascending: false });
 
   if (year) {
-    query = query
-      .gte("date_seen", `${year}-01-01`)
-      .lte("date_seen", `${year}-12-31`);
+    query = query.gte("date_seen", `${year}-01-01`).lte("date_seen", `${year}-12-31`);
   }
 
   const { data, error } = await query;
@@ -1389,7 +1335,7 @@ export async function getLogEntries(
 
 export async function getLogEntriesForProduction(
   productionId: string,
-  userId: string
+  userId: string,
 ): Promise<LogEntry[]> {
   const { data, error } = await supabase
     .from("log_entries")
@@ -1402,14 +1348,8 @@ export async function getLogEntriesForProduction(
   return data ?? [];
 }
 
-export async function createLogEntry(
-  entry: LogEntryInsert
-): Promise<LogEntry> {
-  const { data, error } = await supabase
-    .from("log_entries")
-    .insert(entry)
-    .select()
-    .single();
+export async function createLogEntry(entry: LogEntryInsert): Promise<LogEntry> {
+  const { data, error } = await supabase.from("log_entries").insert(entry).select().single();
 
   if (error) throw new Error(error.message);
   return data;
@@ -1417,7 +1357,7 @@ export async function createLogEntry(
 
 export async function updateLogEntry(
   id: string,
-  updates: Partial<LogEntryInsert>
+  updates: Partial<LogEntryInsert>,
 ): Promise<LogEntry> {
   const { data, error } = await supabase
     .from("log_entries")
@@ -1431,10 +1371,7 @@ export async function updateLogEntry(
 }
 
 export async function deleteLogEntry(id: string): Promise<void> {
-  const { error } = await supabase
-    .from("log_entries")
-    .delete()
-    .eq("id", id);
+  const { error } = await supabase.from("log_entries").delete().eq("id", id);
 
   if (error) throw new Error(error.message);
 }
@@ -1512,9 +1449,7 @@ describe("removeFromWishlist", () => {
 import { supabase } from "../supabase";
 import { WishlistItem, WishlistItemInsert, WishlistItemWithDetails } from "../types";
 
-export async function getWishlist(
-  userId: string
-): Promise<WishlistItemWithDetails[]> {
+export async function getWishlist(userId: string): Promise<WishlistItemWithDetails[]> {
   const { data, error } = await supabase
     .from("wishlist_items")
     .select("*, work:works(*), production:productions(*, work:works(*))")
@@ -1525,24 +1460,15 @@ export async function getWishlist(
   return data ?? [];
 }
 
-export async function addToWishlist(
-  item: WishlistItemInsert
-): Promise<WishlistItem> {
-  const { data, error } = await supabase
-    .from("wishlist_items")
-    .insert(item)
-    .select()
-    .single();
+export async function addToWishlist(item: WishlistItemInsert): Promise<WishlistItem> {
+  const { data, error } = await supabase.from("wishlist_items").insert(item).select().single();
 
   if (error) throw new Error(error.message);
   return data;
 }
 
 export async function removeFromWishlist(id: string): Promise<void> {
-  const { error } = await supabase
-    .from("wishlist_items")
-    .delete()
-    .eq("id", id);
+  const { error } = await supabase.from("wishlist_items").delete().eq("id", id);
 
   if (error) throw new Error(error.message);
 }
@@ -1602,13 +1528,13 @@ describe("getStats", () => {
         { rating: 3.5, count: 1 },
         { rating: 4.0, count: 1 },
         { rating: 5.0, count: 1 },
-      ])
+      ]),
     );
     expect(result.byMediaType).toEqual(
       expect.arrayContaining([
         { media_type: "theatre", count: 2 },
         { media_type: "musical", count: 1 },
-      ])
+      ]),
     );
   });
 });
@@ -1622,12 +1548,15 @@ import { supabase } from "../supabase";
 import { MediaType, Stats } from "../types";
 
 export async function getStats(userId: string): Promise<Stats> {
-  const { data: entries, count, error } = await supabase
+  const {
+    data: entries,
+    count,
+    error,
+  } = await supabase
     .from("log_entries")
-    .select(
-      "date_seen, rating, production:productions(venue, work:works(media_type))",
-      { count: "exact" }
-    )
+    .select("date_seen, rating, production:productions(venue, work:works(media_type))", {
+      count: "exact",
+    })
     .eq("user_id", userId);
 
   if (error) throw new Error(error.message);
@@ -1637,13 +1566,11 @@ export async function getStats(userId: string): Promise<Stats> {
 
   const totalShows = count ?? all.length;
   const showsThisYear = all.filter(
-    (e) => new Date(e.date_seen).getFullYear() === currentYear
+    (e) => new Date(e.date_seen).getFullYear() === currentYear,
   ).length;
 
   // Count distinct non-null venues
-  const venues = new Set(
-    all.map((e: any) => e.production?.venue).filter(Boolean)
-  );
+  const venues = new Set(all.map((e: any) => e.production?.venue).filter(Boolean));
   const venuesVisited = venues.size;
 
   // Rating distribution
@@ -1706,6 +1633,7 @@ git commit -m "feat: add LogEntries, Wishlist, and Stats API layer with tests"
 ### Task 6: Shared UI Components
 
 **Files:**
+
 - Create: `components/StarRating.tsx`
 - Create: `components/StarRatingDisplay.tsx`
 - Create: `components/HeartButton.tsx`
@@ -1725,9 +1653,7 @@ import StarRating from "../../components/StarRating";
 
 describe("StarRating", () => {
   it("renders 5 star positions", () => {
-    const { getAllByTestId } = render(
-      <StarRating value={null} onChange={() => {}} />
-    );
+    const { getAllByTestId } = render(<StarRating value={null} onChange={() => {}} />);
     // Each star has a left and right touch target
     expect(getAllByTestId(/^star-\d+-left$/)).toHaveLength(5);
     expect(getAllByTestId(/^star-\d+-right$/)).toHaveLength(5);
@@ -1735,27 +1661,21 @@ describe("StarRating", () => {
 
   it("calls onChange with half-star value on left tap", () => {
     const onChange = jest.fn();
-    const { getByTestId } = render(
-      <StarRating value={null} onChange={onChange} />
-    );
+    const { getByTestId } = render(<StarRating value={null} onChange={onChange} />);
     fireEvent.press(getByTestId("star-3-left"));
     expect(onChange).toHaveBeenCalledWith(2.5);
   });
 
   it("calls onChange with full-star value on right tap", () => {
     const onChange = jest.fn();
-    const { getByTestId } = render(
-      <StarRating value={null} onChange={onChange} />
-    );
+    const { getByTestId } = render(<StarRating value={null} onChange={onChange} />);
     fireEvent.press(getByTestId("star-3-right"));
     expect(onChange).toHaveBeenCalledWith(3);
   });
 
   it("clears rating when tapping the same value", () => {
     const onChange = jest.fn();
-    const { getByTestId } = render(
-      <StarRating value={3} onChange={onChange} />
-    );
+    const { getByTestId } = render(<StarRating value={3} onChange={onChange} />);
     fireEvent.press(getByTestId("star-3-right"));
     expect(onChange).toHaveBeenCalledWith(null);
   });
@@ -1802,16 +1722,8 @@ export default function StarRating({ value, onChange, size = 32 }: Props) {
         const color = icon === "star-outline" ? "#d1d5db" : "#f59e0b";
 
         return (
-          <View
-            key={star}
-            style={{ width: size, height: size, position: "relative" }}
-          >
-            <Ionicons
-              name={icon}
-              size={size}
-              color={color}
-              style={{ position: "absolute" }}
-            />
+          <View key={star} style={{ width: size, height: size, position: "relative" }}>
+            <Ionicons name={icon} size={size} color={color} style={{ position: "absolute" }} />
             <Pressable
               testID={`star-${star}-left`}
               onPress={() => handlePress(halfValue)}
@@ -1919,7 +1831,7 @@ import TagInput from "../../components/TagInput";
 describe("TagInput", () => {
   it("displays existing tags as pills", () => {
     const { getByText } = render(
-      <TagInput value={["world premiere", "with Mum"]} onChange={() => {}} />
+      <TagInput value={["world premiere", "with Mum"]} onChange={() => {}} />,
     );
     expect(getByText("world premiere")).toBeTruthy();
     expect(getByText("with Mum")).toBeTruthy();
@@ -1927,9 +1839,7 @@ describe("TagInput", () => {
 
   it("adds a tag when comma is typed", () => {
     const onChange = jest.fn();
-    const { getByPlaceholderText } = render(
-      <TagInput value={[]} onChange={onChange} />
-    );
+    const { getByPlaceholderText } = render(<TagInput value={[]} onChange={onChange} />);
     const input = getByPlaceholderText("Add tags...");
     fireEvent.changeText(input, "new tag,");
     expect(onChange).toHaveBeenCalledWith(["new tag"]);
@@ -1937,9 +1847,7 @@ describe("TagInput", () => {
 
   it("removes a tag when X is pressed", () => {
     const onChange = jest.fn();
-    const { getAllByTestId } = render(
-      <TagInput value={["tag1", "tag2"]} onChange={onChange} />
-    );
+    const { getAllByTestId } = render(<TagInput value={["tag1", "tag2"]} onChange={onChange} />);
     fireEvent.press(getAllByTestId("remove-tag")[0]);
     expect(onChange).toHaveBeenCalledWith(["tag2"]);
   });
@@ -1990,10 +1898,7 @@ export default function TagInput({ value, onChange }: Props) {
     <View>
       <View className="flex-row flex-wrap gap-2 mb-2">
         {value.map((tag, index) => (
-          <View
-            key={tag}
-            className="flex-row items-center bg-gray-200 rounded-full px-3 py-1"
-          >
+          <View key={tag} className="flex-row items-center bg-gray-200 rounded-full px-3 py-1">
             <Text className="text-sm mr-1">{tag}</Text>
             <Pressable onPress={() => removeTag(index)} testID="remove-tag">
               <Ionicons name="close-circle" size={16} color="#6b7280" />
@@ -2086,6 +1991,7 @@ git commit -m "feat: add shared UI components (StarRating, TagInput, etc.)"
 ### Task 7: Tab Navigation Layout
 
 **Files:**
+
 - Modify: `app/(tabs)/_layout.tsx`
 - Create: `app/(tabs)/index.tsx` (placeholder)
 - Create: `app/(tabs)/search.tsx` (placeholder)
@@ -2164,6 +2070,7 @@ export default function TabLayout() {
 Create each placeholder file with a simple centered text label:
 
 `app/(tabs)/index.tsx`:
+
 ```tsx
 import { View, Text } from "react-native";
 export default function DiaryScreen() {
@@ -2176,6 +2083,7 @@ export default function DiaryScreen() {
 ```
 
 `app/(tabs)/search.tsx`:
+
 ```tsx
 import { View, Text } from "react-native";
 export default function SearchScreen() {
@@ -2188,6 +2096,7 @@ export default function SearchScreen() {
 ```
 
 `app/(tabs)/wishlist.tsx`:
+
 ```tsx
 import { View, Text } from "react-native";
 export default function WishlistScreen() {
@@ -2200,6 +2109,7 @@ export default function WishlistScreen() {
 ```
 
 `app/(tabs)/stats.tsx`:
+
 ```tsx
 import { View, Text } from "react-native";
 export default function StatsScreen() {
@@ -2212,6 +2122,7 @@ export default function StatsScreen() {
 ```
 
 `app/(tabs)/settings.tsx`:
+
 ```tsx
 import { View, Text } from "react-native";
 export default function SettingsScreen() {
@@ -2241,6 +2152,7 @@ git commit -m "feat: add 5-tab navigation layout"
 ### Task 8: Diary Screen (Home)
 
 **Files:**
+
 - Create: `components/DiaryEntryRow.tsx`
 - Modify: `app/(tabs)/index.tsx`
 
@@ -2259,10 +2171,7 @@ type Props = {
 };
 
 export default function DiaryEntryRow({ entry, onPress }: Props) {
-  const title =
-    entry.production.title_override ??
-    entry.production.work?.title ??
-    "Unknown";
+  const title = entry.production.title_override ?? entry.production.work?.title ?? "Unknown";
   const venue = entry.production.venue;
 
   const date = new Date(entry.date_seen + "T00:00:00");
@@ -2288,13 +2197,9 @@ export default function DiaryEntryRow({ entry, onPress }: Props) {
         )}
       </View>
       <View className="flex-row items-center gap-1">
-        {entry.rating != null && (
-          <StarRatingDisplay value={entry.rating} size={12} />
-        )}
+        {entry.rating != null && <StarRatingDisplay value={entry.rating} size={12} />}
         {entry.liked && <Ionicons name="heart" size={14} color="#ef4444" />}
-        {entry.review && (
-          <Ionicons name="document-text-outline" size={14} color="#9ca3af" />
-        )}
+        {entry.review && <Ionicons name="document-text-outline" size={14} color="#9ca3af" />}
       </View>
     </Pressable>
   );
@@ -2331,10 +2236,7 @@ export default function DiaryScreen() {
     if (!session) return;
     setLoading(true);
     try {
-      const data = await getLogEntries(
-        session.user.id,
-        selectedYear ?? undefined
-      );
+      const data = await getLogEntries(session.user.id, selectedYear ?? undefined);
       setEntries(data);
     } catch (e) {
       console.error(e);
@@ -2347,7 +2249,7 @@ export default function DiaryScreen() {
   useFocusEffect(
     useCallback(() => {
       loadEntries();
-    }, [loadEntries])
+    }, [loadEntries]),
   );
 
   return (
@@ -2363,11 +2265,7 @@ export default function DiaryScreen() {
                 selectedYear === year ? "bg-black" : "bg-gray-200"
               }`}
             >
-              <Text
-                className={
-                  selectedYear === year ? "text-white" : "text-gray-700"
-                }
-              >
+              <Text className={selectedYear === year ? "text-white" : "text-gray-700"}>
                 {year ?? "All"}
               </Text>
             </Pressable>
@@ -2383,10 +2281,7 @@ export default function DiaryScreen() {
           data={entries}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <DiaryEntryRow
-              entry={item}
-              onPress={() => router.push(`/log/${item.id}`)}
-            />
+            <DiaryEntryRow entry={item} onPress={() => router.push(`/log/${item.id}`)} />
           )}
         />
       )}
@@ -2421,12 +2316,14 @@ git commit -m "feat: implement Diary screen with entry list and FAB"
 ### Task 9: Log Entry Screen (New and Edit)
 
 **Files:**
+
 - Create: `components/WorkSearchResult.tsx`
 - Create: `components/ProductionRow.tsx`
 - Create: `app/log/new.tsx`
 - Create: `app/log/[id].tsx`
 
 This is the most complex screen. It has four sub-views controlled by state:
+
 1. `search` — search for a work, expand to see productions, select one
 2. `create-work` — inline form to create a new Work
 3. `create-production` — inline form to create a Production under a Work
@@ -2453,9 +2350,7 @@ export default function WorkSearchResult({ work, onPress, expanded }: Props) {
   return (
     <Pressable
       onPress={onPress}
-      className={`py-3 border-b border-gray-100 ${
-        expanded ? "bg-gray-50" : ""
-      }`}
+      className={`py-3 border-b border-gray-100 ${expanded ? "bg-gray-50" : ""}`}
     >
       <Text className="font-semibold">{work.title}</Text>
       {firstCreator && (
@@ -2494,9 +2389,7 @@ export default function ProductionRow({ production, onPress }: Props) {
         {production.year ? `, ${production.year}` : ""}
       </Text>
       {production.director && (
-        <Text className="text-xs text-gray-400">
-          dir. {production.director}
-        </Text>
+        <Text className="text-xs text-gray-400">dir. {production.director}</Text>
       )}
     </Pressable>
   );
@@ -2522,10 +2415,7 @@ import {
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../lib/auth-context";
 import { searchWorks, createWork } from "../../lib/api/works";
-import {
-  getProductionsByWork,
-  createProduction,
-} from "../../lib/api/productions";
+import { getProductionsByWork, createProduction } from "../../lib/api/productions";
 import { createLogEntry } from "../../lib/api/log-entries";
 import { WorkWithProductionCount, Production, MediaType } from "../../lib/types";
 import WorkSearchResult from "../../components/WorkSearchResult";
@@ -2554,7 +2444,7 @@ export default function NewLogEntryScreen() {
           title_override: params.productionTitle ?? null,
           venue: params.productionVenue ?? null,
         } as Production)
-      : null
+      : null,
   );
 
   // Search state
@@ -2573,9 +2463,7 @@ export default function NewLogEntryScreen() {
 
   // Create production state
   const [newProdVenue, setNewProdVenue] = useState("");
-  const [newProdYear, setNewProdYear] = useState(
-    String(new Date().getFullYear())
-  );
+  const [newProdYear, setNewProdYear] = useState(String(new Date().getFullYear()));
   const [newProdDirector, setNewProdDirector] = useState("");
 
   // Log form state
@@ -2629,10 +2517,9 @@ export default function NewLogEntryScreen() {
   // ---- Create work handler ----
 
   async function handleCreateWork() {
-    const creators =
-      newWorkCreatorName.trim()
-        ? [{ name: newWorkCreatorName.trim(), role: newWorkCreatorRole }]
-        : [];
+    const creators = newWorkCreatorName.trim()
+      ? [{ name: newWorkCreatorName.trim(), role: newWorkCreatorRole }]
+      : [];
     try {
       const work = await createWork({
         title: newWorkTitle,
@@ -2733,9 +2620,7 @@ export default function NewLogEntryScreen() {
                     }}
                     className="py-2 pl-6"
                   >
-                    <Text className="text-blue-600 text-sm">
-                      + Add new production
-                    </Text>
+                    <Text className="text-blue-600 text-sm">+ Add new production</Text>
                   </Pressable>
                 </>
               )}
@@ -2750,9 +2635,7 @@ export default function NewLogEntryScreen() {
                 }}
                 className="py-4 items-center"
               >
-                <Text className="text-blue-600">
-                  Can't find it? Add new work
-                </Text>
+                <Text className="text-blue-600">Can't find it? Add new work</Text>
               </Pressable>
             ) : null
           }
@@ -2775,20 +2658,10 @@ export default function NewLogEntryScreen() {
           className="border border-gray-300 rounded-lg px-4 py-2 mb-3"
         />
 
-        <Text className="text-sm font-medium text-gray-700 mb-1">
-          Media Type
-        </Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">Media Type</Text>
         <View className="flex-row flex-wrap gap-2 mb-3">
           {(
-            [
-              "theatre",
-              "musical",
-              "opera",
-              "dance",
-              "circus",
-              "concert",
-              "other",
-            ] as MediaType[]
+            ["theatre", "musical", "opera", "dance", "circus", "concert", "other"] as MediaType[]
           ).map((mt) => (
             <Pressable
               key={mt}
@@ -2797,20 +2670,12 @@ export default function NewLogEntryScreen() {
                 newWorkMediaType === mt ? "bg-black" : "bg-gray-200"
               }`}
             >
-              <Text
-                className={
-                  newWorkMediaType === mt ? "text-white" : "text-gray-700"
-                }
-              >
-                {mt}
-              </Text>
+              <Text className={newWorkMediaType === mt ? "text-white" : "text-gray-700"}>{mt}</Text>
             </Pressable>
           ))}
         </View>
 
-        <Text className="text-sm font-medium text-gray-700 mb-1">
-          Creator (optional)
-        </Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">Creator (optional)</Text>
         <TextInput
           value={newWorkCreatorName}
           onChangeText={setNewWorkCreatorName}
@@ -2866,9 +2731,7 @@ export default function NewLogEntryScreen() {
           className="border border-gray-300 rounded-lg px-4 py-2 mb-3"
         />
 
-        <Text className="text-sm font-medium text-gray-700 mb-1">
-          Director (optional)
-        </Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">Director (optional)</Text>
         <TextInput
           value={newProdDirector}
           onChangeText={setNewProdDirector}
@@ -2889,9 +2752,7 @@ export default function NewLogEntryScreen() {
   // ---- Step: Log Form ----
 
   const displayTitle =
-    selectedProduction?.title_override ??
-    selectedProduction?.venue ??
-    "Selected production";
+    selectedProduction?.title_override ?? selectedProduction?.venue ?? "Selected production";
 
   return (
     <ScrollView className="flex-1 bg-white px-4 pt-4">
@@ -2905,9 +2766,7 @@ export default function NewLogEntryScreen() {
 
       {/* Date seen */}
       <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">
-          Date seen
-        </Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">Date seen</Text>
         <TextInput
           value={dateSeen}
           onChangeText={setDateSeen}
@@ -2930,14 +2789,10 @@ export default function NewLogEntryScreen() {
 
       {/* Rewatch */}
       <View className="mb-4 flex-row items-center gap-2">
-        <Text className="text-sm font-medium text-gray-700">
-          Seen this production before?
-        </Text>
+        <Text className="text-sm font-medium text-gray-700">Seen this production before?</Text>
         <Pressable
           onPress={() => setIsRewatch(!isRewatch)}
-          className={`px-3 py-1 rounded-full ${
-            isRewatch ? "bg-black" : "bg-gray-200"
-          }`}
+          className={`px-3 py-1 rounded-full ${isRewatch ? "bg-black" : "bg-gray-200"}`}
         >
           <Text className={isRewatch ? "text-white" : "text-gray-700"}>
             {isRewatch ? "Yes" : "No"}
@@ -2978,9 +2833,7 @@ export default function NewLogEntryScreen() {
           disabled={saving}
           className="flex-1 py-3 rounded-lg bg-black items-center"
         >
-          <Text className="text-white font-medium">
-            {saving ? "Saving..." : "Save"}
-          </Text>
+          <Text className="text-white font-medium">{saving ? "Saving..." : "Save"}</Text>
         </Pressable>
       </View>
     </ScrollView>
@@ -3004,10 +2857,7 @@ import {
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../lib/auth-context";
-import {
-  updateLogEntry,
-  deleteLogEntry,
-} from "../../lib/api/log-entries";
+import { updateLogEntry, deleteLogEntry } from "../../lib/api/log-entries";
 import { supabase } from "../../lib/supabase";
 import { LogEntryWithProduction } from "../../lib/types";
 import StarRating from "../../components/StarRating";
@@ -3104,26 +2954,19 @@ export default function EditLogEntryScreen() {
     );
   }
 
-  const title =
-    entry.production.title_override ??
-    entry.production.work?.title ??
-    "Unknown";
+  const title = entry.production.title_override ?? entry.production.work?.title ?? "Unknown";
 
   return (
     <ScrollView className="flex-1 bg-white px-4 pt-4">
       {/* Production info (read-only) */}
       <View className="mb-4 pb-4 border-b border-gray-200">
         <Text className="text-lg font-bold">{title}</Text>
-        {entry.production.venue && (
-          <Text className="text-gray-500">{entry.production.venue}</Text>
-        )}
+        {entry.production.venue && <Text className="text-gray-500">{entry.production.venue}</Text>}
       </View>
 
       {/* Date */}
       <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">
-          Date seen
-        </Text>
+        <Text className="text-sm font-medium text-gray-700 mb-1">Date seen</Text>
         <TextInput
           value={dateSeen}
           onChangeText={setDateSeen}
@@ -3145,14 +2988,10 @@ export default function EditLogEntryScreen() {
 
       {/* Rewatch */}
       <View className="mb-4 flex-row items-center gap-2">
-        <Text className="text-sm font-medium text-gray-700">
-          Seen this production before?
-        </Text>
+        <Text className="text-sm font-medium text-gray-700">Seen this production before?</Text>
         <Pressable
           onPress={() => setIsRewatch(!isRewatch)}
-          className={`px-3 py-1 rounded-full ${
-            isRewatch ? "bg-black" : "bg-gray-200"
-          }`}
+          className={`px-3 py-1 rounded-full ${isRewatch ? "bg-black" : "bg-gray-200"}`}
         >
           <Text className={isRewatch ? "text-white" : "text-gray-700"}>
             {isRewatch ? "Yes" : "No"}
@@ -3193,9 +3032,7 @@ export default function EditLogEntryScreen() {
           disabled={saving}
           className="flex-1 py-3 rounded-lg bg-black items-center"
         >
-          <Text className="text-white font-medium">
-            {saving ? "Saving..." : "Save"}
-          </Text>
+          <Text className="text-white font-medium">{saving ? "Saving..." : "Save"}</Text>
         </Pressable>
       </View>
 
@@ -3225,6 +3062,7 @@ git commit -m "feat: implement Log Entry screen with search, inline creation, an
 ### Task 10: Search Screen
 
 **Files:**
+
 - Modify: `app/(tabs)/search.tsx`
 
 - [ ] **Step 1: Implement the Search screen**
@@ -3311,9 +3149,7 @@ export default function SearchScreen() {
                       {prod.year ? `, ${prod.year}` : ""}
                     </Text>
                     {prod.director && (
-                      <Text className="text-xs text-gray-400">
-                        dir. {prod.director}
-                      </Text>
+                      <Text className="text-xs text-gray-400">dir. {prod.director}</Text>
                     )}
                   </Pressable>
                   <Pressable
@@ -3322,8 +3158,7 @@ export default function SearchScreen() {
                         pathname: "/log/new",
                         params: {
                           productionId: prod.id,
-                          productionTitle:
-                            prod.title_override ?? work.title,
+                          productionTitle: prod.title_override ?? work.title,
                           productionVenue: prod.venue ?? "",
                         },
                       })
@@ -3360,6 +3195,7 @@ git commit -m "feat: implement Search screen with work and production browsing"
 ### Task 11: Production Detail Screen
 
 **Files:**
+
 - Create: `app/production/[id].tsx`
 
 - [ ] **Step 1: Implement the Production Detail screen**
@@ -3367,14 +3203,7 @@ git commit -m "feat: implement Search screen with work and production browsing"
 ```tsx
 // app/production/[id].tsx
 import { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  ActivityIndicator,
-  Image,
-} from "react-native";
+import { View, Text, ScrollView, Pressable, ActivityIndicator, Image } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../lib/auth-context";
@@ -3390,9 +3219,7 @@ export default function ProductionDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  const [production, setProduction] = useState<
-    (Production & { work: Work | null }) | null
-  >(null);
+  const [production, setProduction] = useState<(Production & { work: Work | null }) | null>(null);
   const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -3433,8 +3260,7 @@ export default function ProductionDetailScreen() {
     );
   }
 
-  const title =
-    production.title_override ?? production.work?.title ?? "Unknown";
+  const title = production.title_override ?? production.work?.title ?? "Unknown";
   const work = production.work;
 
   return (
@@ -3453,9 +3279,7 @@ export default function ProductionDetailScreen() {
           {production.venue ?? "Unknown venue"}
           {production.year ? `, ${production.year}` : ""}
         </Text>
-        {production.director && (
-          <Text className="text-gray-500">dir. {production.director}</Text>
-        )}
+        {production.director && <Text className="text-gray-500">dir. {production.director}</Text>}
         {production.start_date && production.end_date && (
           <Text className="text-sm text-gray-400 mt-1">
             {production.start_date} — {production.end_date}
@@ -3493,9 +3317,7 @@ export default function ProductionDetailScreen() {
       <View className="px-4 py-3 border-b border-gray-100">
         <Text className="font-semibold mb-2">Your Log Entries</Text>
         {logEntries.length === 0 ? (
-          <Text className="text-gray-400 text-sm">
-            You haven't logged this production yet.
-          </Text>
+          <Text className="text-gray-400 text-sm">You haven't logged this production yet.</Text>
         ) : (
           logEntries.map((entry) => (
             <Pressable
@@ -3505,23 +3327,17 @@ export default function ProductionDetailScreen() {
             >
               <View className="flex-row items-center gap-2">
                 <Text className="text-sm text-gray-500">
-                  {new Date(entry.date_seen + "T00:00:00").toLocaleDateString(
-                    "en-GB",
-                    { day: "numeric", month: "short", year: "numeric" }
-                  )}
+                  {new Date(entry.date_seen + "T00:00:00").toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
                 </Text>
-                {entry.rating != null && (
-                  <StarRatingDisplay value={entry.rating} size={12} />
-                )}
-                {entry.liked && (
-                  <Ionicons name="heart" size={12} color="#ef4444" />
-                )}
+                {entry.rating != null && <StarRatingDisplay value={entry.rating} size={12} />}
+                {entry.liked && <Ionicons name="heart" size={12} color="#ef4444" />}
               </View>
               {entry.review && (
-                <Text
-                  className="text-sm text-gray-600 mt-1"
-                  numberOfLines={2}
-                >
+                <Text className="text-sm text-gray-600 mt-1" numberOfLines={2}>
                   {entry.review}
                 </Text>
               )}
@@ -3578,6 +3394,7 @@ git commit -m "feat: implement Production Detail screen"
 ### Task 12: Wishlist Screen
 
 **Files:**
+
 - Modify: `app/(tabs)/wishlist.tsx`
 
 - [ ] **Step 1: Implement the Wishlist screen**
@@ -3604,7 +3421,7 @@ export default function WishlistScreen() {
   useFocusEffect(
     useCallback(() => {
       loadWishlist();
-    }, [session])
+    }, [session]),
   );
 
   async function loadWishlist() {
@@ -3659,20 +3476,17 @@ export default function WishlistScreen() {
       className="flex-1 bg-white"
       renderItem={({ item }) => {
         const title = item.production
-          ? item.production.title_override ??
-            item.production.work?.title ??
-            "Unknown"
-          : item.work?.title ?? "Unknown";
+          ? (item.production.title_override ?? item.production.work?.title ?? "Unknown")
+          : (item.work?.title ?? "Unknown");
         const subtitle = item.production?.venue
-          ? `${item.production.venue}${
-              item.production.year ? `, ${item.production.year}` : ""
-            }`
+          ? `${item.production.venue}${item.production.year ? `, ${item.production.year}` : ""}`
           : null;
 
-        const dateAdded = new Date(item.created_at).toLocaleDateString(
-          "en-GB",
-          { day: "numeric", month: "short", year: "numeric" }
-        );
+        const dateAdded = new Date(item.created_at).toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
 
         return (
           <Pressable
@@ -3681,17 +3495,13 @@ export default function WishlistScreen() {
           >
             <View className="flex-1">
               <Text className="font-semibold">{title}</Text>
-              {subtitle && (
-                <Text className="text-sm text-gray-500">{subtitle}</Text>
-              )}
+              {subtitle && <Text className="text-sm text-gray-500">{subtitle}</Text>}
               {item.notes && (
                 <Text className="text-sm text-gray-400 mt-1" numberOfLines={1}>
                   {item.notes}
                 </Text>
               )}
-              <Text className="text-xs text-gray-300 mt-1">
-                Added {dateAdded}
-              </Text>
+              <Text className="text-xs text-gray-300 mt-1">Added {dateAdded}</Text>
             </View>
             <Pressable onPress={() => handleRemove(item.id)} className="p-2">
               <Text className="text-red-400 text-sm">Remove</Text>
@@ -3722,6 +3532,7 @@ git commit -m "feat: implement Wishlist screen"
 ### Task 13: Stats Screen
 
 **Files:**
+
 - Modify: `app/(tabs)/stats.tsx`
 
 - [ ] **Step 1: Implement the Stats screen**
@@ -3745,7 +3556,7 @@ export default function StatsScreen() {
   useFocusEffect(
     useCallback(() => {
       loadStats();
-    }, [session])
+    }, [session]),
   );
 
   async function loadStats() {
@@ -3769,10 +3580,7 @@ export default function StatsScreen() {
     );
   }
 
-  const maxRatingCount = Math.max(
-    ...stats.ratingDistribution.map((r) => r.count),
-    1
-  );
+  const maxRatingCount = Math.max(...stats.ratingDistribution.map((r) => r.count), 1);
 
   return (
     <ScrollView className="flex-1 bg-white px-4 pt-4">
@@ -3798,18 +3606,14 @@ export default function StatsScreen() {
           <Text className="font-semibold mb-3">Rating Distribution</Text>
           {stats.ratingDistribution.map(({ rating, count }) => (
             <View key={rating} className="flex-row items-center mb-1">
-              <Text className="w-10 text-xs text-gray-500 text-right mr-2">
-                {rating}
-              </Text>
+              <Text className="w-10 text-xs text-gray-500 text-right mr-2">{rating}</Text>
               <View className="flex-1 h-5 bg-gray-100 rounded overflow-hidden">
                 <View
                   className="h-full bg-amber-400 rounded"
                   style={{ width: `${(count / maxRatingCount) * 100}%` }}
                 />
               </View>
-              <Text className="w-8 text-xs text-gray-500 text-right ml-2">
-                {count}
-              </Text>
+              <Text className="w-8 text-xs text-gray-500 text-right ml-2">{count}</Text>
             </View>
           ))}
         </View>
@@ -3836,10 +3640,7 @@ export default function StatsScreen() {
         <View className="mb-8">
           <Text className="font-semibold mb-3">By Year</Text>
           {stats.byYear.map(({ year, count }) => (
-            <View
-              key={year}
-              className="flex-row justify-between py-2 border-b border-gray-50"
-            >
+            <View key={year} className="flex-row justify-between py-2 border-b border-gray-50">
               <Text className="text-gray-700">{year}</Text>
               <Text className="text-gray-500">{count}</Text>
             </View>
@@ -3869,6 +3670,7 @@ git commit -m "feat: implement Stats screen with rating distribution and breakdo
 ### Task 14: Settings Screen
 
 **Files:**
+
 - Modify: `app/(tabs)/settings.tsx`
 
 - [ ] **Step 1: Implement the Settings screen**
@@ -3890,7 +3692,7 @@ export default function SettingsScreen() {
       const { data: entries, error } = await supabase
         .from("log_entries")
         .select(
-          "date_seen, rating, review, liked, tags, is_rewatch, production:productions(venue, year, title_override, work:works(title, media_type))"
+          "date_seen, rating, review, liked, tags, is_rewatch, production:productions(venue, year, title_override, work:works(title, media_type))",
         )
         .eq("user_id", session.user.id)
         .order("date_seen", { ascending: false });
@@ -3900,10 +3702,7 @@ export default function SettingsScreen() {
       const csv = [
         "date_seen,title,venue,year,rating,liked,rewatch,tags,review",
         ...(entries ?? []).map((e: any) => {
-          const title =
-            e.production?.title_override ??
-            e.production?.work?.title ??
-            "";
+          const title = e.production?.title_override ?? e.production?.work?.title ?? "";
           const venue = e.production?.venue ?? "";
           const year = e.production?.year ?? "";
           const review = (e.review ?? "").replace(/"/g, '""');
@@ -3935,20 +3734,13 @@ export default function SettingsScreen() {
       {/* User info */}
       <View className="mb-6 pb-4 border-b border-gray-200">
         <Text className="text-sm text-gray-500">Signed in as</Text>
-        <Text className="text-base font-medium">
-          {session?.user.email ?? "Unknown"}
-        </Text>
+        <Text className="text-base font-medium">{session?.user.email ?? "Unknown"}</Text>
       </View>
 
       {/* Data export */}
-      <Pressable
-        onPress={handleExportData}
-        className="py-3 border-b border-gray-100"
-      >
+      <Pressable onPress={handleExportData} className="py-3 border-b border-gray-100">
         <Text className="text-base">Export my data (CSV)</Text>
-        <Text className="text-sm text-gray-400">
-          Download all your log entries
-        </Text>
+        <Text className="text-sm text-gray-400">Download all your log entries</Text>
       </Pressable>
 
       {/* About */}

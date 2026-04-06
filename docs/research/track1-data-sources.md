@@ -7,15 +7,15 @@
 
 ## Summary Table
 
-| Source | Type | Public API | Work/Prod Distinction | Coverage | License |
-|---|---|---|---|---|---|
-| IBDB | Broadway-only database | No | Production only | Broadway (NY) comprehensive | All Rights Reserved |
-| Spectra.theater (IOBDB) | Off-Broadway database | No | Production only | Off-Broadway comprehensive | No scraping |
-| Theatricalia | UK/international theatre | No | Play + Production | ~20,000 productions | Open source (Django) |
-| Wikidata | General knowledge graph | Yes (SPARQL) | Yes (work + production) | Famous works good; recent/fringe sparse | CC0 |
-| MusicBrainz | Music encyclopedia | Yes (REST) | Yes (work + recording + release) | Musicals/operas recorded; unrecorded stage works sparse | CC0/Public Domain |
-| AboutTheArtists | Broad US theatre credits | No | Production only | Very broad US coverage | Proprietary, scraping forbidden |
-| IMSLP | Music scores library | Yes (MediaWiki) | Work only (no productions) | Classical scores excellent; musicals limited | IMSLP custom (public domain works) |
+| Source                  | Type                     | Public API      | Work/Prod Distinction            | Coverage                                                | License                            |
+| ----------------------- | ------------------------ | --------------- | -------------------------------- | ------------------------------------------------------- | ---------------------------------- |
+| IBDB                    | Broadway-only database   | No              | Production only                  | Broadway (NY) comprehensive                             | All Rights Reserved                |
+| Spectra.theater (IOBDB) | Off-Broadway database    | No              | Production only                  | Off-Broadway comprehensive                              | No scraping                        |
+| Theatricalia            | UK/international theatre | No              | Play + Production                | ~20,000 productions                                     | Open source (Django)               |
+| Wikidata                | General knowledge graph  | Yes (SPARQL)    | Yes (work + production)          | Famous works good; recent/fringe sparse                 | CC0                                |
+| MusicBrainz             | Music encyclopedia       | Yes (REST)      | Yes (work + recording + release) | Musicals/operas recorded; unrecorded stage works sparse | CC0/Public Domain                  |
+| AboutTheArtists         | Broad US theatre credits | No              | Production only                  | Very broad US coverage                                  | Proprietary, scraping forbidden    |
+| IMSLP                   | Music scores library     | Yes (MediaWiki) | Work only (no productions)       | Classical scores excellent; musicals limited            | IMSLP custom (public domain works) |
 
 ---
 
@@ -29,6 +29,7 @@
 **API availability:** None. There is no official public API. A third-party GitHub project (Broadway-Data-API by ytmimi) exists as a community workaround, but it is not official and of unknown reliability or freshness.
 
 **Entities modelled:**
+
 - Shows (productions, not abstract works)
 - Theatres / Venues
 - People (cast, crew, creative team)
@@ -57,6 +58,7 @@
 **API availability:** None found. No public API or data download documented.
 
 **Entities modelled:**
+
 - Productions (title page credits)
 - Original cast and understudies
 - Production staff
@@ -86,6 +88,7 @@
 **API availability:** No API exists. The maintainer has acknowledged the need to add API/linked data access but has not completed it. No raw data download available either.
 
 **Data exposed:**
+
 - Plays (works)
 - Productions (linked to plays)
 - People (cast and crew)
@@ -96,6 +99,7 @@
 **Work vs. production distinction:** Yes. Theatricalia has a play entity (the abstract work) and a separate production entity (a specific staging). This is the closest structural match to the Transient data model (Work → Production).
 
 **Standard identifiers:** Wikidata has three Theatricalia identifier properties:
+
 - `P1242` — Theatricalia play ID (links a Wikidata play item to its Theatricalia page)
 - `P2468` — Theatricalia theatre ID (links a venue)
 - `P2469` — Theatricalia person ID
@@ -116,6 +120,7 @@ This means Theatricalia's plays are cross-referenced in Wikidata, enabling look-
 **API availability:** Yes. Full free public SPARQL endpoint at query.wikidata.org. Also REST-like access via `https://www.wikidata.org/wiki/Special:EntityData/Q{id}.json`. No authentication required. Rate limits are soft (60-second query timeout on SPARQL endpoint).
 
 **Relevant item types (Q numbers):**
+
 - `Q25379` — play (theatre) [abstract work]
 - `Q182659` — musical (abstract work)
 - `Q1344` — opera (abstract work)
@@ -125,6 +130,7 @@ This means Theatricalia's plays are cross-referenced in Wikidata, enabling look-
 - `Q59163902` — musical production
 
 **Key properties (P numbers):**
+
 - `P31` — instance of (used to type items as play, musical, opera, theatrical production, etc.)
 - `P136` — genre
 - `P170` — creator / author
@@ -139,6 +145,7 @@ This means Theatricalia's plays are cross-referenced in Wikidata, enabling look-
 **Work vs. production distinction:** Yes, and explicitly modelled. The WikiProject Performing Arts data structure separates the abstract work (play, musical, opera) from the performing arts production (specific staging). Production items point back to the work via `P921` (main subject) or structured relationships. Multiple productions of the same work each have their own Wikidata item.
 
 **Example SPARQL query for theatrical works:**
+
 ```sparql
 SELECT ?work ?workLabel WHERE {
   ?work wdt:P31 wd:Q25379 .  # instance of: play
@@ -150,6 +157,7 @@ LIMIT 100
 For musicals: replace `wd:Q25379` with `wd:Q182659`.
 
 **Coverage assessment:**
+
 - Famous/canonical plays (Shakespeare, Chekhov, Ibsen, Sondheim musicals, major operas): generally good
 - Broadway/West End productions of famous works: reasonable
 - Recent, fringe, or regional productions: sparse to nonexistent
@@ -172,6 +180,7 @@ For musicals: replace `wd:Q25379` with `wd:Q182659`.
 **API availability:** Yes. REST-based JSON/XML webservice, free for non-commercial use. Rate limit: 1 request/second average with a meaningful User-Agent header. Full database dumps available (JSON and PostgreSQL format, updated periodically).
 
 **Data model — key entities:**
+
 - **Work** — the abstract intellectual creation (opera, musical, song). This is the equivalent of Transient's Work.
 - **Recording** — a specific audio capture of a performance
 - **Release** — a published audio product (cast recording, studio album)
@@ -180,14 +189,17 @@ For musicals: replace `wd:Q25379` with `wd:Q182659`.
 - **Event** — concerts and performances (less developed than works/recordings)
 
 **Work hierarchy for opera (recommended structure):**
+
 ```
 Opera (Work)
   └── Act (Work, "part of" Opera)
        └── Number/Aria (Work, "part of" Act)
 ```
+
 Scenes are not modelled as independent works.
 
 **Theatre/musical coverage:**
+
 - Has a specific style guide for "Theatre" releases (non-opera theatre with music/songs/dialogue)
 - Opera works are well-modelled and extensively populated — major operas have full work trees
 - Musicals that have cast recordings are present (as Release + Work entities)
@@ -196,6 +208,7 @@ Scenes are not modelled as independent works.
 **Licence:** Majority of data released to public domain. Database dumps freely downloadable.
 
 **Relevance to Transient:**
+
 - Excellent for musicals and operas where a cast recording exists — these have full work-level metadata (composer, librettist, premiere year, ISWC identifiers)
 - Not useful for plays (no music)
 - The Work entity in MusicBrainz is a strong analogue to Transient's Work for musical theatre
@@ -245,38 +258,44 @@ Scenes are not modelled as independent works.
 ## Additional Sources Identified
 
 ### Spectra.theater (beyond IOBDB)
+
 Beyond hosting the IOBDB data, Spectra describes itself as connecting plays, characters, creatives, production credits, venues, and artists. Founded 2022, still developing. No API found but the company is tech-focused and may open up data access in future. Worth monitoring.
 
 ### BroadwayWorld
+
 Claims 335,000+ performers and 250,000+ productions. Web-only, no public API found. Proprietary.
 
 ### Playbill
+
 Historical programme archive, some digital data. No public API found.
 
 ### GloPAD (Global Performing Arts Database)
+
 Academic resource providing multilingual metadata on performing arts images, video, and text. Primarily a research/archival resource, not structured for the Work → Production use case.
 
 ### National Theatre (UK) Archive
+
 The National Theatre's archive was previously included in Theatricalia but has since been removed from that site. NT has its own digital archive at ntarchive.nationaltheatre.org.uk but no public API.
 
 ### Theatre Museum / V&A Collections
+
 Victoria and Albert Museum holds significant theatre collections with some open data via the V&A API, but this is artefact/object focused (programmes, costumes, set designs), not structured productions data.
 
 ---
 
 ## Standard Identifiers Found
 
-| Identifier | Scope | Notes |
-|---|---|---|
-| IBDB show ID | Broadway productions | No API; stable URL pattern: ibdb.com/broadway-production/{id} |
-| Theatricalia play ID (P1242) | Plays/works | Wikidata cross-reference; no direct API |
-| Theatricalia theatre ID (P2468) | Venues | Wikidata cross-reference |
-| Theatricalia person ID (P2469) | People | Wikidata cross-reference |
-| Wikidata QID | Universal | CC0; SPARQL queryable; covers works + productions |
-| MusicBrainz MBID | Musical works + recordings | UUID format; free API; CC0 |
-| ISNI | People and organisations | Batch API requires paid membership |
-| VIAF | People and organisations | Free lookup; cross-references national authority files |
-| ISWC | Musical works | International Standard Musical Work Code; held in MusicBrainz |
+| Identifier                      | Scope                      | Notes                                                         |
+| ------------------------------- | -------------------------- | ------------------------------------------------------------- |
+| IBDB show ID                    | Broadway productions       | No API; stable URL pattern: ibdb.com/broadway-production/{id} |
+| Theatricalia play ID (P1242)    | Plays/works                | Wikidata cross-reference; no direct API                       |
+| Theatricalia theatre ID (P2468) | Venues                     | Wikidata cross-reference                                      |
+| Theatricalia person ID (P2469)  | People                     | Wikidata cross-reference                                      |
+| Wikidata QID                    | Universal                  | CC0; SPARQL queryable; covers works + productions             |
+| MusicBrainz MBID                | Musical works + recordings | UUID format; free API; CC0                                    |
+| ISNI                            | People and organisations   | Batch API requires paid membership                            |
+| VIAF                            | People and organisations   | Free lookup; cross-references national authority files        |
+| ISWC                            | Musical works              | International Standard Musical Work Code; held in MusicBrainz |
 
 ---
 
