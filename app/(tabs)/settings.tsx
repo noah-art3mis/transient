@@ -77,22 +77,26 @@ export default function SettingsScreen() {
   }
 
   return (
-    <View className="flex-1 bg-white px-4 pt-4">
-      <View className="mb-6 pb-4 border-b border-gray-200">
-        <Text className="text-sm text-gray-500">{t("settings.signedInAs")}</Text>
+    <View className="flex-1 bg-background px-4 pt-4">
+      <View className="mb-6 pb-4 border-b border-divider">
+        <Text className="text-sm text-muted-foreground">{t("settings.signedInAs")}</Text>
         <Text className="text-base font-medium">{session?.user.email ?? t("common.unknown")}</Text>
       </View>
 
-      <View className="py-3 border-b border-gray-100">
+      <View className="py-3 border-b border-divider-light">
         <Text className="text-base mb-2">{t("settings.language")}</Text>
         <View className="flex-row gap-2">
           {LANGUAGES.map(({ code, label }) => (
             <Pressable
               key={code}
               onPress={() => handleLanguageChange(code)}
-              className={`px-3 py-1 rounded-full ${currentLang === code ? "bg-black" : "bg-gray-200"}`}
+              className={`px-3 py-1 rounded-full ${currentLang === code ? "bg-primary" : "bg-secondary"}`}
             >
-              <Text className={currentLang === code ? "text-white" : "text-gray-700"}>
+              <Text
+                className={
+                  currentLang === code ? "text-primary-foreground" : "text-secondary-foreground"
+                }
+              >
                 {t(label)}
               </Text>
             </Pressable>
@@ -100,16 +104,16 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      <Pressable onPress={handleExportData} className="py-3 border-b border-gray-100">
+      <Pressable onPress={handleExportData} className="py-3 border-b border-divider-light">
         <Text className="text-base">{t("settings.exportCsv")}</Text>
-        <Text className="text-sm text-gray-400">{t("settings.exportDescription")}</Text>
+        <Text className="text-sm text-subtle">{t("settings.exportDescription")}</Text>
       </Pressable>
-      <View className="py-3 border-b border-gray-100">
+      <View className="py-3 border-b border-divider-light">
         <Text className="text-base">{t("settings.about")}</Text>
-        <Text className="text-sm text-gray-400">{t("settings.version")}</Text>
+        <Text className="text-sm text-subtle">{t("settings.version")}</Text>
       </View>
       <Pressable onPress={handleSignOut} className="py-4 mt-6 items-center">
-        <Text className="text-red-500 font-medium text-base">{t("settings.signOut")}</Text>
+        <Text className="text-destructive font-medium text-base">{t("settings.signOut")}</Text>
       </Pressable>
     </View>
   );

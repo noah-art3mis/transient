@@ -1,9 +1,21 @@
 import "../global.css";
 import "../lib/i18n";
 import { useEffect } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Platform, View } from "react-native";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { AuthProvider, useAuth } from "../lib/auth-context";
+import colors from "../lib/theme/colors";
+
+const webContentStyle =
+  Platform.OS === "web"
+    ? {
+        maxWidth: 900,
+        width: "100%" as const,
+        marginLeft: "auto" as const,
+        marginRight: "auto" as const,
+        backgroundColor: colors.background,
+      }
+    : undefined;
 
 function AuthGate() {
   const { session, loading } = useAuth();
@@ -24,7 +36,7 @@ function AuthGate() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-white">
+      <View className="flex-1 items-center justify-center bg-background">
         <ActivityIndicator size="large" />
       </View>
     );
@@ -34,8 +46,11 @@ function AuthGate() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="log" options={{ presentation: "modal" }} />
-      <Stack.Screen name="production" />
+      <Stack.Screen
+        name="log"
+        options={{ presentation: "modal", contentStyle: webContentStyle }}
+      />
+      <Stack.Screen name="production" options={{ contentStyle: webContentStyle }} />
     </Stack>
   );
 }

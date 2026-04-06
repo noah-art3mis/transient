@@ -1,5 +1,6 @@
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import colors from "../lib/theme/colors";
 
 type Props = {
   value: boolean;
@@ -13,7 +14,7 @@ export default function HeartButton({ value, onChange, size = 28 }: Props) {
       <Ionicons
         name={value ? "heart" : "heart-outline"}
         size={size}
-        color={value ? "#ef4444" : "#9ca3af"}
+        color={value ? colors.heart : colors["icon-muted"]}
       />
     </Pressable>
   );

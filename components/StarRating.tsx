@@ -1,5 +1,6 @@
 import { View, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import colors from "../lib/theme/colors";
 
 type Props = {
   value: number | null;
@@ -24,7 +25,7 @@ export default function StarRating({ value, onChange, size = 32 }: Props) {
           else if (value >= halfValue) icon = "star-half";
         }
 
-        const color = icon === "star-outline" ? "#d1d5db" : "#f59e0b";
+        const color = icon === "star-outline" ? colors.rating.empty : colors.rating.DEFAULT;
 
         return (
           <View key={star} style={{ width: size, height: size, position: "relative" }}>

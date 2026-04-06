@@ -44,13 +44,13 @@ export default function SearchScreen() {
   }
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-background">
       <View className="px-4 pt-2 pb-2">
         <TextInput
           value={query}
           onChangeText={handleSearch}
           placeholder={t("search.placeholder")}
-          className="border border-gray-300 rounded-lg px-4 py-3 text-base"
+          className="border border-input rounded-lg px-4 py-3 text-base"
         />
       </View>
       <FlatList
@@ -69,14 +69,14 @@ export default function SearchScreen() {
                 <View key={prod.id} className="flex-row items-center">
                   <Pressable
                     onPress={() => router.push(`/production/${prod.id}`)}
-                    className="flex-1 py-2 pl-6 border-b border-gray-50"
+                    className="flex-1 py-2 pl-6 border-b border-divider-lighter"
                   >
                     <Text className="text-sm">
                       {prod.venue ?? t("common.unknownVenue")}
                       {prod.year ? `, ${prod.year}` : ""}
                     </Text>
                     {prod.director && (
-                      <Text className="text-xs text-gray-400">
+                      <Text className="text-xs text-subtle">
                         {t("common.dir")} {prod.director}
                       </Text>
                     )}
@@ -92,9 +92,9 @@ export default function SearchScreen() {
                         },
                       })
                     }
-                    className="px-3 py-1 bg-black rounded-full mr-4"
+                    className="px-3 py-1 bg-primary rounded-full mr-4"
                   >
-                    <Text className="text-white text-xs">{t("common.log")}</Text>
+                    <Text className="text-primary-foreground text-xs">{t("common.log")}</Text>
                   </Pressable>
                 </View>
               ))}
