@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { SparqlResponse } from "./transform";
+import { createClient } from "@supabase/supabase-js";
+import { transformRawToWorkInserts, type SparqlResponse } from "./transform";
 
 const CATEGORIES = [
   // plays: no items use direct wdt:P31 wd:Q25379 — all typed via subclasses (tragedy, comedy, etc.)
@@ -65,11 +66,87 @@ async function fetchCommand(): Promise<void> {
   console.log("Done. Raw data saved to scripts/data/raw/");
 }
 
+async function loadCommand(): Promise<void> {
+  const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
+  const key = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    console.error(
+      "Missing EXPO_PUBLIC_SUPABASE_URL or EXPO_PUBLIC_SUPABASE_ANON_KEY.\n" +
+        "Tip: run `source .env.local` first, or use `node --env-file=.env.local`",
+    );
+    process.exit(1);
+  }
+
+  const supabase = createClient(url, key);
+  const dataDir = path.join(__dirname, "data", "raw");
+
+  // Get existing QIDs to skip duplicates
+  const { data: existing, error: fetchError } = await supabase
+    .from("works")
+    .select("external_ids");
+
+  if (fetchError) {
+    console.error(`Failed to query existing works: ${fetchError.message}`);
+    process.exit(1);
+  }
+
+  const existingQids = new Set(
+    (existing ?? [])
+      .map((w: { external_ids: Record<string, string> }) => w.external_ids?.wikidata_qid)
+      .filter(Boolean),
+  );
+
+  console.log(`Found ${existingQids.size} existing works with Wikidata QIDs`);
+
+  let inserted = 0;
+  let skipped = 0;
+  let errors = 0;
+
+  for (const category of CATEGORIES) {
+    const filePath = path.join(dataDir, `${category.name}.json`);
+
+    let fileContent: string;
+    try {
+      fileContent = await fs.readFile(filePath, "utf-8");
+    } catch {
+      console.error(`Missing ${filePath} — run "fetch" first`);
+      continue;
+    }
+
+    const raw: SparqlResponse = JSON.parse(fileContent);
+    const works = transformRawToWorkInserts(raw, category.mediaType);
+
+    for (const work of works) {
+      const qid = work.external_ids?.wikidata_qid;
+      if (qid && existingQids.has(qid)) {
+        skipped++;
+        continue;
+      }
+
+      const { error } = await supabase.from("works").insert(work);
+      if (error) {
+        console.error(`  Error inserting "${work.title}": ${error.message}`);
+        errors++;
+      } else {
+        inserted++;
+        if (qid) existingQids.add(qid);
+      }
+    }
+
+    console.log(`Processed ${category.name}: ${works.length} works`);
+  }
+
+  console.log(`\nDone. Inserted: ${inserted}, Skipped: ${skipped}, Errors: ${errors}`);
+}
+
 const command = process.argv[2];
 
 switch (command) {
   case "fetch":
     fetchCommand();
+    break;
+  case "load":
+    loadCommand();
     break;
   default:
     console.error("Usage: npx tsx scripts/seed.ts <fetch|load>");
