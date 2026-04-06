@@ -2,6 +2,21 @@ import { View, Text, Pressable, Alert, Share } from "react-native";
 import { useAuth } from "../../lib/auth-context";
 import { supabase } from "../../lib/supabase";
 
+type ExportQueryRow = {
+  date_seen: string;
+  rating: number | null;
+  review: string | null;
+  liked: boolean;
+  tags: string[];
+  is_rewatch: boolean;
+  production: {
+    title_override: string | null;
+    venue: string | null;
+    year: number | null;
+    work: { title: string; media_type: string } | null;
+  } | null;
+};
+
 export default function SettingsScreen() {
   const { session, signOut } = useAuth();
 
@@ -10,15 +25,18 @@ export default function SettingsScreen() {
     try {
       const { data: entries, error } = await supabase
         .from("log_entries")
-        .select("date_seen, rating, review, liked, tags, is_rewatch, production:productions(venue, year, title_override, work:works(title, media_type))")
+        .select(
+          "date_seen, rating, review, liked, tags, is_rewatch, production:productions(venue, year, title_override, work:works(title, media_type))",
+        )
         .eq("user_id", session.user.id)
         .order("date_seen", { ascending: false });
 
       if (error) throw error;
 
+      const rows = (entries ?? []) as unknown as ExportQueryRow[];
       const csv = [
         "date_seen,title,venue,year,rating,liked,rewatch,tags,review",
-        ...(entries ?? []).map((e: any) => {
+        ...rows.map((e) => {
           const title = e.production?.title_override ?? e.production?.work?.title ?? "";
           const venue = e.production?.venue ?? "";
           const year = e.production?.year ?? "";
@@ -36,8 +54,11 @@ export default function SettingsScreen() {
   }
 
   async function handleSignOut() {
-    try { await signOut(); }
-    catch (e: any) { Alert.alert("Error", e.message); }
+    try {
+      await signOut();
+    } catch (e: unknown) {
+      Alert.alert("Error", e instanceof Error ? e.message : "Sign out failed");
+    }
   }
 
   return (

@@ -13,7 +13,7 @@ export async function getProductionsByWork(workId: string): Promise<Production[]
 }
 
 export async function getProduction(
-  id: string
+  id: string,
 ): Promise<(Production & { work: Work | null }) | null> {
   const { data, error } = await supabase
     .from("productions")
@@ -26,11 +26,7 @@ export async function getProduction(
 }
 
 export async function createProduction(production: ProductionInsert): Promise<Production> {
-  const { data, error } = await supabase
-    .from("productions")
-    .insert(production)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("productions").insert(production).select().single();
 
   if (error) throw new Error(error.message);
   return data;

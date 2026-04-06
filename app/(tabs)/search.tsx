@@ -15,20 +15,30 @@ export default function SearchScreen() {
 
   async function handleSearch(text: string) {
     setQuery(text);
-    if (text.length < 2) { setResults([]); return; }
+    if (text.length < 2) {
+      setResults([]);
+      return;
+    }
     try {
       const data = await searchWorks(text);
       setResults(data);
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async function handleWorkPress(workId: string) {
-    if (expandedWorkId === workId) { setExpandedWorkId(null); return; }
+    if (expandedWorkId === workId) {
+      setExpandedWorkId(null);
+      return;
+    }
     setExpandedWorkId(workId);
     try {
       const prods = await getProductionsByWork(workId);
       setWorkProductions(prods);
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return (
@@ -60,15 +70,24 @@ export default function SearchScreen() {
                     className="flex-1 py-2 pl-6 border-b border-gray-50"
                   >
                     <Text className="text-sm">
-                      {prod.venue ?? "Unknown venue"}{prod.year ? `, ${prod.year}` : ""}
+                      {prod.venue ?? "Unknown venue"}
+                      {prod.year ? `, ${prod.year}` : ""}
                     </Text>
-                    {prod.director && <Text className="text-xs text-gray-400">dir. {prod.director}</Text>}
+                    {prod.director && (
+                      <Text className="text-xs text-gray-400">dir. {prod.director}</Text>
+                    )}
                   </Pressable>
                   <Pressable
-                    onPress={() => router.push({
-                      pathname: "/log/new",
-                      params: { productionId: prod.id, productionTitle: prod.title_override ?? work.title, productionVenue: prod.venue ?? "" },
-                    })}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/log/new",
+                        params: {
+                          productionId: prod.id,
+                          productionTitle: prod.title_override ?? work.title,
+                          productionVenue: prod.venue ?? "",
+                        },
+                      })
+                    }
                     className="px-3 py-1 bg-black rounded-full mr-4"
                   >
                     <Text className="text-white text-xs">Log</Text>

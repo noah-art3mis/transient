@@ -13,21 +13,14 @@ export async function getWishlist(userId: string): Promise<WishlistItemWithDetai
 }
 
 export async function addToWishlist(item: WishlistItemInsert): Promise<WishlistItem> {
-  const { data, error } = await supabase
-    .from("wishlist_items")
-    .insert(item)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("wishlist_items").insert(item).select().single();
 
   if (error) throw new Error(error.message);
   return data;
 }
 
 export async function removeFromWishlist(id: string): Promise<void> {
-  const { error } = await supabase
-    .from("wishlist_items")
-    .delete()
-    .eq("id", id);
+  const { error } = await supabase.from("wishlist_items").delete().eq("id", id);
 
   if (error) throw new Error(error.message);
 }

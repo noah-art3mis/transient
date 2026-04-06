@@ -1,11 +1,4 @@
-export type MediaType =
-  | "theatre"
-  | "musical"
-  | "opera"
-  | "dance"
-  | "circus"
-  | "concert"
-  | "other";
+export type MediaType = "theatre" | "musical" | "opera" | "dance" | "circus" | "concert" | "other";
 
 export type CreationMethod = "scripted" | "devised" | "other";
 

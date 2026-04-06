@@ -9,7 +9,7 @@ jest.mock("@expo/vector-icons", () => ({
 describe("TagInput", () => {
   it("displays existing tags as pills", () => {
     const { getByText } = render(
-      <TagInput value={["world premiere", "with Mum"]} onChange={() => {}} />
+      <TagInput value={["world premiere", "with Mum"]} onChange={() => {}} />,
     );
     expect(getByText("world premiere")).toBeTruthy();
     expect(getByText("with Mum")).toBeTruthy();
@@ -17,9 +17,7 @@ describe("TagInput", () => {
 
   it("adds a tag when comma is typed", () => {
     const onChange = jest.fn();
-    const { getByPlaceholderText } = render(
-      <TagInput value={[]} onChange={onChange} />
-    );
+    const { getByPlaceholderText } = render(<TagInput value={[]} onChange={onChange} />);
     const input = getByPlaceholderText("Add tags...");
     fireEvent.changeText(input, "new tag,");
     expect(onChange).toHaveBeenCalledWith(["new tag"]);
@@ -27,9 +25,7 @@ describe("TagInput", () => {
 
   it("removes a tag when X is pressed", () => {
     const onChange = jest.fn();
-    const { getAllByTestId } = render(
-      <TagInput value={["tag1", "tag2"]} onChange={onChange} />
-    );
+    const { getAllByTestId } = render(<TagInput value={["tag1", "tag2"]} onChange={onChange} />);
     fireEvent.press(getAllByTestId("remove-tag")[0]);
     expect(onChange).toHaveBeenCalledWith(["tag2"]);
   });

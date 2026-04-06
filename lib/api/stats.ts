@@ -1,33 +1,43 @@
 import { supabase } from "../supabase";
 import { MediaType, Stats } from "../types";
 
+type StatsQueryRow = {
+  date_seen: string;
+  rating: number | null;
+  production: {
+    venue: string | null;
+    work: { media_type: string } | null;
+  } | null;
+};
+
 export async function getStats(userId: string): Promise<Stats> {
-  const { data: entries, count, error } = await supabase
+  const {
+    data: entries,
+    count,
+    error,
+  } = await supabase
     .from("log_entries")
-    .select(
-      "date_seen, rating, production:productions(venue, work:works(media_type))",
-      { count: "exact" }
-    )
+    .select("date_seen, rating, production:productions(venue, work:works(media_type))", {
+      count: "exact",
+    })
     .eq("user_id", userId);
 
   if (error) throw new Error(error.message);
 
-  const all = entries ?? [];
+  const all = (entries ?? []) as unknown as StatsQueryRow[];
   const currentYear = new Date().getFullYear();
 
   const totalShows = count ?? all.length;
   const showsThisYear = all.filter(
-    (e) => new Date(e.date_seen).getFullYear() === currentYear
+    (e) => new Date(e.date_seen).getFullYear() === currentYear,
   ).length;
 
-  const venues = new Set(
-    all.map((e: any) => e.production?.venue).filter(Boolean)
-  );
+  const venues = new Set(all.map((e) => e.production?.venue).filter(Boolean));
   const venuesVisited = venues.size;
 
   const ratingMap = new Map<number, number>();
   for (const e of all) {
-    if (e.rating != null) {
+    if (e.rating !== null) {
       ratingMap.set(e.rating, (ratingMap.get(e.rating) ?? 0) + 1);
     }
   }
@@ -37,7 +47,7 @@ export async function getStats(userId: string): Promise<Stats> {
 
   const typeMap = new Map<string, number>();
   for (const e of all) {
-    const mt = (e as any).production?.work?.media_type ?? "other";
+    const mt = e.production?.work?.media_type ?? "other";
     typeMap.set(mt, (typeMap.get(mt) ?? 0) + 1);
   }
   const byMediaType = Array.from(typeMap.entries())

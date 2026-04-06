@@ -14,8 +14,8 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await signIn(email, password);
-    } catch (e: any) {
-      Alert.alert("Error", e.message);
+    } catch (e: unknown) {
+      Alert.alert("Error", e instanceof Error ? e.message : "Sign in failed");
     } finally {
       setLoading(false);
     }
@@ -53,8 +53,7 @@ export default function LoginScreen() {
       <Link href="/(auth)/signup" asChild>
         <Pressable className="py-2 items-center">
           <Text className="text-gray-600">
-            Don't have an account?{" "}
-            <Text className="text-black font-semibold">Sign Up</Text>
+            Don&apos;t have an account? <Text className="text-black font-semibold">Sign Up</Text>
           </Text>
         </Pressable>
       </Link>

@@ -15,8 +15,8 @@ export default function SignupScreen() {
     try {
       await signUp(email, password);
       Alert.alert("Success", "Check your email to confirm your account.");
-    } catch (e: any) {
-      Alert.alert("Error", e.message);
+    } catch (e: unknown) {
+      Alert.alert("Error", e instanceof Error ? e.message : "Sign up failed");
     } finally {
       setLoading(false);
     }
@@ -54,8 +54,7 @@ export default function SignupScreen() {
       <Link href="/(auth)/login" asChild>
         <Pressable className="py-2 items-center">
           <Text className="text-gray-600">
-            Already have an account?{" "}
-            <Text className="text-black font-semibold">Sign In</Text>
+            Already have an account? <Text className="text-black font-semibold">Sign In</Text>
           </Text>
         </Pressable>
       </Link>

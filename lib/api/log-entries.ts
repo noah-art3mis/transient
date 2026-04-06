@@ -3,7 +3,7 @@ import { LogEntry, LogEntryInsert, LogEntryWithProduction } from "../types";
 
 export async function getLogEntries(
   userId: string,
-  year?: number
+  year?: number,
 ): Promise<LogEntryWithProduction[]> {
   let query = supabase
     .from("log_entries")
@@ -12,9 +12,7 @@ export async function getLogEntries(
     .order("date_seen", { ascending: false });
 
   if (year) {
-    query = query
-      .gte("date_seen", `${year}-01-01`)
-      .lte("date_seen", `${year}-12-31`);
+    query = query.gte("date_seen", `${year}-01-01`).lte("date_seen", `${year}-12-31`);
   }
 
   const { data, error } = await query;
@@ -24,7 +22,7 @@ export async function getLogEntries(
 
 export async function getLogEntriesForProduction(
   productionId: string,
-  userId: string
+  userId: string,
 ): Promise<LogEntry[]> {
   const { data, error } = await supabase
     .from("log_entries")
@@ -38,11 +36,7 @@ export async function getLogEntriesForProduction(
 }
 
 export async function createLogEntry(entry: LogEntryInsert): Promise<LogEntry> {
-  const { data, error } = await supabase
-    .from("log_entries")
-    .insert(entry)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("log_entries").insert(entry).select().single();
 
   if (error) throw new Error(error.message);
   return data;
@@ -50,7 +44,7 @@ export async function createLogEntry(entry: LogEntryInsert): Promise<LogEntry> {
 
 export async function updateLogEntry(
   id: string,
-  updates: Partial<LogEntryInsert>
+  updates: Partial<LogEntryInsert>,
 ): Promise<LogEntry> {
   const { data, error } = await supabase
     .from("log_entries")
@@ -64,10 +58,7 @@ export async function updateLogEntry(
 }
 
 export async function deleteLogEntry(id: string): Promise<void> {
-  const { error } = await supabase
-    .from("log_entries")
-    .delete()
-    .eq("id", id);
+  const { error } = await supabase.from("log_entries").delete().eq("id", id);
 
   if (error) throw new Error(error.message);
 }

@@ -22,10 +22,7 @@ export default function DiaryScreen() {
     if (!session) return;
     setLoading(true);
     try {
-      const data = await getLogEntries(
-        session.user.id,
-        selectedYear ?? undefined
-      );
+      const data = await getLogEntries(session.user.id, selectedYear ?? undefined);
       setEntries(data);
     } catch (e) {
       console.error(e);
@@ -37,7 +34,7 @@ export default function DiaryScreen() {
   useFocusEffect(
     useCallback(() => {
       loadEntries();
-    }, [loadEntries])
+    }, [loadEntries]),
   );
 
   return (
@@ -53,11 +50,7 @@ export default function DiaryScreen() {
                 selectedYear === year ? "bg-black" : "bg-gray-200"
               }`}
             >
-              <Text
-                className={
-                  selectedYear === year ? "text-white" : "text-gray-700"
-                }
-              >
+              <Text className={selectedYear === year ? "text-white" : "text-gray-700"}>
                 {year ?? "All"}
               </Text>
             </Pressable>
@@ -72,10 +65,7 @@ export default function DiaryScreen() {
           data={entries}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <DiaryEntryRow
-              entry={item}
-              onPress={() => router.push(`/log/${item.id}`)}
-            />
+            <DiaryEntryRow entry={item} onPress={() => router.push(`/log/${item.id}`)} />
           )}
         />
       )}

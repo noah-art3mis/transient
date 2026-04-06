@@ -27,16 +27,8 @@ export default function StarRating({ value, onChange, size = 32 }: Props) {
         const color = icon === "star-outline" ? "#d1d5db" : "#f59e0b";
 
         return (
-          <View
-            key={star}
-            style={{ width: size, height: size, position: "relative" }}
-          >
-            <Ionicons
-              name={icon}
-              size={size}
-              color={color}
-              style={{ position: "absolute" }}
-            />
+          <View key={star} style={{ width: size, height: size, position: "relative" }}>
+            <Ionicons name={icon} size={size} color={color} style={{ position: "absolute" }} />
             <Pressable
               testID={`star-${star}-left`}
               onPress={() => handlePress(halfValue)}

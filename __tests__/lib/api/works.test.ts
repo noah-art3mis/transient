@@ -9,9 +9,7 @@ const worksApi = require("../../../lib/api/works");
 
 describe("searchWorks", () => {
   it("searches works by query and returns results", async () => {
-    const mockWorks = [
-      { id: "1", title: "Hamlet", productions: [{ count: 3 }] },
-    ];
+    const mockWorks = [{ id: "1", title: "Hamlet", productions: [{ count: 3 }] }];
     const builder = createMockQueryBuilder({ data: mockWorks, error: null });
     (supabase.from as jest.Mock).mockReturnValue(builder);
 

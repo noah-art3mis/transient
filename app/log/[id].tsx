@@ -1,10 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
-  View, Text, TextInput, Pressable, ScrollView,
-  ActivityIndicator, Alert,
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { useAuth } from "../../lib/auth-context";
 import { updateLogEntry, deleteLogEntry } from "../../lib/api/log-entries";
 import { supabase } from "../../lib/supabase";
 import { LogEntryWithProduction } from "../../lib/types";
@@ -13,7 +17,6 @@ import HeartButton from "../../components/HeartButton";
 import TagInput from "../../components/TagInput";
 
 export default function EditLogEntryScreen() {
-  const { session } = useAuth();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
 
@@ -28,11 +31,7 @@ export default function EditLogEntryScreen() {
   const [review, setReview] = useState("");
   const [tags, setTags] = useState<string[]>([]);
 
-  useEffect(() => {
-    loadEntry();
-  }, [id]);
-
-  async function loadEntry() {
+  const loadEntry = useCallback(async () => {
     const { data, error } = await supabase
       .from("log_entries")
       .select("*, production:productions(*, work:works(*))")
@@ -53,7 +52,11 @@ export default function EditLogEntryScreen() {
     setReview(data.review ?? "");
     setTags(data.tags ?? []);
     setLoading(false);
-  }
+  }, [id, router]);
+
+  useEffect(() => {
+    loadEntry();
+  }, [loadEntry]);
 
   async function handleSave() {
     if (!id) return;
@@ -83,7 +86,8 @@ export default function EditLogEntryScreen() {
         style: "destructive",
         onPress: async () => {
           try {
-            await deleteLogEntry(id!);
+            if (!id) return;
+            await deleteLogEntry(id);
             router.back();
           } catch (e) {
             console.error(e);
@@ -107,13 +111,15 @@ export default function EditLogEntryScreen() {
     <ScrollView className="flex-1 bg-white px-4 pt-4">
       <View className="mb-4 pb-4 border-b border-gray-200">
         <Text className="text-lg font-bold">{title}</Text>
-        {entry.production.venue && (
-          <Text className="text-gray-500">{entry.production.venue}</Text>
-        )}
+        {entry.production.venue && <Text className="text-gray-500">{entry.production.venue}</Text>}
       </View>
       <View className="mb-4">
         <Text className="text-sm font-medium text-gray-700 mb-1">Date seen</Text>
-        <TextInput value={dateSeen} onChangeText={setDateSeen} className="border border-gray-300 rounded-lg px-4 py-2" />
+        <TextInput
+          value={dateSeen}
+          onChangeText={setDateSeen}
+          className="border border-gray-300 rounded-lg px-4 py-2"
+        />
       </View>
       <View className="mb-4">
         <Text className="text-sm font-medium text-gray-700 mb-1">Rating</Text>
@@ -129,7 +135,9 @@ export default function EditLogEntryScreen() {
           onPress={() => setIsRewatch(!isRewatch)}
           className={`px-3 py-1 rounded-full ${isRewatch ? "bg-black" : "bg-gray-200"}`}
         >
-          <Text className={isRewatch ? "text-white" : "text-gray-700"}>{isRewatch ? "Yes" : "No"}</Text>
+          <Text className={isRewatch ? "text-white" : "text-gray-700"}>
+            {isRewatch ? "Yes" : "No"}
+          </Text>
         </Pressable>
       </View>
       <View className="mb-4">
@@ -149,7 +157,10 @@ export default function EditLogEntryScreen() {
         <TagInput value={tags} onChange={setTags} />
       </View>
       <View className="flex-row gap-3 mb-4">
-        <Pressable onPress={() => router.back()} className="flex-1 py-3 rounded-lg bg-gray-200 items-center">
+        <Pressable
+          onPress={() => router.back()}
+          className="flex-1 py-3 rounded-lg bg-gray-200 items-center"
+        >
           <Text className="font-medium">Cancel</Text>
         </Pressable>
         <Pressable

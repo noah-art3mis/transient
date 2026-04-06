@@ -38,10 +38,7 @@ export default function TagInput({ value, onChange }: Props) {
     <View>
       <View className="flex-row flex-wrap gap-2 mb-2">
         {value.map((tag, index) => (
-          <View
-            key={tag}
-            className="flex-row items-center bg-gray-200 rounded-full px-3 py-1"
-          >
+          <View key={tag} className="flex-row items-center bg-gray-200 rounded-full px-3 py-1">
             <Text className="text-sm mr-1">{tag}</Text>
             <Pressable onPress={() => removeTag(index)} testID="remove-tag">
               <Ionicons name="close-circle" size={16} color="#6b7280" />

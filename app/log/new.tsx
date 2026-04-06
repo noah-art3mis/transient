@@ -1,7 +1,13 @@
 import { useState } from "react";
 import {
-  View, Text, TextInput, Pressable, ScrollView, FlatList,
-  KeyboardAvoidingView, Platform,
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ScrollView,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../lib/auth-context";
@@ -34,7 +40,7 @@ export default function NewLogEntryScreen() {
           title_override: params.productionTitle ?? null,
           venue: params.productionVenue ?? null,
         } as Production)
-      : null
+      : null,
   );
 
   // Search state
@@ -215,7 +221,7 @@ export default function NewLogEntryScreen() {
                 }}
                 className="py-4 items-center"
               >
-                <Text className="text-blue-600">Can't find it? Add new work</Text>
+                <Text className="text-blue-600">Can&apos;t find it? Add new work</Text>
               </Pressable>
             ) : null
           }
@@ -237,7 +243,9 @@ export default function NewLogEntryScreen() {
         />
         <Text className="text-sm font-medium text-gray-700 mb-1">Media Type</Text>
         <View className="flex-row flex-wrap gap-2 mb-3">
-          {(["theatre", "musical", "opera", "dance", "circus", "concert", "other"] as MediaType[]).map((mt) => (
+          {(
+            ["theatre", "musical", "opera", "dance", "circus", "concert", "other"] as MediaType[]
+          ).map((mt) => (
             <Pressable
               key={mt}
               onPress={() => setNewWorkMediaType(mt)}
@@ -261,7 +269,10 @@ export default function NewLogEntryScreen() {
           className="border border-gray-300 rounded-lg px-4 py-2 mb-4"
         />
         <View className="flex-row gap-3 mb-8">
-          <Pressable onPress={() => setStep("search")} className="flex-1 py-3 rounded-lg bg-gray-200 items-center">
+          <Pressable
+            onPress={() => setStep("search")}
+            className="flex-1 py-3 rounded-lg bg-gray-200 items-center"
+          >
             <Text className="font-medium">Back</Text>
           </Pressable>
           <Pressable
@@ -302,7 +313,10 @@ export default function NewLogEntryScreen() {
           placeholder="Director name"
           className="border border-gray-300 rounded-lg px-4 py-2 mb-4"
         />
-        <Pressable onPress={handleCreateProduction} className="py-3 rounded-lg bg-black items-center mb-8">
+        <Pressable
+          onPress={handleCreateProduction}
+          className="py-3 rounded-lg bg-black items-center mb-8"
+        >
           <Text className="text-white font-medium">Save Production</Text>
         </Pressable>
       </ScrollView>
@@ -310,7 +324,8 @@ export default function NewLogEntryScreen() {
   }
 
   // ---- LOG FORM VIEW ----
-  const displayTitle = selectedProduction?.title_override ?? selectedProduction?.venue ?? "Selected production";
+  const displayTitle =
+    selectedProduction?.title_override ?? selectedProduction?.venue ?? "Selected production";
 
   return (
     <ScrollView className="flex-1 bg-white px-4 pt-4">
@@ -322,7 +337,12 @@ export default function NewLogEntryScreen() {
       </View>
       <View className="mb-4">
         <Text className="text-sm font-medium text-gray-700 mb-1">Date seen</Text>
-        <TextInput value={dateSeen} onChangeText={setDateSeen} placeholder="YYYY-MM-DD" className="border border-gray-300 rounded-lg px-4 py-2" />
+        <TextInput
+          value={dateSeen}
+          onChangeText={setDateSeen}
+          placeholder="YYYY-MM-DD"
+          className="border border-gray-300 rounded-lg px-4 py-2"
+        />
       </View>
       <View className="mb-4">
         <Text className="text-sm font-medium text-gray-700 mb-1">Rating</Text>
@@ -338,7 +358,9 @@ export default function NewLogEntryScreen() {
           onPress={() => setIsRewatch(!isRewatch)}
           className={`px-3 py-1 rounded-full ${isRewatch ? "bg-black" : "bg-gray-200"}`}
         >
-          <Text className={isRewatch ? "text-white" : "text-gray-700"}>{isRewatch ? "Yes" : "No"}</Text>
+          <Text className={isRewatch ? "text-white" : "text-gray-700"}>
+            {isRewatch ? "Yes" : "No"}
+          </Text>
         </Pressable>
       </View>
       <View className="mb-4">
@@ -358,7 +380,10 @@ export default function NewLogEntryScreen() {
         <TagInput value={tags} onChange={setTags} />
       </View>
       <View className="flex-row gap-3 mb-8">
-        <Pressable onPress={() => router.back()} className="flex-1 py-3 rounded-lg bg-gray-200 items-center">
+        <Pressable
+          onPress={() => router.back()}
+          className="flex-1 py-3 rounded-lg bg-gray-200 items-center"
+        >
           <Text className="font-medium">Cancel</Text>
         </Pressable>
         <Pressable

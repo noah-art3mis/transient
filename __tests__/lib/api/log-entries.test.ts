@@ -9,9 +9,7 @@ const logEntriesApi = require("../../../lib/api/log-entries");
 
 describe("getLogEntries", () => {
   it("returns user log entries ordered by date", async () => {
-    const mockEntries = [
-      { id: "le1", date_seen: "2026-04-05", production: { venue: "Globe" } },
-    ];
+    const mockEntries = [{ id: "le1", date_seen: "2026-04-05", production: { venue: "Globe" } }];
     const builder = createMockQueryBuilder({ data: mockEntries, error: null });
     (supabase.from as jest.Mock).mockReturnValue(builder);
 

@@ -7,21 +7,35 @@ import { Stats } from "../../lib/types";
 
 export default function StatsScreen() {
   const { session } = useAuth();
+  const userId = session?.user.id;
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useFocusEffect(useCallback(() => { loadStats(); }, [session]));
-
-  async function loadStats() {
-    if (!session) return;
+  const loadStats = useCallback(async () => {
+    if (!userId) return;
     setLoading(true);
-    try { const data = await getStats(session.user.id); setStats(data); }
-    catch (e) { console.error(e); }
-    finally { setLoading(false); }
-  }
+    try {
+      const data = await getStats(userId);
+      setStats(data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadStats();
+    }, [loadStats]),
+  );
 
   if (loading || !stats) {
-    return <View className="flex-1 items-center justify-center bg-white"><ActivityIndicator size="large" /></View>;
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   const maxRatingCount = Math.max(...stats.ratingDistribution.map((r) => r.count), 1);
@@ -50,7 +64,10 @@ export default function StatsScreen() {
             <View key={rating} className="flex-row items-center mb-1">
               <Text className="w-10 text-xs text-gray-500 text-right mr-2">{rating}</Text>
               <View className="flex-1 h-5 bg-gray-100 rounded overflow-hidden">
-                <View className="h-full bg-amber-400 rounded" style={{ width: `${(count / maxRatingCount) * 100}%` }} />
+                <View
+                  className="h-full bg-amber-400 rounded"
+                  style={{ width: `${(count / maxRatingCount) * 100}%` }}
+                />
               </View>
               <Text className="w-8 text-xs text-gray-500 text-right ml-2">{count}</Text>
             </View>
@@ -62,7 +79,10 @@ export default function StatsScreen() {
         <View className="mb-6">
           <Text className="font-semibold mb-3">By Media Type</Text>
           {stats.byMediaType.map(({ media_type, count }) => (
-            <View key={media_type} className="flex-row justify-between py-2 border-b border-gray-50">
+            <View
+              key={media_type}
+              className="flex-row justify-between py-2 border-b border-gray-50"
+            >
               <Text className="text-gray-700 capitalize">{media_type}</Text>
               <Text className="text-gray-500">{count}</Text>
             </View>

@@ -42,13 +42,13 @@ describe("getStats", () => {
         { rating: 3.5, count: 1 },
         { rating: 4.0, count: 1 },
         { rating: 5.0, count: 1 },
-      ])
+      ]),
     );
     expect(result.byMediaType).toEqual(
       expect.arrayContaining([
         { media_type: "theatre", count: 2 },
         { media_type: "musical", count: 1 },
-      ])
+      ]),
     );
   });
 });

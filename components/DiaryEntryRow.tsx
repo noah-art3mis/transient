@@ -9,10 +9,7 @@ type Props = {
 };
 
 export default function DiaryEntryRow({ entry, onPress }: Props) {
-  const title =
-    entry.production.title_override ??
-    entry.production.work?.title ??
-    "Unknown";
+  const title = entry.production.title_override ?? entry.production.work?.title ?? "Unknown";
   const venue = entry.production.venue;
 
   const date = new Date(entry.date_seen + "T00:00:00");
@@ -38,13 +35,9 @@ export default function DiaryEntryRow({ entry, onPress }: Props) {
         )}
       </View>
       <View className="flex-row items-center gap-1">
-        {entry.rating != null && (
-          <StarRatingDisplay value={entry.rating} size={12} />
-        )}
+        {entry.rating !== null && <StarRatingDisplay value={entry.rating} size={12} />}
         {entry.liked && <Ionicons name="heart" size={14} color="#ef4444" />}
-        {entry.review && (
-          <Ionicons name="document-text-outline" size={14} color="#9ca3af" />
-        )}
+        {entry.review && <Ionicons name="document-text-outline" size={14} color="#9ca3af" />}
       </View>
     </Pressable>
   );
