@@ -34,7 +34,7 @@ export default function StatsScreen() {
 
   if (loading || !stats) {
     return (
-      <View className="flex-1 items-center justify-center bg-white">
+      <View className="flex-1 items-center justify-center bg-background">
         <ActivityIndicator size="large" />
       </View>
     );
@@ -43,19 +43,19 @@ export default function StatsScreen() {
   const maxRatingCount = Math.max(...stats.ratingDistribution.map((r) => r.count), 1);
 
   return (
-    <ScrollView className="flex-1 bg-white px-4 pt-4">
+    <ScrollView className="flex-1 bg-background px-4 pt-4">
       <View className="flex-row gap-3 mb-6">
-        <View className="flex-1 bg-gray-50 rounded-lg p-4 items-center">
+        <View className="flex-1 bg-muted rounded-lg p-4 items-center">
           <Text className="text-2xl font-bold">{stats.totalShows}</Text>
-          <Text className="text-xs text-gray-500 mt-1">{t("stats.totalShows")}</Text>
+          <Text className="text-xs text-muted-foreground mt-1">{t("stats.totalShows")}</Text>
         </View>
-        <View className="flex-1 bg-gray-50 rounded-lg p-4 items-center">
+        <View className="flex-1 bg-muted rounded-lg p-4 items-center">
           <Text className="text-2xl font-bold">{stats.showsThisYear}</Text>
-          <Text className="text-xs text-gray-500 mt-1">{t("stats.thisYear")}</Text>
+          <Text className="text-xs text-muted-foreground mt-1">{t("stats.thisYear")}</Text>
         </View>
-        <View className="flex-1 bg-gray-50 rounded-lg p-4 items-center">
+        <View className="flex-1 bg-muted rounded-lg p-4 items-center">
           <Text className="text-2xl font-bold">{stats.venuesVisited}</Text>
-          <Text className="text-xs text-gray-500 mt-1">{t("stats.venues")}</Text>
+          <Text className="text-xs text-muted-foreground mt-1">{t("stats.venues")}</Text>
         </View>
       </View>
 
@@ -64,14 +64,14 @@ export default function StatsScreen() {
           <Text className="font-semibold mb-3">{t("stats.ratingDistribution")}</Text>
           {stats.ratingDistribution.map(({ rating, count }) => (
             <View key={rating} className="flex-row items-center mb-1">
-              <Text className="w-10 text-xs text-gray-500 text-right mr-2">{rating}</Text>
-              <View className="flex-1 h-5 bg-gray-100 rounded overflow-hidden">
+              <Text className="w-10 text-xs text-muted-foreground text-right mr-2">{rating}</Text>
+              <View className="flex-1 h-5 bg-accent rounded overflow-hidden">
                 <View
-                  className="h-full bg-amber-400 rounded"
+                  className="h-full bg-rating rounded"
                   style={{ width: `${(count / maxRatingCount) * 100}%` }}
                 />
               </View>
-              <Text className="w-8 text-xs text-gray-500 text-right ml-2">{count}</Text>
+              <Text className="w-8 text-xs text-muted-foreground text-right ml-2">{count}</Text>
             </View>
           ))}
         </View>
@@ -83,10 +83,10 @@ export default function StatsScreen() {
           {stats.byMediaType.map(({ media_type, count }) => (
             <View
               key={media_type}
-              className="flex-row justify-between py-2 border-b border-gray-50"
+              className="flex-row justify-between py-2 border-b border-divider-lighter"
             >
-              <Text className="text-gray-700 capitalize">{media_type}</Text>
-              <Text className="text-gray-500">{count}</Text>
+              <Text className="text-secondary-foreground capitalize">{media_type}</Text>
+              <Text className="text-muted-foreground">{count}</Text>
             </View>
           ))}
         </View>
@@ -96,9 +96,12 @@ export default function StatsScreen() {
         <View className="mb-8">
           <Text className="font-semibold mb-3">{t("stats.byYear")}</Text>
           {stats.byYear.map(({ year, count }) => (
-            <View key={year} className="flex-row justify-between py-2 border-b border-gray-50">
-              <Text className="text-gray-700">{year}</Text>
-              <Text className="text-gray-500">{count}</Text>
+            <View
+              key={year}
+              className="flex-row justify-between py-2 border-b border-divider-lighter"
+            >
+              <Text className="text-secondary-foreground">{year}</Text>
+              <Text className="text-muted-foreground">{count}</Text>
             </View>
           ))}
         </View>

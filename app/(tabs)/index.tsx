@@ -40,7 +40,7 @@ export default function DiaryScreen() {
   );
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-background">
       {/* Year filter pills */}
       <View className="px-4 pt-2 pb-2">
         <View className="flex-row gap-2">
@@ -49,10 +49,14 @@ export default function DiaryScreen() {
               key={year ?? "all"}
               onPress={() => setSelectedYear(year)}
               className={`px-3 py-1 rounded-full ${
-                selectedYear === year ? "bg-black" : "bg-gray-200"
+                selectedYear === year ? "bg-primary" : "bg-secondary"
               }`}
             >
-              <Text className={selectedYear === year ? "text-white" : "text-gray-700"}>
+              <Text
+                className={
+                  selectedYear === year ? "text-primary-foreground" : "text-secondary-foreground"
+                }
+              >
                 {year ?? t("diary.all")}
               </Text>
             </Pressable>
@@ -75,9 +79,9 @@ export default function DiaryScreen() {
       {/* FAB */}
       <Pressable
         onPress={() => router.push("/log/new")}
-        className="absolute bottom-6 right-6 w-14 h-14 bg-black rounded-full items-center justify-center shadow-lg"
+        className="absolute bottom-6 right-6 w-14 h-14 bg-primary rounded-full items-center justify-center shadow-lg"
       >
-        <Text className="text-white text-3xl leading-none">+</Text>
+        <Text className="text-primary-foreground text-3xl leading-none">+</Text>
       </Pressable>
     </View>
   );

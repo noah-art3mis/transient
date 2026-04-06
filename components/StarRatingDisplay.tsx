@@ -1,5 +1,6 @@
 import { View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import colors from "../lib/theme/colors";
 
 type Props = {
   value: number;
@@ -19,7 +20,7 @@ export default function StarRatingDisplay({ value, size = 14 }: Props) {
             key={star}
             name={icon}
             size={size}
-            color={icon === "star-outline" ? "#d1d5db" : "#f59e0b"}
+            color={icon === "star-outline" ? colors.rating.empty : colors.rating.DEFAULT}
           />
         );
       })}

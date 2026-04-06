@@ -40,15 +40,15 @@ Logs progress to stdout (e.g. "Fetched 50 plays").
 
 Reads the 4 raw JSON files and transforms each item to `WorkInsert`:
 
-| `WorkInsert` field | Source                                             |
-| ------------------ | -------------------------------------------------- |
-| `title`            | `workLabel`                                        |
-| `media_type`       | Derived from which file the item came from         |
-| `creators`         | `[{name: creatorLabel, role: creatorRoleLabel}]`   |
-| `year_written`     | Parsed from `inception` (xsd:dateTime → year int)  |
-| `description`      | `workDescription`                                  |
-| `external_ids`     | `{wikidata_qid: "Q12345"}` (extracted from URI)    |
-| `creation_method`  | `"scripted"` (default)                             |
+| `WorkInsert` field | Source                                            |
+| ------------------ | ------------------------------------------------- |
+| `title`            | `workLabel`                                       |
+| `media_type`       | Derived from which file the item came from        |
+| `creators`         | `[{name: creatorLabel, role: creatorRoleLabel}]`  |
+| `year_written`     | Parsed from `inception` (xsd:dateTime → year int) |
+| `description`      | `workDescription`                                 |
+| `external_ids`     | `{wikidata_qid: "Q12345"}` (extracted from URI)   |
+| `creation_method`  | `"scripted"` (default)                            |
 
 Multiple creators per work are grouped into the `creators` array.
 

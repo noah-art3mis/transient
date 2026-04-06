@@ -65,7 +65,7 @@ export default function WishlistScreen() {
     <FlatList
       data={items}
       keyExtractor={(item) => item.id}
-      className="flex-1 bg-white"
+      className="flex-1 bg-background"
       renderItem={({ item }) => {
         const title = item.production
           ? (item.production.title_override ?? item.production.work?.title ?? t("common.unknown"))
@@ -82,22 +82,22 @@ export default function WishlistScreen() {
         return (
           <Pressable
             onPress={() => handlePress(item)}
-            className="px-4 py-3 border-b border-gray-100 flex-row items-center"
+            className="px-4 py-3 border-b border-divider-light flex-row items-center"
           >
             <View className="flex-1">
               <Text className="font-semibold">{title}</Text>
-              {subtitle && <Text className="text-sm text-gray-500">{subtitle}</Text>}
+              {subtitle && <Text className="text-sm text-muted-foreground">{subtitle}</Text>}
               {item.notes && (
-                <Text className="text-sm text-gray-400 mt-1" numberOfLines={1}>
+                <Text className="text-sm text-subtle mt-1" numberOfLines={1}>
                   {item.notes}
                 </Text>
               )}
-              <Text className="text-xs text-gray-300 mt-1">
+              <Text className="text-xs text-subtle mt-1">
                 {t("common.added")} {dateAdded}
               </Text>
             </View>
             <Pressable onPress={() => handleRemove(item.id)} className="p-2">
-              <Text className="text-red-400 text-sm">{t("common.remove")}</Text>
+              <Text className="text-destructive text-sm">{t("common.remove")}</Text>
             </Pressable>
           </Pressable>
         );

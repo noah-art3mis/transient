@@ -10,6 +10,7 @@ import { addToWishlist } from "../../lib/api/wishlist";
 import { Production, Work, LogEntry } from "../../lib/types";
 import StarRatingDisplay from "../../components/StarRatingDisplay";
 import MediaTypeBadge from "../../components/MediaTypeBadge";
+import colors from "../../lib/theme/colors";
 
 export default function ProductionDetailScreen() {
   const { session } = useAuth();
@@ -53,7 +54,7 @@ export default function ProductionDetailScreen() {
 
   if (loading || !production) {
     return (
-      <View className="flex-1 items-center justify-center bg-white">
+      <View className="flex-1 items-center justify-center bg-background">
         <ActivityIndicator size="large" />
       </View>
     );
@@ -63,8 +64,8 @@ export default function ProductionDetailScreen() {
   const work = production.work;
 
   return (
-    <ScrollView className="flex-1 bg-white">
-      <View className="px-4 pt-4 pb-4 border-b border-gray-200">
+    <ScrollView className="flex-1 bg-background">
+      <View className="px-4 pt-4 pb-4 border-b border-divider">
         {production.poster_url && (
           <Image
             source={{ uri: production.poster_url }}
@@ -73,17 +74,17 @@ export default function ProductionDetailScreen() {
           />
         )}
         <Text className="text-2xl font-bold">{title}</Text>
-        <Text className="text-gray-500 mt-1">
+        <Text className="text-muted-foreground mt-1">
           {production.venue ?? t("common.unknownVenue")}
           {production.year ? `, ${production.year}` : ""}
         </Text>
         {production.director && (
-          <Text className="text-gray-500">
+          <Text className="text-muted-foreground">
             {t("common.dir")} {production.director}
           </Text>
         )}
         {production.start_date && production.end_date && (
-          <Text className="text-sm text-gray-400 mt-1">
+          <Text className="text-sm text-subtle mt-1">
             {production.start_date} — {production.end_date}
           </Text>
         )}
@@ -91,10 +92,10 @@ export default function ProductionDetailScreen() {
       </View>
 
       {work && work.creators.length > 0 && (
-        <View className="px-4 py-3 border-b border-gray-100">
+        <View className="px-4 py-3 border-b border-divider-light">
           <Text className="font-semibold mb-2">{t("production.creators")}</Text>
           {work.creators.map((c, i) => (
-            <Text key={i} className="text-sm text-gray-600">
+            <Text key={i} className="text-sm text-accent-foreground">
               {c.name} ({c.role})
             </Text>
           ))}
@@ -102,10 +103,10 @@ export default function ProductionDetailScreen() {
       )}
 
       {production.cast_members.length > 0 && (
-        <View className="px-4 py-3 border-b border-gray-100">
+        <View className="px-4 py-3 border-b border-divider-light">
           <Text className="font-semibold mb-2">{t("production.cast")}</Text>
           {production.cast_members.map((c, i) => (
-            <Text key={i} className="text-sm text-gray-600">
+            <Text key={i} className="text-sm text-accent-foreground">
               {c.name}
               {c.role ? ` ${t("production.castAs")} ${c.role}` : ""}
             </Text>
@@ -113,19 +114,19 @@ export default function ProductionDetailScreen() {
         </View>
       )}
 
-      <View className="px-4 py-3 border-b border-gray-100">
+      <View className="px-4 py-3 border-b border-divider-light">
         <Text className="font-semibold mb-2">{t("production.yourLogEntries")}</Text>
         {logEntries.length === 0 ? (
-          <Text className="text-gray-400 text-sm">{t("production.notLoggedYet")}</Text>
+          <Text className="text-subtle text-sm">{t("production.notLoggedYet")}</Text>
         ) : (
           logEntries.map((entry) => (
             <Pressable
               key={entry.id}
               onPress={() => router.push(`/log/${entry.id}`)}
-              className="py-2 border-b border-gray-50"
+              className="py-2 border-b border-divider-lighter"
             >
               <View className="flex-row items-center gap-2">
-                <Text className="text-sm text-gray-500">
+                <Text className="text-sm text-muted-foreground">
                   {new Date(entry.date_seen + "T00:00:00").toLocaleDateString("en-GB", {
                     day: "numeric",
                     month: "short",
@@ -133,10 +134,10 @@ export default function ProductionDetailScreen() {
                   })}
                 </Text>
                 {entry.rating !== null && <StarRatingDisplay value={entry.rating} size={12} />}
-                {entry.liked && <Ionicons name="heart" size={12} color="#ef4444" />}
+                {entry.liked && <Ionicons name="heart" size={12} color={colors.heart} />}
               </View>
               {entry.review && (
-                <Text className="text-sm text-gray-600 mt-1" numberOfLines={2}>
+                <Text className="text-sm text-accent-foreground mt-1" numberOfLines={2}>
                   {entry.review}
                 </Text>
               )}
@@ -157,13 +158,13 @@ export default function ProductionDetailScreen() {
               },
             })
           }
-          className="py-3 rounded-lg bg-black items-center"
+          className="py-3 rounded-lg bg-primary items-center"
         >
-          <Text className="text-white font-medium">{t("production.logThis")}</Text>
+          <Text className="text-primary-foreground font-medium">{t("production.logThis")}</Text>
         </Pressable>
         <Pressable
           onPress={handleAddToWishlist}
-          className="py-3 rounded-lg bg-gray-200 items-center"
+          className="py-3 rounded-lg bg-secondary items-center"
         >
           <Text className="font-medium">{t("production.addToWishlist")}</Text>
         </Pressable>

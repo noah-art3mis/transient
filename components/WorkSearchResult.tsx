@@ -15,17 +15,17 @@ export default function WorkSearchResult({ work, onPress, expanded }: Props) {
   return (
     <Pressable
       onPress={onPress}
-      className={`py-3 border-b border-gray-100 ${expanded ? "bg-gray-50" : ""}`}
+      className={`py-3 border-b border-divider-light ${expanded ? "bg-muted" : ""}`}
     >
       <Text className="font-semibold">{work.title}</Text>
       {firstCreator && (
-        <Text className="text-sm text-gray-500">
+        <Text className="text-sm text-muted-foreground">
           {firstCreator.role}: {firstCreator.name}
         </Text>
       )}
       <View className="flex-row items-center gap-2 mt-1">
         <MediaTypeBadge type={work.media_type} />
-        <Text className="text-xs text-gray-400">
+        <Text className="text-xs text-subtle">
           {prodCount} production{prodCount !== 1 ? "s" : ""}
         </Text>
       </View>

@@ -2,6 +2,7 @@ import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LogEntryWithProduction } from "../lib/types";
 import StarRatingDisplay from "./StarRatingDisplay";
+import colors from "../lib/theme/colors";
 
 type Props = {
   entry: LogEntryWithProduction;
@@ -21,23 +22,25 @@ export default function DiaryEntryRow({ entry, onPress }: Props) {
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center px-4 py-3 border-b border-gray-100"
+      className="flex-row items-center px-4 py-3 border-b border-divider-light"
     >
-      <Text className="w-16 text-sm text-gray-500">{formatted}</Text>
+      <Text className="w-16 text-sm text-muted-foreground">{formatted}</Text>
       <View className="flex-1 mx-2">
         <Text className="font-semibold" numberOfLines={1}>
           {title}
         </Text>
         {venue && (
-          <Text className="text-sm text-gray-500" numberOfLines={1}>
+          <Text className="text-sm text-muted-foreground" numberOfLines={1}>
             {venue}
           </Text>
         )}
       </View>
       <View className="flex-row items-center gap-1">
         {entry.rating !== null && <StarRatingDisplay value={entry.rating} size={12} />}
-        {entry.liked && <Ionicons name="heart" size={14} color="#ef4444" />}
-        {entry.review && <Ionicons name="document-text-outline" size={14} color="#9ca3af" />}
+        {entry.liked && <Ionicons name="heart" size={14} color={colors.heart} />}
+        {entry.review && (
+          <Ionicons name="document-text-outline" size={14} color={colors["icon-muted"]} />
+        )}
       </View>
     </Pressable>
   );
