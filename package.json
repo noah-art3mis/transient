@@ -45,6 +45,9 @@
   },
   "private": true,
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "testPathIgnorePatterns": [
+      "__tests__/helpers/"
+    ]
   }
 }
