@@ -25,10 +25,7 @@ export function parseYear(value: string | undefined): number | null {
   return match ? parseInt(match[1], 10) : null;
 }
 
-export function transformRawToWorkInserts(
-  raw: SparqlResponse,
-  mediaType: MediaType,
-): WorkInsert[] {
+export function transformRawToWorkInserts(raw: SparqlResponse, mediaType: MediaType): WorkInsert[] {
   const grouped = new Map<string, { binding: SparqlBinding; creators: Creator[] }>();
 
   for (const binding of raw.results.bindings) {

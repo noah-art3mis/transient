@@ -6,9 +6,19 @@ import { transformRawToWorkInserts, type SparqlResponse } from "./transform";
 const CATEGORIES = [
   // plays: no items use direct wdt:P31 wd:Q25379 — all typed via subclasses (tragedy, comedy, etc.)
   { name: "plays", wikidataClass: "Q25379", mediaType: "theatre" as const, useSubclassPath: true },
-  { name: "musicals", wikidataClass: "Q2743", mediaType: "musical" as const, useSubclassPath: true },
+  {
+    name: "musicals",
+    wikidataClass: "Q2743",
+    mediaType: "musical" as const,
+    useSubclassPath: true,
+  },
   { name: "operas", wikidataClass: "Q1344", mediaType: "opera" as const, useSubclassPath: true },
-  { name: "ballets", wikidataClass: "Q476300", mediaType: "dance" as const, useSubclassPath: false },
+  {
+    name: "ballets",
+    wikidataClass: "Q476300",
+    mediaType: "dance" as const,
+    useSubclassPath: false,
+  },
 ];
 
 function buildSparqlQuery(wikidataClass: string, useSubclassPath: boolean): string {
@@ -81,9 +91,7 @@ async function loadCommand(): Promise<void> {
   const dataDir = path.join(__dirname, "data", "raw");
 
   // Get existing QIDs to skip duplicates
-  const { data: existing, error: fetchError } = await supabase
-    .from("works")
-    .select("external_ids");
+  const { data: existing, error: fetchError } = await supabase.from("works").select("external_ids");
 
   if (fetchError) {
     console.error(`Failed to query existing works: ${fetchError.message}`);
