@@ -41,6 +41,10 @@ npm run check          # All checks: lint + typecheck + format + test
 
 `app/_layout.tsx` wraps everything in `<AuthProvider>`. `AuthGate` checks session state: unauthenticated → `/(auth)/login`, authenticated → `/(tabs)`. Supabase handles tokens with auto-refresh.
 
+### Supabase client
+
+`lib/supabase.ts` depends on React Native modules (`AsyncStorage`, `Platform`, `react-native-url-polyfill`). It cannot be imported from Node scripts. CLI tools and seed scripts must create their own Supabase client directly via `createClient()` from `@supabase/supabase-js`.
+
 ### API layer pattern
 
 All `lib/api/*.ts` files follow the same pattern: import supabase client, build query with fluent API, throw on error, return typed data. Row-Level Security enforces access at DB layer.
