@@ -107,10 +107,10 @@ async function fetchCommand(): Promise<void> {
 
 async function loadCommand(): Promise<void> {
   const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
-  const key = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) {
     console.error(
-      "Missing EXPO_PUBLIC_SUPABASE_URL or EXPO_PUBLIC_SUPABASE_ANON_KEY.\n" +
+      "Missing EXPO_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.\n" +
         "Tip: run `source .env.local` first, or use `node --env-file=.env.local`",
     );
     process.exit(1);
@@ -135,6 +135,7 @@ async function loadCommand(): Promise<void> {
 
   console.log(`Found ${existingQids.size} existing works with Wikidata QIDs`);
 
+  const BATCH_SIZE = 200;
   let inserted = 0;
   let skipped = 0;
   let errors = 0;
@@ -151,26 +152,34 @@ async function loadCommand(): Promise<void> {
     }
 
     const raw: SparqlResponse = JSON.parse(fileContent);
-    const works = transformRawToWorkInserts(raw, category.mediaType);
+    const allWorks = transformRawToWorkInserts(raw, category.mediaType);
 
-    for (const work of works) {
+    const toInsert = allWorks.filter((work) => {
       const qid = work.external_ids?.wikidata_qid;
       if (qid && existingQids.has(qid)) {
         skipped++;
-        continue;
+        return false;
       }
+      return true;
+    });
 
-      const { error } = await supabase.from("works").insert(work);
+    for (let i = 0; i < toInsert.length; i += BATCH_SIZE) {
+      const batch = toInsert.slice(i, i + BATCH_SIZE);
+      const { error } = await supabase.from("works").insert(batch);
       if (error) {
-        console.error(`  Error inserting "${work.title}": ${error.message}`);
-        errors++;
+        console.error(`  Batch error in ${category.name} (${i}–${i + batch.length}): ${error.message}`);
+        errors += batch.length;
       } else {
-        inserted++;
-        if (qid) existingQids.add(qid);
+        inserted += batch.length;
+        for (const work of batch) {
+          const qid = work.external_ids?.wikidata_qid;
+          if (qid) existingQids.add(qid);
+        }
       }
+      console.log(`  ${category.name}: ${Math.min(i + BATCH_SIZE, toInsert.length)}/${toInsert.length}`);
     }
 
-    console.log(`Processed ${category.name}: ${works.length} works`);
+    console.log(`Processed ${category.name}: ${allWorks.length} works`);
   }
 
   console.log(`\nDone. Inserted: ${inserted}, Skipped: ${skipped}, Errors: ${errors}`);

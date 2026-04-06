@@ -47,13 +47,15 @@ export function transformRawToWorkInserts(raw: SparqlResponse, mediaType: MediaT
     }
   }
 
-  return Array.from(grouped.values()).map(({ binding, creators }) => ({
-    title: binding.workLabel.value,
-    media_type: mediaType,
-    creators,
-    year_written: parseYear(binding.inception?.value),
-    description: binding.workDescription?.value ?? null,
-    external_ids: { wikidata_qid: extractQid(binding.work.value) },
-    creation_method: "scripted" as const,
-  }));
+  return Array.from(grouped.values())
+    .filter(({ binding }) => !/^Q\d+$/.test(binding.workLabel.value))
+    .map(({ binding, creators }) => ({
+      title: binding.workLabel.value,
+      media_type: mediaType,
+      creators,
+      year_written: parseYear(binding.inception?.value),
+      description: binding.workDescription?.value ?? null,
+      external_ids: { wikidata_qid: extractQid(binding.work.value) },
+      creation_method: "scripted" as const,
+    }));
 }

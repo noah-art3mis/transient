@@ -62,7 +62,19 @@ All `lib/api/*.ts` files follow the same pattern: import supabase client, build 
 - `__tests__/helpers/supabase-mock.ts` provides chainable mock query builders simulating Supabase's fluent API — this directory is excluded from test detection
 - Test files live in `__tests__/` mirroring source structure
 
+## Chrome Integration (Browser Testing)
+
+This repo is developed in WSL. The CLI instance of Claude Code running in WSL **cannot** use the Chrome integration because Chrome runs on the Windows host and native messaging doesn't cross the WSL boundary.
+
+If you are the Claude Code **IDE extension** instance (running on the Windows side via Cursor/VS Code), you **can** use Chrome:
+
+1. Ensure the [Claude in Chrome extension](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn) (v1.0.36+) is installed in Chrome/Edge on Windows
+2. Run `/chrome` to connect, or launch with `--chrome`
+3. Use `npm run web` to start the Expo web dev server, then navigate to `localhost:8081` (or whichever port Expo assigns) to test the app in the browser
+4. You can read console errors, inspect DOM state, test user flows, and verify UI changes directly
+
 ## Environment
 
 - Supabase credentials use `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` (in `.env.local`)
+- Seed scripts (`scripts/seed.ts load`) require `SUPABASE_SERVICE_ROLE_KEY` (in `.env.local`) to bypass RLS
 - Never read `.env` or `.env.local` files
