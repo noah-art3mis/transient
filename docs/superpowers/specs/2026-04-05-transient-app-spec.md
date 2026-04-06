@@ -566,6 +566,8 @@ This is the two-step version: the user creates the Work first (as above), is imm
 
 ## 8. Data Seeding
 
+The seeding strategy is designed for a Brasilia-focused theatre platform. The international canon (Wikidata, MusicBrainz) provides a base of well-known Works, while Brazilian-specific sources (SALIC, Sympla, Mapas Culturais) provide local Productions and venue data that no international database covers.
+
 ### Phase 1: Wikidata bulk seed (before launch)
 
 Run SPARQL queries against `query.wikidata.org` to extract canonical Works:
@@ -573,7 +575,8 @@ Run SPARQL queries against `query.wikidata.org` to extract canonical Works:
 - **Query targets:** All Wikidata items typed as play (`Q25379`), musical (`Q182659`), or opera (`Q1344`).
 - **Fields extracted per item:** title (label), creators (P170 creator, P86 composer, P58 screenwriter), year (P571 inception), description, genre (P136).
 - **Cross-reference:** Store the Wikidata QID in `external_ids.wikidata_qid` on the Work record.
-- **Expected yield:** 5,000-10,000 Works with reasonable metadata quality. Coverage is strong for canonical works (Shakespeare, Chekhov, Ibsen, Sondheim, Rodgers & Hammerstein, Puccini, Verdi, major operas). Coverage is sparse for recent plays (last 5 years), fringe/community theatre, and most regional work.
+- **Expected yield:** 5,000-10,000 Works with reasonable metadata quality. Coverage is strong for the international canon (Shakespeare, Chekhov, Ibsen, Sondheim, Puccini, Verdi). Some major Brazilian playwrights have Wikidata entries (Nelson Rodrigues, Ariano Suassuna, Augusto Boal, Plinio Marcos, Dias Gomes, Jorge Andrade), but coverage is sparse for contemporary Brazilian theatre and regional/independent work.
+- **Portuguese labels:** Query both `rdfs:label` in `pt` (Portuguese) and `en` (English). Store Portuguese label as `title` and English as `original_title` (or vice versa depending on the work's origin language). This ensures Brazilian users see familiar titles.
 - **License:** CC0 (public domain). No restrictions on use.
 - **Seeded entity:** Works only. No production-level data is available from Wikidata.
 
@@ -587,26 +590,92 @@ For works with `media_type` in (`musical`, `opera`), cross-reference MusicBrainz
 - **License:** CC0.
 - **Scope:** Only useful for musicals and operas where a cast recording exists. Not useful for straight plays.
 
-### Phase 3: User-generated content (ongoing, steady state)
+### Phase 3: SALIC seed -- Lei Rouanet funded projects in DF (before launch)
 
-Productions are entirely user-created. No open, API-accessible source exists for production-level data at scale. The production catalog grows organically through user logging:
+The SALIC API (`api.salic.cultura.gov.br`) exposes all projects funded by Lei Rouanet (federal arts incentive law). Query for performing arts projects in the Distrito Federal to seed both Works and Productions with real Brasilia data.
+
+- **API endpoint:** `GET /v1/projetos?area=Artes+Cênicas&UF=DF&limit=100&offset=0` (paginate through all results).
+- **Fields extracted per project:** project name (`nome`), proponent name and CNPJ (`proponente`), summary (`resumo`), municipality (`municipio`), current status (`situacao`), year of approval (`ano_projeto`), funding amounts (`valor_solicitado`, `valor_aprovado`, `valor_captado`).
+- **Mapping to Transient entities:**
+  - Each SALIC project maps to a **Production** (it represents a specific funded staging, not an abstract work).
+  - `nome` -> `title_override` on Production (or used to create/match a Work if identifiable).
+  - `proponente` -> `company` on Production.
+  - `municipio` -> used to confirm Brasilia/DF location.
+  - `ano_projeto` -> `year` on Production.
+  - `resumo` -> `description` on the associated Work (if created).
+  - Where a project name clearly maps to a known Work (e.g., "Montagem de Auto da Compadecida"), link the Production to the existing Work. Otherwise, create a new Work with the project name as title and `creation_method = 'other'` to flag it for manual review.
+- **Cross-reference:** Store `salic_pronac` (the PRONAC project number) in `external_ids.salic_pronac` on the Production record.
+- **Expected yield:** Hundreds of Production records spanning multiple years of funded theatre in Brasilia. Quality varies -- some project names are clear show titles, others are umbrella project names ("Festival de Teatro do DF") that need manual curation.
+- **License:** Public government data (Lei de Acesso a Informacao). No restrictions.
+- **Curation needed:** A manual pass after import to: (a) link Productions to correct Works where identifiable, (b) discard umbrella/festival entries that don't map to a single production, (c) fill in venue data where the project summary mentions it.
+
+### Phase 4: Sympla seed -- current/upcoming productions (before launch, then periodic)
+
+The Sympla API (`developers.sympla.com.br`) exposes events on Brazil's largest ticketing platform. Many independent Brasilia theatre productions sell tickets through Sympla.
+
+- **API:** OAuth2 authenticated. Query events by category (theatre/performing arts) and location (Brasilia/DF).
+- **Fields extracted per event:** event name, description, venue name, venue address, start/end dates, image URL, ticket URL.
+- **Mapping to Transient entities:**
+  - Each Sympla event maps to a **Production**.
+  - Event name -> used to match/create a Work, then create a Production under it.
+  - Venue name -> `venue` on Production.
+  - Start/end dates -> `start_date`, `end_date` on Production.
+  - Image URL -> `poster_url` on Production.
+  - Description -> `description` on associated Work (if new).
+- **Cross-reference:** Store `sympla_event_id` in `external_ids.sympla_event_id` on the Production record.
+- **Expected yield:** Dozens of current/upcoming productions at any given time. This makes the app immediately useful -- users can search for a show they're about to see without having to create it manually.
+- **Refresh cadence:** Run weekly via a scheduled job to pick up newly listed events.
+- **License:** Subject to Sympla API terms of service. Review before implementing.
+- **Curation needed:** Sympla events include stand-up comedy, children's shows, workshops, and other non-traditional theatre. Filter by category and apply heuristics (or manual review) to exclude irrelevant events.
+
+### Phase 5: Mapas Culturais seed -- venues and cultural agents (before launch)
+
+Mapas Culturais (`github.com/mapasculturais/mapasculturais`) is an open-source cultural mapping platform used by Brazilian government entities. If the Distrito Federal runs an instance, it provides structured data on venues and theatre companies.
+
+- **API:** REST API. `GET /api/space/find?type=EQ(20)&_geoLocation=NEAR(-15.7801,-47.9292,50000)` to find performance spaces within 50km of Brasilia's center.
+- **Fields extracted per Space:** name, short description, address, geolocation (lat/lon), opening hours, accessibility info.
+- **Fields extracted per Agent:** name, type (individual/collective), description, area of activity.
+- **Mapping to Transient entities:**
+  - Spaces do not directly map to the current schema (venues are plain text in v1). However, the venue names can be stored as a reference list for **search autocomplete** when users type a venue name during Production creation.
+  - Agents (theatre companies) can be stored as a reference list for **company name autocomplete** on Production creation.
+  - When the schema eventually gains a `venues` table (documented post-MVP), Mapas Culturais data can be migrated directly with geolocation.
+- **Cross-reference:** Store `mapas_culturais_space_id` or `mapas_culturais_agent_id` in `external_ids` for future linking.
+- **Availability:** Check whether the DF instance is active at `cultura.df.gov.br` or a subdomain. If no DF instance exists, the federal instance at `mapas.cultura.gov.br` may still have Brasilia data.
+- **License:** Open source (GPL). Government public data.
+
+### Phase 6: User-generated content (ongoing, steady state)
+
+The primary source for Productions in steady state. The catalog grows organically through user logging:
 
 1. User searches for the Work.
 2. If found, user searches/creates a Production under it.
 3. If Work not found, user creates both Work and Production inline.
 
-For a single-user personal app, this is acceptable: the database only needs production records for shows the user has actually seen.
+For a single-user personal app, this is acceptable: the database only needs production records for shows the user has actually seen. The API-seeded Productions (from SALIC and Sympla) reduce the frequency of manual creation for current Brasilia shows.
 
 ### Cross-reference identifiers stored
 
 | Identifier | Entity | Source | Notes |
 |---|---|---|---|
-| `wikidata_qid` | Work, Production | Wikidata SPARQL | Primary cross-reference |
+| `wikidata_qid` | Work, Production | Wikidata SPARQL | Primary cross-reference for canonical works |
 | `musicbrainz_mbid` | Work | MusicBrainz REST API | Musicals and operas only |
-| `theatricalia_play_id` | Work | Wikidata P1242 property | Looked up via Wikidata; no direct Theatricalia API |
-| `ibdb_show_id` | Production | Manual entry | Broadway productions; no API available |
+| `salic_pronac` | Production | SALIC API | Lei Rouanet project number. Links to `versalic.cultura.gov.br` |
+| `sympla_event_id` | Production | Sympla API | Links to event page on `sympla.com.br` |
+| `mapas_culturais_space_id` | (reference data) | Mapas Culturais API | Venue cross-reference for future `venues` table |
+| `mapas_culturais_agent_id` | (reference data) | Mapas Culturais API | Theatre company cross-reference |
 
 All stored in the `external_ids` JSONB field on both `works` and `productions`. Extensible without schema changes.
+
+### Seeding priority order
+
+For a solo developer, implement in this order:
+
+1. **Wikidata** (Phase 1) -- One-time script, highest yield of Works, no auth required.
+2. **SALIC** (Phase 3) -- One-time script, gives Brasilia-specific Productions, no auth required.
+3. **User-generated** (Phase 6) -- This is just the app working as designed. No extra work.
+4. **Sympla** (Phase 4) -- Requires OAuth setup and ongoing scheduled job. Implement when the app is functional.
+5. **MusicBrainz** (Phase 2) -- Enrichment, not critical path. Implement when there's time.
+6. **Mapas Culturais** (Phase 5) -- Dependent on DF instance availability. Nice-to-have for autocomplete.
 
 ---
 

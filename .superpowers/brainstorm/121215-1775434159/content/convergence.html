@@ -1,0 +1,69 @@
+<h2>Where the tracks converge</h2>
+<p class="subtitle">Dependencies and decision points across the three tracks</p>
+
+<div style="display: flex; gap: 24px; margin: 32px 0;">
+  <!-- Track 1 -->
+  <div style="flex: 1; background: #1a1a2e; border-radius: 12px; padding: 20px; border: 1px solid #333;">
+    <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 8px;">Track 1</div>
+    <h3 style="margin: 0 0 12px 0; color: #e8b4b8;">Data & Domain</h3>
+    <ul style="color: #aaa; font-size: 14px; padding-left: 18px; line-height: 1.8;">
+      <li>Research existing DBs/APIs</li>
+      <li>Map metadata fields</li>
+      <li>Identify edge cases</li>
+    </ul>
+  </div>
+  <!-- Track 2 -->
+  <div style="flex: 1; background: #1a1a2e; border-radius: 12px; padding: 20px; border: 1px solid #333;">
+    <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 8px;">Track 2</div>
+    <h3 style="margin: 0 0 12px 0; color: #b4c9e8;">Product & UX</h3>
+    <ul style="color: #aaa; font-size: 14px; padding-left: 18px; line-height: 1.8;">
+      <li>Audit Letterboxd & competitors</li>
+      <li>Define core screens & flows</li>
+      <li>Decide rating/logging format</li>
+    </ul>
+  </div>
+  <!-- Track 3 -->
+  <div style="flex: 1; background: #1a1a2e; border-radius: 12px; padding: 20px; border: 1px solid #333;">
+    <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 8px;">Track 3</div>
+    <h3 style="margin: 0 0 12px 0; color: #b8e8b4;">Tech & Architecture</h3>
+    <ul style="color: #aaa; font-size: 14px; padding-left: 18px; line-height: 1.8;">
+      <li>Evaluate RN/Expo + backend</li>
+      <li>Prototype data layer</li>
+      <li>Assess hosting & costs</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Convergence arrows -->
+<div style="text-align: center; font-size: 28px; color: #555; margin: 8px 0;">&#x25BC; &#x25BC; &#x25BC;</div>
+
+<!-- Convergence points -->
+<div style="background: #1e1e2e; border: 2px solid #555; border-radius: 12px; padding: 24px; margin: 16px 0;">
+  <h3 style="margin: 0 0 16px 0; color: #e8d4a0;">Convergence Point 1: Data Model Design</h3>
+  <p style="color: #aaa; font-size: 14px; line-height: 1.6; margin: 0;">
+    <strong style="color: #ccc;">Requires:</strong> Track 1 (what metadata exists) + Track 2 (what users need to see/log)<br>
+    <strong style="color: #ccc;">Produces:</strong> The schema — Work, Production, Log Entry fields and relationships<br>
+    <strong style="color: #ccc;">Unlocks:</strong> Track 3 can finalize database choice
+  </p>
+</div>
+
+<div style="text-align: center; font-size: 28px; color: #555; margin: 8px 0;">&#x25BC;</div>
+
+<div style="background: #1e1e2e; border: 2px solid #555; border-radius: 12px; padding: 24px; margin: 16px 0;">
+  <h3 style="margin: 0 0 16px 0; color: #e8d4a0;">Convergence Point 2: MVP Scope</h3>
+  <p style="color: #aaa; font-size: 14px; line-height: 1.6; margin: 0;">
+    <strong style="color: #ccc;">Requires:</strong> All three tracks at least partially answered<br>
+    <strong style="color: #ccc;">Produces:</strong> A concrete feature list for v1 — what's in, what's deferred<br>
+    <strong style="color: #ccc;">Key question:</strong> Do you seed data first, or build the app and add data as you go?
+  </p>
+</div>
+
+<div style="text-align: center; font-size: 28px; color: #555; margin: 8px 0;">&#x25BC;</div>
+
+<div style="background: #1e1e2e; border: 2px solid #555; border-radius: 12px; padding: 24px; margin: 16px 0;">
+  <h3 style="margin: 0 0 16px 0; color: #e8d4a0;">Convergence Point 3: Build</h3>
+  <p style="color: #aaa; font-size: 14px; line-height: 1.6; margin: 0;">
+    <strong style="color: #ccc;">Requires:</strong> Data model + MVP scope + tech stack decided<br>
+    <strong style="color: #ccc;">Produces:</strong> An implementation plan you can actually execute
+  </p>
+</div>
