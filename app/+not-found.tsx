@@ -12,7 +12,7 @@ export default function NotFoundScreen() {
         <Text className="text-xl font-bold">{t("notFound.message")}</Text>
 
         <Link href="/" className="mt-4 py-4">
-          <Text className="text-sm text-[#2e78b7]">{t("notFound.goHome")}</Text>
+          <Text className="text-sm text-link">{t("notFound.goHome")}</Text>
         </Link>
       </View>
     </>
