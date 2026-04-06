@@ -25,7 +25,13 @@ const CATEGORIES = [
   },
 ];
 
-function buildSparqlQuery(wikidataClass: string, useSubclassPath: boolean): string {
+const PAGE_SIZE = 500;
+
+function buildSparqlQuery(
+  wikidataClass: string,
+  useSubclassPath: boolean,
+  offset: number,
+): string {
   const instancePattern = useSubclassPath
     ? `?work wdt:P31/wdt:P279* wd:${wikidataClass}.`
     : `?work wdt:P31 wd:${wikidataClass}.`;
@@ -42,8 +48,13 @@ WHERE {
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }
 ORDER BY DESC(?sitelinks)
-LIMIT 50
+LIMIT ${PAGE_SIZE}
+OFFSET ${offset}
 `.trim();
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function fetchSparql(query: string): Promise<SparqlResponse> {
@@ -70,11 +81,25 @@ async function fetchCommand(): Promise<void> {
 
   for (const category of CATEGORIES) {
     console.log(`Fetching ${category.name}...`);
-    const query = buildSparqlQuery(category.wikidataClass, category.useSubclassPath);
-    const data = await fetchSparql(query);
+    const allBindings: SparqlResponse["results"]["bindings"] = [];
+    let offset = 0;
+
+    while (true) {
+      const query = buildSparqlQuery(category.wikidataClass, category.useSubclassPath, offset);
+      const data = await fetchSparql(query);
+      const count = data.results.bindings.length;
+      allBindings.push(...data.results.bindings);
+      console.log(`  Page ${offset / PAGE_SIZE + 1}: ${count} rows (total: ${allBindings.length})`);
+
+      if (count < PAGE_SIZE) break;
+      offset += PAGE_SIZE;
+      await delay(1000);
+    }
+
+    const combined: SparqlResponse = { results: { bindings: allBindings } };
     const filePath = path.join(dataDir, `${category.name}.json`);
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
-    console.log(`  Saved ${data.results.bindings.length} rows for ${category.name}`);
+    await fs.writeFile(filePath, JSON.stringify(combined, null, 2));
+    console.log(`  Saved ${allBindings.length} total rows for ${category.name}`);
   }
 
   console.log("Done. Raw data saved to scripts/data/raw/");
